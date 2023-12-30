@@ -3,6 +3,7 @@ package com.modsen.passengerservice.services;
 
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.entities.Passenger;
+import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
 import com.modsen.passengerservice.mappers.PassengerMapper;
 import com.modsen.passengerservice.repositories.PassengerRepository;
 import lombok.RequiredArgsConstructor;
@@ -29,18 +30,42 @@ public class PassengerService {
                 .collect(Collectors.toList()), HttpStatus.OK);
     }
 
-    public HttpStatus addPassenger(PassengerDto passengerDto){
-        Optional<Passenger> passenger_opt_email = passengerRepository.findByEmail(passengerDto.getEmail());
-        Optional<Passenger> passenger_opt_phone = passengerRepository.findByEmail(passengerDto.getPhone());
-        Optional<Passenger> passenger_opt_username = passengerRepository.findByEmail(passengerDto.getUsername());
-        if(passenger_opt_email.isPresent() ||
-                passenger_opt_phone.isPresent() ||
-                passenger_opt_username.isPresent()){
-            //TODO make a exception for this block
-            return HttpStatus.CONFLICT;
-        }else {
-            passengerRepository.save(passengerMapper.dtoToEntity(passengerDto));
-            return HttpStatus.OK;
-        }
+
+
+    public HttpStatus addPassenger(PassengerDto passengerDto) throws PassengerAlreadyExistException{
+        checkPassengerParamsExists(passengerDto);
+        passengerRepository.save(passengerMapper.dtoToEntity(passengerDto));
+        return HttpStatus.OK;
+
+    }
+
+
+    public boolean checkPhoneExist(PassengerDto passengerDto){
+        Optional<Passenger> passenger_opt = passengerRepository.findByPhone(passengerDto.getPhone());
+        return passenger_opt.isPresent();
+    }
+
+    public boolean checkEmailExist(PassengerDto passengerDto){
+        Optional<Passenger> passenger_opt = passengerRepository.findByEmail(passengerDto.getPhone());
+        return passenger_opt.isPresent();
+    }
+    public boolean checkUsernameExist(PassengerDto passengerDto){
+        Optional<Passenger> passenger_opt = passengerRepository.findByUsername(passengerDto.getPhone());
+        return passenger_opt.isPresent();
+    }
+
+    public void checkPassengerParamsExists(PassengerDto passengerDto) throws PassengerAlreadyExistException{
+        if(checkEmailExist(passengerDto))
+            throw new PassengerAlreadyExistException(String.format("passenger with email : %s is already exist.",
+                    passengerDto.getEmail()));
+
+        if(checkPhoneExist(passengerDto))
+            throw new PassengerAlreadyExistException(String.format("passenger with phone : %s is already exist.",
+                    passengerDto.getPhone()));
+
+        if(checkUsernameExist(passengerDto))
+            throw new PassengerAlreadyExistException(String.format("passenger with username : %s is already exist.",
+                    passengerDto.getUsername()));
+
     }
 }

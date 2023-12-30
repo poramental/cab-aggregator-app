@@ -2,6 +2,7 @@ package com.modsen.passengerservice.controllers;
 
 
 import com.modsen.passengerservice.dto.PassengerDto;
+import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
 import com.modsen.passengerservice.services.PassengerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,7 +24,8 @@ public class PassengerController {
     }
 
     @PostMapping()
-    public HttpStatus addPassenger(@RequestBody PassengerDto passengerDto){
+    public HttpStatus addPassenger(@RequestBody PassengerDto passengerDto)
+            throws PassengerAlreadyExistException {
         return passengerService.addPassenger(passengerDto);
     }
 }
