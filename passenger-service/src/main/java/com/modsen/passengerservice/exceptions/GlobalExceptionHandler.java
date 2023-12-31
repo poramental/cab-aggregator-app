@@ -10,4 +10,8 @@ public class GlobalExceptionHandler {
     public ResponseEntity<AppError> passengerExistExceptionHandler(PassengerAlreadyExistException ex){
         return new ResponseEntity<>(new AppError(ex.getMessage()), HttpStatus.CONFLICT);
     }
+
+    public ResponseEntity<AppError> passengerNotFoundExceptionHandler(PassengerNotFoundException ex){
+        return new ResponseEntity<>(new AppError(ex.getMessage()), HttpStatus.NOT_FOUND);
+    }
 }

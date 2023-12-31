@@ -3,6 +3,7 @@ package com.modsen.passengerservice.controllers;
 
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
+import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
 import com.modsen.passengerservice.services.PassengerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,14 +19,26 @@ public class PassengerController {
 
     private final PassengerService passengerService;
 
-    @GetMapping()
+    @GetMapping("/getAll")
     public ResponseEntity<List<PassengerDto>> getAll(){
         return passengerService.getAll();
     }
 
-    @PostMapping()
+    @PostMapping("/add")
     public HttpStatus addPassenger(@RequestBody PassengerDto passengerDto)
             throws PassengerAlreadyExistException {
         return passengerService.addPassenger(passengerDto);
+    }
+
+    @DeleteMapping("/deleteById")
+    public HttpStatus deletePassengerById(@RequestParam(name = "id") Long passengerId)
+            throws PassengerNotFoundException {
+        return passengerService.deletePassengerById(passengerId);
+    }
+
+    @DeleteMapping("deleteByPhone")
+    public HttpStatus deletePassengerByPhone(@RequestParam(name = "phone") String phone)
+            throws PassengerNotFoundException{
+        return passengerService.deletePassengerByPhone(phone);
     }
 }
