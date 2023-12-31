@@ -8,6 +8,9 @@ import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
 import com.modsen.passengerservice.mappers.PassengerMapper;
 import com.modsen.passengerservice.repositories.PassengerRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -88,6 +91,13 @@ public class PassengerService {
 
     }
 
+    public ResponseEntity<Page<PassengerDto>> getLimitedList(int offset, int limit){
+        Pageable pageable = PageRequest.of(offset,limit);
+        Page<Passenger> passengerPage = passengerRepository.findAll(pageable);
+        Page<PassengerDto> result = passengerPage.map(passengerMapper::entityToDto);
+        return ResponseEntity.ok(result);
+    }
+
 
     private HttpStatus updatePassenger(Function<String, Optional<Passenger>> repositoryFunc,
                                       Supplier<String> passengerDtoGetter,
@@ -138,6 +148,8 @@ public class PassengerService {
         Optional<Passenger> passenger_opt = passengerRepository.findByUsername(passengerDto.getPhone());
         return passenger_opt.isPresent();
     }
+
+
 
     public void checkPassengerParamsExists(PassengerDto passengerDto) throws PassengerAlreadyExistException{
         if(checkEmailExist(passengerDto))

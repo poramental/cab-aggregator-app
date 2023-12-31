@@ -6,6 +6,7 @@ import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
 import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
 import com.modsen.passengerservice.services.PassengerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -56,5 +57,11 @@ public class PassengerController {
     public HttpStatus updatePassengerByPhone(@RequestBody PassengerDto passengerDto)
             throws PassengerNotFoundException{
         return passengerService.updatePassengerByPhone(passengerDto);
+    }
+
+    @GetMapping("/getLimitedList")
+    public ResponseEntity<Page<PassengerDto>> getLimitedList(@RequestParam(name = "offset") int offset,
+                                                             @RequestParam(name = "limit") int limit){
+        return passengerService.getLimitedList(offset,limit);
     }
 }
