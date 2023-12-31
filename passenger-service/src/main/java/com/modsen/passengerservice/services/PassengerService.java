@@ -14,9 +14,11 @@ import org.springframework.stereotype.Service;
 
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 @Service
@@ -51,6 +53,60 @@ public class PassengerService {
     public HttpStatus deletePassengerByPhone(String phone) throws PassengerNotFoundException{
         return delete(phone,String.format("passenger with phone: %s is not found.",
                 phone),passengerRepository::findByPhone);
+    }
+
+    public HttpStatus deletePassengerByEmail(String email) throws PassengerNotFoundException{
+        return delete(email,String.format("passenger with email: %s is bot found.",
+                email),passengerRepository::findByEmail);
+    }
+
+    public HttpStatus deletePassengerByUsername(String username) throws PassengerNotFoundException{
+        return delete(username,String.format("passenger with username: %s is bot found.",
+                username),passengerRepository::findByUsername);
+    }
+
+    public HttpStatus updatePassengerByEmail(PassengerDto passengerDto) throws PassengerNotFoundException{
+        return updatePassenger(passengerRepository::findByEmail,
+                passengerDto::getEmail,
+                passengerDto,
+                String.format("passenger with email: %s is not found.", passengerDto.getEmail()));
+    }
+
+    public HttpStatus updatePassengerByPhone(PassengerDto passengerDto) throws PassengerNotFoundException{
+        return updatePassenger(passengerRepository::findByPhone,
+                passengerDto::getPhone,
+                passengerDto,
+                String.format("passenger with phone: %s is not found.", passengerDto.getPhone()));
+
+    }
+
+    public HttpStatus updatePassengerByUsername(PassengerDto passengerDto) throws PassengerNotFoundException{
+        return updatePassenger(passengerRepository::findByUsername,
+                passengerDto::getUsername,
+                passengerDto,
+                String.format("passenger with username: %s is not found.", passengerDto.getUsername()));
+
+    }
+
+
+    private HttpStatus updatePassenger(Function<String, Optional<Passenger>> repositoryFunc,
+                                      Supplier<String> passengerDtoGetter,
+                                      PassengerDto passengerDto,
+                                      String exceptionMessage) throws PassengerNotFoundException{
+        Optional<Passenger> passenger_opt = repositoryFunc.apply(passengerDtoGetter.get());
+        if(passenger_opt.isPresent()){
+            Passenger passenger_db = passenger_opt.get();
+            if(Objects.nonNull(passengerDto.getEmail()) && !passengerDto.getEmail().isEmpty()){
+                passenger_db.setEmail(passengerDto.getEmail());
+            }
+            if(Objects.nonNull(passengerDto.getUsername()) && !passengerDto.getUsername().isEmpty()){
+                passenger_db.setUsername(passengerDto.getUsername());
+            }
+            if(Objects.nonNull(passengerDto.getPhone()) && !passengerDto.getPhone().isEmpty()){
+                passenger_db.setPhone(passengerDto.getPhone());
+            }
+            return HttpStatus.OK;
+        }else throw new PassengerNotFoundException(exceptionMessage);
     }
 
 

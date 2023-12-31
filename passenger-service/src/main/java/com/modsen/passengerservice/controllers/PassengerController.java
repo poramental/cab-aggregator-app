@@ -41,4 +41,20 @@ public class PassengerController {
             throws PassengerNotFoundException{
         return passengerService.deletePassengerByPhone(phone);
     }
+
+    @PutMapping("/updateByEmail")
+    public HttpStatus updatePassengerByEmail(@RequestBody PassengerDto passengerDto)
+            throws PassengerNotFoundException{
+        return passengerService.updatePassengerByEmail(passengerDto);
+    }
+    @PutMapping("/updateByUsername")
+    public HttpStatus updatePassengerByUsername(@RequestBody PassengerDto passengerDto)
+            throws PassengerNotFoundException{
+        return passengerService.updatePassengerByUsername(passengerDto);
+    }
+    @PutMapping("/updateByPhone")
+    public HttpStatus updatePassengerByPhone(@RequestBody PassengerDto passengerDto)
+            throws PassengerNotFoundException{
+        return passengerService.updatePassengerByPhone(passengerDto);
+    }
 }
