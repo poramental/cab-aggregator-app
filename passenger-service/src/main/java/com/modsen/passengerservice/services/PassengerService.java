@@ -5,6 +5,7 @@ import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.entities.Passenger;
 import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
 import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
+import com.modsen.passengerservice.exceptions.ValidateException;
 import com.modsen.passengerservice.mappers.PassengerMapper;
 import com.modsen.passengerservice.repositories.PassengerRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalInt;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
@@ -30,17 +28,19 @@ public class PassengerService {
 
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
-
+    private final ValidationService validationService;
 
     public ResponseEntity<List<PassengerDto>> getAll(){
         return new ResponseEntity<>(passengerRepository.findAll().stream()
-                .map(passenger -> passengerMapper.entityToDto(passenger))
+                .map(passengerMapper::entityToDto)
                 .collect(Collectors.toList()), HttpStatus.OK);
     }
 
 
 
-    public HttpStatus addPassenger(PassengerDto passengerDto) throws PassengerAlreadyExistException{
+    public HttpStatus addPassenger(PassengerDto passengerDto) throws PassengerAlreadyExistException,
+            ValidateException {
+        validationService.validatePassengerRequest(passengerDto);
         checkPassengerParamsExists(passengerDto);
         passengerRepository.save(passengerMapper.dtoToEntity(passengerDto));
         return HttpStatus.OK;
@@ -64,18 +64,24 @@ public class PassengerService {
     }
 
     public HttpStatus deletePassengerByUsername(String username) throws PassengerNotFoundException{
-        return delete(username,String.format("passenger with username: %s is bot found.",
+        return delete(username,String.format("passenger with username: %s is not found.",
                 username),passengerRepository::findByUsername);
     }
 
-    public HttpStatus updatePassengerByEmail(PassengerDto passengerDto) throws PassengerNotFoundException{
+    public HttpStatus updatePassengerByEmail(PassengerDto passengerDto)
+            throws PassengerNotFoundException,
+            ValidateException{
+        validationService.validatePassengerRequest(passengerDto);
         return updatePassenger(passengerRepository::findByEmail,
                 passengerDto::getEmail,
                 passengerDto,
                 String.format("passenger with email: %s is not found.", passengerDto.getEmail()));
     }
 
-    public HttpStatus updatePassengerByPhone(PassengerDto passengerDto) throws PassengerNotFoundException{
+    public HttpStatus updatePassengerByPhone(PassengerDto passengerDto)
+            throws PassengerNotFoundException,
+            ValidateException{
+        validationService.validatePassengerRequest(passengerDto);
         return updatePassenger(passengerRepository::findByPhone,
                 passengerDto::getPhone,
                 passengerDto,
@@ -83,7 +89,10 @@ public class PassengerService {
 
     }
 
-    public HttpStatus updatePassengerByUsername(PassengerDto passengerDto) throws PassengerNotFoundException{
+    public HttpStatus updatePassengerByUsername(PassengerDto passengerDto)
+            throws PassengerNotFoundException,
+            ValidateException{
+        validationService.validatePassengerRequest(passengerDto);
         return updatePassenger(passengerRepository::findByUsername,
                 passengerDto::getUsername,
                 passengerDto,
@@ -141,11 +150,11 @@ public class PassengerService {
     }
 
     public boolean checkEmailExist(PassengerDto passengerDto){
-        Optional<Passenger> passenger_opt = passengerRepository.findByEmail(passengerDto.getPhone());
+        Optional<Passenger> passenger_opt = passengerRepository.findByEmail(passengerDto.getEmail());
         return passenger_opt.isPresent();
     }
     public boolean checkUsernameExist(PassengerDto passengerDto){
-        Optional<Passenger> passenger_opt = passengerRepository.findByUsername(passengerDto.getPhone());
+        Optional<Passenger> passenger_opt = passengerRepository.findByUsername(passengerDto.getUsername());
         return passenger_opt.isPresent();
     }
 

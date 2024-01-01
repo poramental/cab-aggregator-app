@@ -4,6 +4,7 @@ package com.modsen.passengerservice.controllers;
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
 import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
+import com.modsen.passengerservice.exceptions.ValidateException;
 import com.modsen.passengerservice.services.PassengerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,48 +21,67 @@ public class PassengerController {
 
     private final PassengerService passengerService;
 
-    @GetMapping("/getAll")
+    @GetMapping("/get-all")
     public ResponseEntity<List<PassengerDto>> getAll(){
         return passengerService.getAll();
     }
 
     @PostMapping("/add")
     public HttpStatus addPassenger(@RequestBody PassengerDto passengerDto)
-            throws PassengerAlreadyExistException {
+            throws PassengerAlreadyExistException,
+            ValidateException {
+
         return passengerService.addPassenger(passengerDto);
     }
 
-    @DeleteMapping("/deleteById")
+    @DeleteMapping("/delete-by-id")
     public HttpStatus deletePassengerById(@RequestParam(name = "id") Long passengerId)
             throws PassengerNotFoundException {
         return passengerService.deletePassengerById(passengerId);
     }
 
-    @DeleteMapping("deleteByPhone")
+    @DeleteMapping("/delete-by-phone")
     public HttpStatus deletePassengerByPhone(@RequestParam(name = "phone") String phone)
             throws PassengerNotFoundException{
         return passengerService.deletePassengerByPhone(phone);
     }
 
-    @PutMapping("/updateByEmail")
+    @PutMapping("/update-by-email")
     public HttpStatus updatePassengerByEmail(@RequestBody PassengerDto passengerDto)
-            throws PassengerNotFoundException{
+            throws PassengerNotFoundException,
+            ValidateException{
         return passengerService.updatePassengerByEmail(passengerDto);
     }
-    @PutMapping("/updateByUsername")
+    @PutMapping("/update-by-username")
     public HttpStatus updatePassengerByUsername(@RequestBody PassengerDto passengerDto)
-            throws PassengerNotFoundException{
+            throws PassengerNotFoundException,
+            ValidateException{
         return passengerService.updatePassengerByUsername(passengerDto);
     }
-    @PutMapping("/updateByPhone")
+    @PutMapping("/update-by-phone")
     public HttpStatus updatePassengerByPhone(@RequestBody PassengerDto passengerDto)
-            throws PassengerNotFoundException{
+            throws PassengerNotFoundException,
+            ValidateException {
         return passengerService.updatePassengerByPhone(passengerDto);
     }
 
-    @GetMapping("/getLimitedList")
+    @DeleteMapping("/delete-by-username")
+    public HttpStatus deletePassengerByUsername(@RequestParam(name="username") String username)
+            throws PassengerNotFoundException{
+        return passengerService.deletePassengerByUsername(username);
+    }
+
+    @DeleteMapping("/delete-by-email")
+    public HttpStatus deletePassengerByEmail(@RequestParam(name="email") String email)
+            throws PassengerNotFoundException{
+        return passengerService.deletePassengerByEmail(email);
+    }
+    @GetMapping("/get-limited-list")
     public ResponseEntity<Page<PassengerDto>> getLimitedList(@RequestParam(name = "offset") int offset,
                                                              @RequestParam(name = "limit") int limit){
         return passengerService.getLimitedList(offset,limit);
+
     }
+
+
 }

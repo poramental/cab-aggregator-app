@@ -1,8 +1,8 @@
 package com.modsen.passengerservice.dto;
 
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,7 +12,7 @@ import lombok.Setter;
 public class PassengerDto {
 
     @NotBlank(message = "email should be not empty.")
-    @Pattern(regexp = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "Invalid email")
+    @Email(message = "invalid email.")
     private String email;
 
     @NotBlank(message = "phone number should be not empty.")
