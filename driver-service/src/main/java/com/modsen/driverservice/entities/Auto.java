@@ -1,4 +1,4 @@
-package com.modsen.driverservice.entity;
+package com.modsen.driverservice.entities;
 
 
 import jakarta.persistence.*;

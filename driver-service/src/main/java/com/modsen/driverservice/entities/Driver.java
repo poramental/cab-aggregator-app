@@ -1,10 +1,11 @@
-package com.modsen.driverservice.entity;
+package com.modsen.driverservice.entities;
 
 
 import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
+@Table(name = "driver")
 @Data
 public class Driver {
 
@@ -14,7 +15,7 @@ public class Driver {
     private Long id;
 
     @Column(name = "average_rating")
-    private String averageRating;
+    private float averageRating;
 
     @Column(name = "ratings_count")
     private int ratingsCount;
@@ -26,4 +27,6 @@ public class Driver {
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = false)
     @JoinColumn(name = "driver_id")
     private Auto auto;
+
+    private String phone;
 }
