@@ -5,12 +5,14 @@ import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.entities.Passenger;
 import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
 import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
+import com.modsen.passengerservice.exceptions.SortTypeException;
 import com.modsen.passengerservice.mappers.PassengerMapper;
 import com.modsen.passengerservice.repositories.PassengerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -148,6 +150,27 @@ public class PassengerService {
         Optional<Passenger> passenger_opt = passengerRepository.findByUsername(passengerDto.getUsername());
         return passenger_opt.isPresent();
     }
+
+    public ResponseEntity<List<PassengerDto>> getSortedListOfPassengers(String type) throws SortTypeException {
+        List<Passenger> sortedPassengers;
+
+        switch (type.toLowerCase()) {
+            case "name":
+                sortedPassengers = passengerRepository.findAll(Sort.by(Sort.Order.asc("name")));
+                break;
+            case "surname":
+                sortedPassengers = passengerRepository.findAll(Sort.by(Sort.Order.asc("surname")));
+                break;
+
+            default:
+
+                throw new SortTypeException("Invalid type of sort");
+        }
+
+        return new ResponseEntity<>(sortedPassengers.stream().map(passengerMapper::entityToDto).collect(Collectors.toList()),HttpStatus.OK);
+
+    }
+
 
 
 

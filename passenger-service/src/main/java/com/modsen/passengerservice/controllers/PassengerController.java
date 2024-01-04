@@ -4,6 +4,7 @@ package com.modsen.passengerservice.controllers;
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
 import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
+import com.modsen.passengerservice.exceptions.SortTypeException;
 import com.modsen.passengerservice.services.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -78,5 +79,10 @@ public class PassengerController {
 
     }
 
+    @GetMapping("/sorted-list")
+    public ResponseEntity<List<PassengerDto>> SortedListOfPassengers(@RequestParam String type)
+            throws SortTypeException {
+        return passengerService.getSortedListOfPassengers(type);
+    }
 
 }
