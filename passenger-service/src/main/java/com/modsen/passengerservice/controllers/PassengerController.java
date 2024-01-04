@@ -4,8 +4,8 @@ package com.modsen.passengerservice.controllers;
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
 import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
-import com.modsen.passengerservice.exceptions.ValidateException;
 import com.modsen.passengerservice.services.PassengerService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -27,10 +27,8 @@ public class PassengerController {
     }
 
     @PostMapping("/add")
-    public HttpStatus addPassenger(@RequestBody PassengerDto passengerDto)
-            throws PassengerAlreadyExistException,
-            ValidateException {
-
+    public HttpStatus addPassenger(@RequestBody @Valid PassengerDto passengerDto)
+            throws PassengerAlreadyExistException{
         return passengerService.addPassenger(passengerDto);
     }
 
@@ -47,21 +45,18 @@ public class PassengerController {
     }
 
     @PutMapping("/update-by-email")
-    public HttpStatus updatePassengerByEmail(@RequestBody PassengerDto passengerDto)
-            throws PassengerNotFoundException,
-            ValidateException{
+    public HttpStatus updatePassengerByEmail(@RequestBody @Valid PassengerDto passengerDto)
+            throws PassengerNotFoundException{
         return passengerService.updatePassengerByEmail(passengerDto);
     }
     @PutMapping("/update-by-username")
-    public HttpStatus updatePassengerByUsername(@RequestBody PassengerDto passengerDto)
-            throws PassengerNotFoundException,
-            ValidateException{
+    public HttpStatus updatePassengerByUsername(@RequestBody @Valid PassengerDto passengerDto)
+            throws PassengerNotFoundException{
         return passengerService.updatePassengerByUsername(passengerDto);
     }
     @PutMapping("/update-by-phone")
-    public HttpStatus updatePassengerByPhone(@RequestBody PassengerDto passengerDto)
-            throws PassengerNotFoundException,
-            ValidateException {
+    public HttpStatus updatePassengerByPhone(@RequestBody @Valid PassengerDto passengerDto)
+            throws PassengerNotFoundException{
         return passengerService.updatePassengerByPhone(passengerDto);
     }
 

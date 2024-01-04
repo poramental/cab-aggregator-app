@@ -5,7 +5,6 @@ import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.entities.Passenger;
 import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
 import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
-import com.modsen.passengerservice.exceptions.ValidateException;
 import com.modsen.passengerservice.mappers.PassengerMapper;
 import com.modsen.passengerservice.repositories.PassengerRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,6 @@ public class PassengerService {
 
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
-    private final ValidationService validationService;
 
     public ResponseEntity<List<PassengerDto>> getAll(){
         return new ResponseEntity<>(passengerRepository.findAll().stream()
@@ -38,9 +36,8 @@ public class PassengerService {
 
 
 
-    public HttpStatus addPassenger(PassengerDto passengerDto) throws PassengerAlreadyExistException,
-            ValidateException {
-        validationService.validatePassengerRequest(passengerDto);
+    public HttpStatus addPassenger(PassengerDto passengerDto) throws PassengerAlreadyExistException{
+
         checkPassengerParamsExists(passengerDto);
         passengerRepository.save(passengerMapper.dtoToEntity(passengerDto));
         return HttpStatus.OK;
@@ -69,9 +66,7 @@ public class PassengerService {
     }
 
     public HttpStatus updatePassengerByEmail(PassengerDto passengerDto)
-            throws PassengerNotFoundException,
-            ValidateException{
-        validationService.validatePassengerRequest(passengerDto);
+            throws PassengerNotFoundException{
         return updatePassenger(passengerRepository::findByEmail,
                 passengerDto::getEmail,
                 passengerDto,
@@ -79,9 +74,7 @@ public class PassengerService {
     }
 
     public HttpStatus updatePassengerByPhone(PassengerDto passengerDto)
-            throws PassengerNotFoundException,
-            ValidateException{
-        validationService.validatePassengerRequest(passengerDto);
+            throws PassengerNotFoundException{
         return updatePassenger(passengerRepository::findByPhone,
                 passengerDto::getPhone,
                 passengerDto,
@@ -90,9 +83,7 @@ public class PassengerService {
     }
 
     public HttpStatus updatePassengerByUsername(PassengerDto passengerDto)
-            throws PassengerNotFoundException,
-            ValidateException{
-        validationService.validatePassengerRequest(passengerDto);
+            throws PassengerNotFoundException{
         return updatePassenger(passengerRepository::findByUsername,
                 passengerDto::getUsername,
                 passengerDto,
