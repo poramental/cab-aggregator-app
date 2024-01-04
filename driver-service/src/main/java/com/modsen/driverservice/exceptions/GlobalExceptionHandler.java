@@ -1,5 +1,6 @@
 package com.modsen.driverservice.exceptions;
 
+import com.modsen.driverservice.entities.Driver;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -39,6 +40,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<AppError> driverAlreadyExistException(DriverAlreadyExistException e){
+        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.CONFLICT);
+    }
 
+    @ExceptionHandler
+    public ResponseEntity<AppError> driverNotFoundExceptionHandler(DriverNotFoundException e){
+        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
+    }
 
 }

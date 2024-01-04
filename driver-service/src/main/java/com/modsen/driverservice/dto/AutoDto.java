@@ -3,8 +3,10 @@ package com.modsen.driverservice.dto;
 import jakarta.persistence.Column;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Data
+@Accessors(chain = true)
 public class AutoDto {
     @NotBlank(message = "color should be not empty.")
     private String color;

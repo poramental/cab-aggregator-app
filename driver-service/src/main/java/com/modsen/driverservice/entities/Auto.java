@@ -3,9 +3,11 @@ package com.modsen.driverservice.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Entity
 @Data
+@Accessors(chain = true)
 public class Auto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

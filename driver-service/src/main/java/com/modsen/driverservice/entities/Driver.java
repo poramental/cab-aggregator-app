@@ -3,10 +3,12 @@ package com.modsen.driverservice.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 @Entity
 @Table(name = "driver")
 @Data
+@Accessors(chain = true)
 public class Driver {
 
     @Id
