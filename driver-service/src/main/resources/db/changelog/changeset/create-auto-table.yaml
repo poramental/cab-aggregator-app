@@ -2,9 +2,15 @@ databaseChangeLog:
   - changeSet:
       id: create-auto
       author: Alexey
+      preConditions:
+        - onFail: MARK_RAN
+          or:
+            - not:
+          tableExists:
+          tableName: autos
       changes:
         - createTable:
-            tableName: auto
+            tableName: autos
             columns:
               - column:
                   name: auto_id
@@ -33,3 +39,6 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: true
+      rollback:
+        - dropTable:
+            tableName: passengers

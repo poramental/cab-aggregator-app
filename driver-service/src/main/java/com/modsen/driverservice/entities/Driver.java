@@ -6,7 +6,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Entity
-@Table(name = "driver")
+@Table(name = "drivers")
 @Data
 @Accessors(chain = true)
 public class Driver {

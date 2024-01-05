@@ -8,6 +8,7 @@ import lombok.experimental.Accessors;
 @Entity
 @Data
 @Accessors(chain = true)
+@Table(name = "autos")
 public class Auto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

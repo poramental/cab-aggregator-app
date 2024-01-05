@@ -2,9 +2,15 @@ databaseChangeLog:
   - changeSet:
       id: create-driver
       author: Alexey
+      preConditions:
+        - onFail: MARK_RAN
+          or:
+            - not:
+          tableExists:
+          tableName: drivers
       changes:
         - createTable:
-            tableName: driver
+            tableName: drivers
             columns:
               - column:
                   name: driver_id
@@ -43,3 +49,6 @@ databaseChangeLog:
                   type: varchar(40)
                   constraints:
                     nullable: false
+      rollback:
+        - dropTable:
+            tableName: passengers

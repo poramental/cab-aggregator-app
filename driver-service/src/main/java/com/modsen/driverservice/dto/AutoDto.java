@@ -1,6 +1,6 @@
 package com.modsen.driverservice.dto;
 
-import jakarta.persistence.Column;
+
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.experimental.Accessors;
