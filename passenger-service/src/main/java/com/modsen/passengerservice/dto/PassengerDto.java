@@ -21,4 +21,7 @@ public class PassengerDto {
     @NotBlank(message = "username should be not empty.")
     @Size(max = 16, message = "Name cannot be longer than 16 characters")
     private String username;
+
+    private float averageRating;
+    private int ratingsCount;
 }

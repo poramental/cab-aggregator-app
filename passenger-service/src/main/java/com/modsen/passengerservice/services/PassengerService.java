@@ -5,6 +5,7 @@ import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.entities.Passenger;
 import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
 import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
+import com.modsen.passengerservice.exceptions.RatingException;
 import com.modsen.passengerservice.exceptions.SortTypeException;
 import com.modsen.passengerservice.mappers.PassengerMapper;
 import com.modsen.passengerservice.repositories.PassengerRepository;
@@ -30,27 +31,23 @@ public class PassengerService {
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
 
+
     public ResponseEntity<List<PassengerDto>> getAll(){
         return new ResponseEntity<>(passengerRepository.findAll().stream()
                 .map(passengerMapper::entityToDto)
                 .collect(Collectors.toList()), HttpStatus.OK);
     }
 
-
-
     public HttpStatus addPassenger(PassengerDto passengerDto) throws PassengerAlreadyExistException{
-
         checkPassengerParamsExists(passengerDto);
         passengerRepository.save(passengerMapper.dtoToEntity(passengerDto));
         return HttpStatus.OK;
-
     }
 
     public HttpStatus deletePassengerById(Long passengerId) throws PassengerNotFoundException{
         return delete(passengerId,String.format("passenger with id: %s is not found.",
                 passengerId),passengerRepository::findById);
     }
-
 
     public HttpStatus deletePassengerByPhone(String phone) throws PassengerNotFoundException{
         return delete(phone,String.format("passenger with phone: %s is not found.",
@@ -69,7 +66,7 @@ public class PassengerService {
 
     public HttpStatus updatePassengerByEmail(PassengerDto passengerDto)
             throws PassengerNotFoundException{
-        return updatePassenger(passengerRepository::findByEmail,
+        return update(passengerRepository::findByEmail,
                 passengerDto::getEmail,
                 passengerDto,
                 String.format("passenger with email: %s is not found.", passengerDto.getEmail()));
@@ -77,19 +74,23 @@ public class PassengerService {
 
     public HttpStatus updatePassengerByPhone(PassengerDto passengerDto)
             throws PassengerNotFoundException{
-        return updatePassenger(passengerRepository::findByPhone,
+        return update(
+                passengerRepository::findByPhone,
                 passengerDto::getPhone,
                 passengerDto,
-                String.format("passenger with phone: %s is not found.", passengerDto.getPhone()));
+                String.format("passenger with phone: %s is not found.", passengerDto.getPhone())
+        );
 
     }
 
     public HttpStatus updatePassengerByUsername(PassengerDto passengerDto)
             throws PassengerNotFoundException{
-        return updatePassenger(passengerRepository::findByUsername,
+        return update(
+                passengerRepository::findByUsername,
                 passengerDto::getUsername,
                 passengerDto,
-                String.format("passenger with username: %s is not found.", passengerDto.getUsername()));
+                String.format("passenger with username: %s is not found.", passengerDto.getUsername())
+        );
 
     }
 
@@ -100,8 +101,7 @@ public class PassengerService {
         return ResponseEntity.ok(result);
     }
 
-
-    private HttpStatus updatePassenger(Function<String, Optional<Passenger>> repositoryFunc,
+    private HttpStatus update(Function<String, Optional<Passenger>> repositoryFunc,
                                       Supplier<String> passengerDtoGetter,
                                       PassengerDto passengerDto,
                                       String exceptionMessage) throws PassengerNotFoundException{
@@ -121,8 +121,6 @@ public class PassengerService {
         }else throw new PassengerNotFoundException(exceptionMessage);
     }
 
-
-
     private <T> HttpStatus  delete(T param,
                                    String exceptionMessage,
                                    Function<T, Optional<Passenger>> repositoryFunc)
@@ -135,8 +133,6 @@ public class PassengerService {
         else throw new PassengerNotFoundException(exceptionMessage);
     }
 
-
-
     public boolean checkPhoneExist(PassengerDto passengerDto){
         Optional<Passenger> passenger_opt = passengerRepository.findByPhone(passengerDto.getPhone());
         return passenger_opt.isPresent();
@@ -146,6 +142,7 @@ public class PassengerService {
         Optional<Passenger> passenger_opt = passengerRepository.findByEmail(passengerDto.getEmail());
         return passenger_opt.isPresent();
     }
+
     public boolean checkUsernameExist(PassengerDto passengerDto){
         Optional<Passenger> passenger_opt = passengerRepository.findByUsername(passengerDto.getUsername());
         return passenger_opt.isPresent();
@@ -161,18 +158,14 @@ public class PassengerService {
             case "surname":
                 sortedPassengers = passengerRepository.findAll(Sort.by(Sort.Order.asc("surname")));
                 break;
-
             default:
-
                 throw new SortTypeException("Invalid type of sort");
         }
-
-        return new ResponseEntity<>(sortedPassengers.stream().map(passengerMapper::entityToDto).collect(Collectors.toList()),HttpStatus.OK);
+        return new ResponseEntity<>(sortedPassengers.stream()
+                .map(passengerMapper::entityToDto)
+                .collect(Collectors.toList()),HttpStatus.OK);
 
     }
-
-
-
 
     public void checkPassengerParamsExists(PassengerDto passengerDto) throws PassengerAlreadyExistException{
         if(checkEmailExist(passengerDto))
@@ -187,5 +180,66 @@ public class PassengerService {
             throw new PassengerAlreadyExistException(String.format("passenger with username : %s is already exist.",
                     passengerDto.getUsername()));
 
+    }
+
+    public HttpStatus addRatingByEmail(float rating, String email)
+            throws PassengerNotFoundException, RatingException{
+        return addRating(
+                rating,
+                email,
+                String.format("passenger with email: %s is not found.",email),
+                passengerRepository::findByEmail
+        );
+
+    }
+
+    public HttpStatus addRatingByPhone(float rating, String phone)
+            throws PassengerNotFoundException, RatingException{
+        return addRating(
+                rating,
+                phone,
+                String.format("passenger with phone: %s is not found.",phone),
+                passengerRepository::findByPhone
+        );
+
+    }
+
+    public HttpStatus addRatingById(float rating, Long id)
+            throws PassengerNotFoundException,RatingException{
+        return addRating(
+                rating,
+                id,
+                String.format("passenger with id: %s is not found.",id),
+                passengerRepository::findById
+        );
+
+    }
+
+    public HttpStatus addRatingByUsername(float rating, String username)
+            throws PassengerNotFoundException,RatingException{
+        return addRating(
+                rating,
+                username,
+                String.format("passenger with username: %s is not found.",username),
+                passengerRepository::findByUsername
+        );
+    }
+
+    private <T> HttpStatus  addRating(float rating,
+                                 T param,
+                                 String exMessage,
+                                 Function<T,Optional<Passenger>> repositoryFunc)
+            throws PassengerNotFoundException ,RatingException{
+        if(rating > 5 || rating < 0) throw new RatingException("invalid rating.");
+        Optional<Passenger> passenger_opt = repositoryFunc.apply(param);
+        if(passenger_opt.isPresent()){
+            Passenger passenger = passenger_opt.get();
+            passengerRepository.save(passenger.setAverageRating(
+                    (passenger.getAverageRating() * passenger.getRatingsCount() + rating ) /
+                    (passenger.getRatingsCount() + 1))
+                    .setRatingsCount(passenger.getRatingsCount() + 1)
+            );
+            return HttpStatus.OK;
+        }throw new PassengerNotFoundException(exMessage);
     }
 }

@@ -28,3 +28,13 @@ databaseChangeLog:
                   type: varchar(45)
                   constraints:
                     nullable: false
+              - column:
+                  name: average_rating
+                  type: decimal
+                  constraints:
+                    nullable: true
+              - column:
+                  name: ratings_count
+                  type: integer
+                  constraints:
+                    nullable: true

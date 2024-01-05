@@ -40,4 +40,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<AppError> sortTypeExceptionHandler(SortTypeException ex){
         return new ResponseEntity<>(new AppError(ex.getMessage()), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> ratingExceptionHandler(RatingException ex){
+        return new ResponseEntity<>(new AppError(ex.getMessage()),HttpStatus.BAD_REQUEST);
+    }
 }
