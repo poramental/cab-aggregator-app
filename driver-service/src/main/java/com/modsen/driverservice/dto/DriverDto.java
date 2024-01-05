@@ -4,12 +4,13 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import jakarta.validation.constraints.Max;
 
 @Data
 @Accessors(chain = true)
 public class DriverDto {
 
-
+    @Max(value = 5, message = "average rating can't more than 5.")
     private float averageRating;
 
     private int ratingsCount;
