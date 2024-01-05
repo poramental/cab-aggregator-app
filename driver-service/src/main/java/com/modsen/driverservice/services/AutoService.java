@@ -24,6 +24,7 @@ public class AutoService {
 
     private final AutoMapper autoMapper;
 
+
     public ResponseEntity<List<AutoDto>> getAll(){
         return ResponseEntity.ok(autoRepository.findAll().stream()
                 .map(autoMapper::entityToDto).collect(Collectors.toList()));
@@ -35,37 +36,44 @@ public class AutoService {
         return HttpStatus.OK;
     }
 
-
     public void checkAutoExist(AutoDto autoDto) throws AutoAlreadyExistException{
+
         if(autoRepository.findByNumber(autoDto.getNumber()).isPresent()){
             throw new AutoAlreadyExistException(String.format("auto with number: %s is present.",
                     autoDto.getNumber()));
-        };
+        }
     }
 
     public HttpStatus deleteByNumber(String number) throws AutoNotFoundException{
         Optional<Auto> auto_opt = autoRepository.findByNumber(number);
+
         if(auto_opt.isPresent()){
             autoRepository.delete(auto_opt.get());
             return HttpStatus.OK;
-        }else throw new AutoNotFoundException(String.format("auto with number: %s is not found.", number));
+        }else
+            throw new AutoNotFoundException(String.format("auto with number: %s is not found.", number));
     }
 
     public HttpStatus update(AutoDto autoDto) throws AutoNotFoundException{
         Optional<Auto> auto_opt = autoRepository.findByNumber(autoDto.getNumber());
         if(auto_opt.isPresent()){
             Auto auto_db = auto_opt.get();
+
             if(Objects.nonNull(autoDto.getNumber()) && !autoDto.getNumber().isEmpty()){
                 auto_db.setNumber(autoDto.getNumber());
             }
+
             if(Objects.nonNull(autoDto.getColor()) && !autoDto.getColor().isEmpty()){
                 auto_db.setColor(autoDto.getColor());
             }
+
             if(Objects.nonNull(autoDto.getModel()) && !autoDto.getModel().isEmpty()){
                 auto_db.setModel(autoDto.getModel());
             }
+
             return HttpStatus.OK;
-        }else throw new AutoNotFoundException(String.format("auto with number: %s is not found",
+        }else
+            throw new AutoNotFoundException(String.format("auto with number: %s is not found",
                 autoDto.getNumber()));
     }
 
@@ -80,4 +88,12 @@ public class AutoService {
         if(auto_opt.isPresent()) return ResponseEntity.ok(autoMapper.entityToDto(auto_opt.get()));
         throw new AutoNotFoundException(String.format("auto with id :%s is not found.", id));
     }
+
+   public HttpStatus deleteById(Long id) throws AutoNotFoundException {
+        Optional<Auto> auto_opt = autoRepository.findById(id);
+        if(auto_opt.isPresent()){
+            autoRepository.delete(auto_opt.get());
+            return HttpStatus.OK;
+        } throw new AutoNotFoundException(String.format("auto with id: %s is not found", id));
+   }
 }

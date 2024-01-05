@@ -38,3 +38,8 @@ databaseChangeLog:
                   type: integer
                   constraints:
                     nullable: true
+              - column:
+                  name: email
+                  type: varchar(40)
+                  constraints:
+                    nullable: false

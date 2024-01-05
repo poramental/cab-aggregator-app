@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -54,6 +53,11 @@ public class AutoController {
     public ResponseEntity<AutoDto> getById(@RequestParam(name = "id") Long id)
             throws AutoNotFoundException{
         return autoService.getById(id);
+    }
+
+    @GetMapping("/delete-by-id")
+    public HttpStatus deleteById(@RequestParam(name = "id") Long id) throws AutoNotFoundException{
+        return autoService.deleteById(id);
     }
 
 

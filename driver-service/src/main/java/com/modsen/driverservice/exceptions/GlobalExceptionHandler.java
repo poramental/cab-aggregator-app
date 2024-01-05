@@ -1,17 +1,17 @@
 package com.modsen.driverservice.exceptions;
 
-import com.modsen.driverservice.entities.Driver;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
+
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -48,6 +48,11 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public ResponseEntity<AppError> driverNotFoundExceptionHandler(DriverNotFoundException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> ratingExceptionHandler(RatingException e){
+        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
     }
 
 }

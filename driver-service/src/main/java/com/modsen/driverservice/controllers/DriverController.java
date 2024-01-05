@@ -2,9 +2,9 @@ package com.modsen.driverservice.controllers;
 
 
 import com.modsen.driverservice.dto.DriverDto;
-import com.modsen.driverservice.entities.Driver;
 import com.modsen.driverservice.exceptions.DriverAlreadyExistException;
 import com.modsen.driverservice.exceptions.DriverNotFoundException;
+import com.modsen.driverservice.exceptions.RatingException;
 import com.modsen.driverservice.services.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,14 +20,23 @@ public class DriverController {
 
 
     private final DriverService driverService;
+
+
     @GetMapping("/get-all")
     public ResponseEntity<List<DriverDto>> getAll(){
         return driverService.getAll();
     }
 
     @PostMapping("/add")
-    public HttpStatus add(DriverDto driverDto) throws DriverAlreadyExistException {
+    public HttpStatus add(DriverDto driverDto)
+            throws DriverAlreadyExistException {
         return driverService.add(driverDto);
+    }
+
+    @GetMapping("/get-by-email")
+    public ResponseEntity<DriverDto> getByEmail(@RequestParam(name = "email") String email)
+            throws DriverNotFoundException {
+        return driverService.getByEmail(email);
     }
 
     @DeleteMapping("/delete-by-phone")
@@ -37,12 +46,14 @@ public class DriverController {
     }
 
     @DeleteMapping("/delete-by-id")
-    public HttpStatus deleteById(@RequestParam(name = "id") Long id) throws DriverNotFoundException{
+    public HttpStatus deleteById(@RequestParam(name = "id") Long id)
+            throws DriverNotFoundException{
         return driverService.deleteById(id);
     }
 
     @GetMapping("/get-by-id")
-    public ResponseEntity<DriverDto> getById(@RequestParam(name = "id") Long id) throws DriverNotFoundException{
+    public ResponseEntity<DriverDto> getById(@RequestParam(name = "id") Long id)
+            throws DriverNotFoundException{
         return driverService.getById(id);
     }
 
@@ -51,9 +62,31 @@ public class DriverController {
             throws DriverNotFoundException{
         return driverService.getByPhone(phone);
     }
+
     @PutMapping("/update")
-    public HttpStatus update(@RequestBody @Valid DriverDto driverDto) throws DriverNotFoundException{
+    public HttpStatus update(@RequestBody @Valid DriverDto driverDto)
+            throws DriverNotFoundException{
         return driverService.update(driverDto);
+    }
+
+    @PatchMapping("/add-rating-by-phone/{phone}")
+    public HttpStatus addRatingByPhone(@PathVariable(name = "phone") String phone,
+                                       @RequestParam(name = "rating") int rating)
+            throws RatingException, DriverNotFoundException {
+        return driverService.addRatingByPhone(rating,phone);
+    }
+
+    @PatchMapping("/add-rating-by-email/{email}")
+    public HttpStatus addRatingByEmail(@PathVariable(name = "email") String phone,
+                                       @RequestParam(name = "rating") int rating)
+            throws RatingException, DriverNotFoundException{
+        return driverService.addRatingByEmail(rating,phone);
+    }
+
+    @DeleteMapping("/delete-by-email")
+    public HttpStatus deleteByRating(@RequestParam(name = "email") String email)
+            throws DriverNotFoundException{
+        return driverService.deleteByEmail(email);
     }
 
 }

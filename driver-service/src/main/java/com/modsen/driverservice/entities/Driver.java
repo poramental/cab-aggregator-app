@@ -31,4 +31,6 @@ public class Driver {
     private Auto auto;
 
     private String phone;
+
+    private String email;
 }

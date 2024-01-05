@@ -2,19 +2,22 @@ package com.modsen.driverservice.mappers;
 
 import com.modsen.driverservice.dto.DriverDto;
 import com.modsen.driverservice.entities.Driver;
-import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
 
 @Component
-@RequiredArgsConstructor
 public class DriverMapper {
 
-    private ModelMapper mapper;
+    private final ModelMapper mapper;
 
-    private final AutoMapper autoMapper;
+    @Autowired
+    private AutoMapper autoMapper;
+
+    public DriverMapper(){
+        this.mapper = new ModelMapper();
+    }
 
     public DriverDto entityToDto(Driver driver){
         DriverDto driverDto = mapper.map(driver,DriverDto.class);
