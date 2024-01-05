@@ -149,18 +149,12 @@ public class PassengerService {
     }
 
     public ResponseEntity<List<PassengerDto>> getSortedListOfPassengers(String type) throws SortTypeException {
-        List<Passenger> sortedPassengers;
+        List<Passenger> sortedPassengers = switch (type.toLowerCase()) {
+            case "name" -> passengerRepository.findAll(Sort.by(Sort.Order.asc("name")));
+            case "surname" -> passengerRepository.findAll(Sort.by(Sort.Order.asc("surname")));
+            default -> throw new SortTypeException("Invalid type of sort");
+        };
 
-        switch (type.toLowerCase()) {
-            case "name":
-                sortedPassengers = passengerRepository.findAll(Sort.by(Sort.Order.asc("name")));
-                break;
-            case "surname":
-                sortedPassengers = passengerRepository.findAll(Sort.by(Sort.Order.asc("surname")));
-                break;
-            default:
-                throw new SortTypeException("Invalid type of sort");
-        }
         return new ResponseEntity<>(sortedPassengers.stream()
                 .map(passengerMapper::entityToDto)
                 .collect(Collectors.toList()),HttpStatus.OK);
@@ -182,7 +176,7 @@ public class PassengerService {
 
     }
 
-    public HttpStatus addRatingByEmail(float rating, String email)
+    public HttpStatus addRatingByEmail(int rating, String email)
             throws PassengerNotFoundException, RatingException{
         return addRating(
                 rating,
@@ -193,7 +187,7 @@ public class PassengerService {
 
     }
 
-    public HttpStatus addRatingByPhone(float rating, String phone)
+    public HttpStatus addRatingByPhone(int rating, String phone)
             throws PassengerNotFoundException, RatingException{
         return addRating(
                 rating,
@@ -204,7 +198,7 @@ public class PassengerService {
 
     }
 
-    public HttpStatus addRatingById(float rating, Long id)
+    public HttpStatus addRatingById(int rating, Long id)
             throws PassengerNotFoundException,RatingException{
         return addRating(
                 rating,
@@ -215,7 +209,7 @@ public class PassengerService {
 
     }
 
-    public HttpStatus addRatingByUsername(float rating, String username)
+    public HttpStatus addRatingByUsername(int rating, String username)
             throws PassengerNotFoundException,RatingException{
         return addRating(
                 rating,
@@ -225,7 +219,7 @@ public class PassengerService {
         );
     }
 
-    private <T> HttpStatus  addRating(float rating,
+    private <T> HttpStatus  addRating(int rating,
                                  T param,
                                  String exMessage,
                                  Function<T,Optional<Passenger>> repositoryFunc)

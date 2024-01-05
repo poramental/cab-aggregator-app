@@ -91,27 +91,27 @@ public class PassengerController {
     }
 
     @PatchMapping("/add-rating-by-email/{passengerEmail}")
-    public HttpStatus addRatingByEmail(@RequestParam("rating") Float rating,
+    public HttpStatus addRatingByEmail(@RequestParam("rating") int rating,
                                 @PathVariable(name = "passengerEmail") String email)
             throws PassengerNotFoundException, RatingException{
         return passengerService.addRatingByEmail(rating,email);
     }
 
     @PatchMapping("/add-rating-by-phone/{passengerPhone}")
-    public HttpStatus addRatingByPhone(@RequestParam("rating") Float rating,
+    public HttpStatus addRatingByPhone(@RequestParam("rating") int rating,
                                        @PathVariable(name = "passengerPhone") String phone)
             throws PassengerNotFoundException, RatingException{
         return passengerService.addRatingByPhone(rating,phone);
     }
     @PatchMapping("/add-rating-by-id/{passengerId}")
-    public HttpStatus addRatingByEmail(@RequestParam("rating") Float rating,
+    public HttpStatus addRatingByEmail(@RequestParam("rating") int rating,
                                        @PathVariable(name = "passengerId") Long passengerId)
             throws PassengerNotFoundException, RatingException {
         return passengerService.addRatingById(rating,passengerId);
     }
 
     @PatchMapping("/add-rating-by-username/{username}")
-    public HttpStatus addRatingByUsername(@RequestParam("rating") Float rating,
+    public HttpStatus addRatingByUsername(@RequestParam("rating") int rating,
                                           @PathVariable(name = "username") String username)
             throws PassengerNotFoundException,RatingException{
         return passengerService.addRatingByUsername(rating,username);
