@@ -6,7 +6,7 @@ import lombok.experimental.Accessors;
 
 @Data
 @Entity
-@Table(name = "passenger")
+@Table(name = "passengers")
 @Accessors(chain = true)
 public class Passenger {
     @Column(name = "passenger_id")

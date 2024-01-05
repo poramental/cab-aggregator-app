@@ -2,9 +2,15 @@ databaseChangeLog:
   - changeSet:
       id: create-passenger
       author: Alexey
+      preConditions:
+        - onFail: MARK_RAN
+          or:
+            - not:
+          tableExists:
+          tableName: passengers
       changes:
         - createTable:
-            tableName: passenger
+            tableName: passengers
             columns:
               - column:
                   name: passenger_id
@@ -38,3 +44,6 @@ databaseChangeLog:
                   type: integer
                   constraints:
                     nullable: true
+      rollback:
+        - dropTable:
+            tableName: passengers
