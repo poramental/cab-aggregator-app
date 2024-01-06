@@ -122,7 +122,7 @@ public class DriverController {
 
     @PostMapping("/set-auto-by-phone")
     public HttpStatus setAutoByPhone(@RequestParam(name = "phone") String phone,
-                                     @RequestBody AutoDto autoDto)
+                                     @RequestBody @Valid AutoDto autoDto)
             throws DriverNotFoundException,
             DriverAlreadyHaveAutoException {
         return driverService.setAutoByPhone(phone,autoDto);
@@ -130,7 +130,7 @@ public class DriverController {
 
     @PostMapping("/set-auto-by-email")
     public HttpStatus setAutoByEmail(@RequestParam(name = "email") String email,
-                                     @RequestBody AutoDto autoDto)
+                                     @RequestBody @Valid AutoDto autoDto)
             throws DriverNotFoundException,
             DriverAlreadyHaveAutoException {
         return driverService.setAutoByEmail(email,autoDto);
@@ -138,21 +138,21 @@ public class DriverController {
 
     @PostMapping("/replace-auto-by-id")
     public HttpStatus replaceAutoById(@RequestParam(name = "driver_id") Long driver_id,
-                                      AutoDto autoDto)
+                                      @RequestBody @Valid AutoDto autoDto)
             throws DriverNotFoundException {
         return driverService.replaceAutoById(driver_id,autoDto);
     }
 
     @PostMapping("/replace-auto-by-phone")
     public HttpStatus replaceAutoByPhone(@RequestParam(name = "phone") String phone,
-                                      AutoDto autoDto)
+                                         @RequestBody @Valid AutoDto autoDto)
             throws DriverNotFoundException {
         return driverService.replaceAutoByPhone(phone,autoDto);
     }
 
     @PostMapping("/replace-auto-by-email")
     public HttpStatus replaceAutoByEmail(@RequestParam(name = "email") String email,
-                                         AutoDto autoDto)
+                                         @RequestBody @Valid AutoDto autoDto)
             throws DriverNotFoundException {
         return driverService.replaceAutoByEmail(email,autoDto);
     }
