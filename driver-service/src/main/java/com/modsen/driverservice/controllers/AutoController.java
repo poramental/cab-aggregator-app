@@ -3,6 +3,7 @@ package com.modsen.driverservice.controllers;
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.exceptions.AutoAlreadyExistException;
 import com.modsen.driverservice.exceptions.AutoNotFoundException;
+import com.modsen.driverservice.exceptions.SortTypeException;
 import com.modsen.driverservice.services.AutoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -55,11 +56,16 @@ public class AutoController {
         return autoService.getById(id);
     }
 
-    @GetMapping("/delete-by-id")
-    public HttpStatus deleteById(@RequestParam(name = "id") Long id) throws AutoNotFoundException{
+    @DeleteMapping("/delete-by-id")
+    public HttpStatus deleteById(@RequestParam(name = "id") Long id)
+            throws AutoNotFoundException{
         return autoService.deleteById(id);
     }
 
-
+    @GetMapping("/get-sorted-list")
+    public ResponseEntity<List<AutoDto>> getSortedList(@RequestParam(name = "type") String type)
+            throws SortTypeException {
+        return autoService.getSortedList(type);
+    }
 
 }

@@ -5,9 +5,11 @@ import com.modsen.driverservice.entities.Driver;
 import com.modsen.driverservice.exceptions.DriverAlreadyExistException;
 import com.modsen.driverservice.exceptions.DriverNotFoundException;
 import com.modsen.driverservice.exceptions.RatingException;
+import com.modsen.driverservice.exceptions.SortTypeException;
 import com.modsen.driverservice.mappers.DriverMapper;
 import com.modsen.driverservice.repositories.DriverRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,8 @@ public class DriverService {
 
     public ResponseEntity<List<DriverDto>> getAll(){
         return new ResponseEntity<>(driverRepository.findAll().stream()
-                .map(driverMapper::entityToDto).collect(Collectors.toList()), HttpStatus.OK);
+                .map(driverMapper::entityToDto)
+                .collect(Collectors.toList()), HttpStatus.OK);
     }
 
 
@@ -45,16 +48,19 @@ public class DriverService {
             driverRepository.delete(driver_opt.get());
             return HttpStatus.OK;
         }else
-            throw new DriverNotFoundException(String.format("driver with phone: %s is not found.",phone));
+            throw new DriverNotFoundException(String
+                    .format("driver with phone: %s is not found.",phone));
 
     }
 
     public ResponseEntity<DriverDto> getByEmail(String email) throws DriverNotFoundException {
         Optional<Driver> driver_opt = driverRepository.findByEmail(email);
         if(driver_opt.isPresent()){
-            return new ResponseEntity<>(driverMapper.entityToDto(driver_opt.get()),HttpStatus.OK);
+            return new ResponseEntity<>(driverMapper
+                    .entityToDto(driver_opt.get()),HttpStatus.OK);
         }
-        throw new DriverNotFoundException(String.format("driver with email: %s is not found.", email));
+        throw new DriverNotFoundException(String
+                .format("driver with email: %s is not found.", email));
     }
 
     public HttpStatus deleteById(Long id) throws DriverNotFoundException{
@@ -63,19 +69,23 @@ public class DriverService {
             driverRepository.delete(driver_opt.get());
             return HttpStatus.OK;
         }else
-            throw new DriverNotFoundException(String.format("driver with id: %s is not found.",id));
+            throw new DriverNotFoundException(String
+                    .format("driver with id: %s is not found.",id));
     }
 
     private boolean checkDriverEmailExist(String email){
         return driverRepository.findByEmail(email).isPresent();
     }
 
-    private void checkDriverParamsExist(String email, String phone) throws DriverAlreadyExistException {
+    private void checkDriverParamsExist(String email, String phone)
+            throws DriverAlreadyExistException {
         if(checkDriverEmailExist(email))
-            throw new DriverAlreadyExistException(String.format("driver with email: %s is present.",email));
+            throw new DriverAlreadyExistException(String
+                    .format("driver with email: %s is present.",email));
 
         if(checkDriverPhoneExist(phone))
-            throw new DriverAlreadyExistException(String.format("driver with phone: %s is present.",phone));
+            throw new DriverAlreadyExistException(String
+                    .format("driver with phone: %s is present.",phone));
     }
 
     public HttpStatus deleteByEmail(String email) throws DriverNotFoundException{
@@ -92,7 +102,8 @@ public class DriverService {
             return new ResponseEntity<>(driverMapper.entityToDto(driverRepository
                     .findById(id).get()),HttpStatus.OK );
         else
-            throw new DriverNotFoundException(String.format("driver with id: %s is not found.",id));
+            throw new DriverNotFoundException(String
+                    .format("driver with id: %s is not found.",id));
     }
 
     public ResponseEntity<DriverDto> getByPhone(String phone) throws DriverNotFoundException{
@@ -100,7 +111,8 @@ public class DriverService {
             return new ResponseEntity<>(driverMapper.entityToDto(driverRepository
                     .findByPhone(phone).get()),HttpStatus.OK );
         else
-            throw new DriverNotFoundException(String.format("driver with phone: %s is not found.",phone));
+            throw new DriverNotFoundException(String
+                    .format("driver with phone: %s is not found.",phone));
     }
 
     public HttpStatus update(DriverDto driverDto) throws DriverNotFoundException{
@@ -123,8 +135,8 @@ public class DriverService {
 
             return HttpStatus.OK;
         }else
-            throw new DriverNotFoundException(String.format("driver with phone: %s is not found",
-                driverDto.getPhone()));
+            throw new DriverNotFoundException(String
+                    .format("driver with phone: %s is not found", driverDto.getPhone()));
     }
 
     public HttpStatus addRatingByPhone(int rating, String phone)
@@ -174,6 +186,15 @@ public class DriverService {
         return driverRepository.findByPhone(phone).isPresent();
     }
 
-
-
+    public ResponseEntity<List<DriverDto>> getSortedList(String type) throws SortTypeException {
+        List<Driver> drivers = switch (type.toLowerCase()) {
+            case "name" -> driverRepository.findAll(Sort.by(Sort.Order.asc("name")));
+            case "surname" -> driverRepository.findAll(Sort.by(Sort.Order.asc("surname")));
+            default -> throw new SortTypeException("Invalid type of sort");
+        };
+        return new ResponseEntity<>(drivers.stream()
+                .map(driverMapper::entityToDto)
+                .collect(Collectors.toList()),
+                HttpStatus.OK);
+    }
 }

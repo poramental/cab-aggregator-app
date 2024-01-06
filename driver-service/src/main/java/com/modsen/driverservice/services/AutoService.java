@@ -4,9 +4,11 @@ import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.entities.Auto;
 import com.modsen.driverservice.exceptions.AutoAlreadyExistException;
 import com.modsen.driverservice.exceptions.AutoNotFoundException;
+import com.modsen.driverservice.exceptions.SortTypeException;
 import com.modsen.driverservice.mappers.AutoMapper;
 import com.modsen.driverservice.repositories.AutoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -96,4 +98,22 @@ public class AutoService {
             return HttpStatus.OK;
         } throw new AutoNotFoundException(String.format("auto with id: %s is not found", id));
    }
+
+   public ResponseEntity<List<AutoDto>> getSortedList(String type)
+           throws SortTypeException{
+       List<Auto> autos = switch (type.toLowerCase()) {
+           case "model" ->
+                   autoRepository.findAll(Sort.by(Sort.Order.asc("model")));
+           case "color" ->
+                   autoRepository.findAll(Sort.by(Sort.Order.asc("color")));
+           default ->
+                   throw new SortTypeException("Invalid type of sort");
+       };
+       return new ResponseEntity<>(autos.stream()
+               .map(autoMapper::entityToDto)
+               .collect(Collectors.toList()),
+               HttpStatus.OK);
+   }
+
 }
+

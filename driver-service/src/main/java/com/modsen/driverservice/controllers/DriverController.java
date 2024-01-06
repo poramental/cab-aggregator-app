@@ -5,6 +5,7 @@ import com.modsen.driverservice.dto.DriverDto;
 import com.modsen.driverservice.exceptions.DriverAlreadyExistException;
 import com.modsen.driverservice.exceptions.DriverNotFoundException;
 import com.modsen.driverservice.exceptions.RatingException;
+import com.modsen.driverservice.exceptions.SortTypeException;
 import com.modsen.driverservice.services.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -87,6 +88,11 @@ public class DriverController {
     public HttpStatus deleteByRating(@RequestParam(name = "email") String email)
             throws DriverNotFoundException{
         return driverService.deleteByEmail(email);
+    }
+    @GetMapping("/get-sorted-list")
+    public ResponseEntity<List<DriverDto>> getSortedList(@RequestParam("type") String type)
+            throws SortTypeException {
+        return driverService.getSortedList(type);
     }
 
 }
