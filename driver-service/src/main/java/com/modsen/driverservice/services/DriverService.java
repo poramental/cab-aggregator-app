@@ -52,8 +52,7 @@ public class DriverService {
         if(driver_opt.isPresent()){
             driverRepository.delete(driver_opt.get());
             return HttpStatus.OK;
-        }else
-            throw new DriverNotFoundException(String
+        }throw new DriverNotFoundException(String
                     .format("driver with phone: %s is not found.",phone));
 
     }
@@ -63,8 +62,7 @@ public class DriverService {
         if(driver_opt.isPresent()){
             return new ResponseEntity<>(driverMapper
                     .entityToDto(driver_opt.get()),HttpStatus.OK);
-        }
-        throw new DriverNotFoundException(String
+        }throw new DriverNotFoundException(String
                 .format("driver with email: %s is not found.", email));
     }
 
@@ -73,8 +71,7 @@ public class DriverService {
         if(driver_opt.isPresent()){
             driverRepository.delete(driver_opt.get());
             return HttpStatus.OK;
-        }else
-            throw new DriverNotFoundException(String
+        }throw new DriverNotFoundException(String
                     .format("driver with id: %s is not found.",id));
     }
 
@@ -105,8 +102,7 @@ public class DriverService {
         if(driverRepository.findById(id).isPresent())
             return new ResponseEntity<>(driverMapper.entityToDto(driverRepository
                     .findById(id).get()),HttpStatus.OK );
-        else
-            throw new DriverNotFoundException(String
+        throw new DriverNotFoundException(String
                     .format("driver with id: %s is not found.",id));
     }
 
@@ -114,8 +110,7 @@ public class DriverService {
         if(driverRepository.findByPhone(phone).isPresent())
             return new ResponseEntity<>(driverMapper.entityToDto(driverRepository
                     .findByPhone(phone).get()),HttpStatus.OK );
-        else
-            throw new DriverNotFoundException(String
+        throw new DriverNotFoundException(String
                     .format("driver with phone: %s is not found.",phone));
     }
 
@@ -141,8 +136,7 @@ public class DriverService {
             }
 
             return HttpStatus.OK;
-        }else
-            throw new DriverNotFoundException(String
+        }throw new DriverNotFoundException(String
                     .format("driver with phone: %s is not found", driverDto.getPhone()));
     }
 
@@ -185,9 +179,7 @@ public class DriverService {
                     .setRatingsCount(passenger.getRatingsCount() + 1)
             );
             return HttpStatus.OK;
-        }
-
-        throw new DriverNotFoundException(exMessage);
+        }throw new DriverNotFoundException(exMessage);
     }
     private void checkDriverPhoneExist(String phone)
             throws DriverAlreadyExistException{
@@ -270,19 +262,21 @@ public class DriverService {
             throws AutoNotFoundException,
             DriverAlreadyHaveAutoException,
             DriverNotFoundException {
+        HttpStatus result;
         Optional<Driver> driver_opt = driverRepositoryFunc.apply(driverParam);
-        Optional<Auto> auto_opt = autoRepositoryFunc.apply(autoParam);
-        if(auto_opt.isEmpty()) throw new AutoNotFoundException(autoExceptionMessage);
-        if(driver_opt.isPresent()){
-            if(driver_opt.get().getAuto() != null)
-                throw new DriverAlreadyHaveAutoException("driver already have auto.");
-            else{
-                driver_opt.get().setAuto(auto_opt.get());
-                return HttpStatus.OK;
-            }
-        }else
-            throw new DriverNotFoundException(driverExceptionMessage);
+                Optional<Auto> auto_opt = autoRepositoryFunc.apply(autoParam);
+                if (auto_opt.isEmpty()) throw new AutoNotFoundException(autoExceptionMessage);
+                if (driver_opt.isPresent()) {
+                    if (driver_opt.get().getAuto() != null)
+                        throw new DriverAlreadyHaveAutoException("driver already have auto.");
+                    else {
+                        driver_opt.get().setAuto(auto_opt.get());
+                        result = HttpStatus.OK;
+                    }
+                } else
+                    throw new DriverNotFoundException(driverExceptionMessage);
 
+        return result;
     }
 
 
@@ -322,7 +316,8 @@ public class DriverService {
             );
     }
 
-    public HttpStatus setAutoByEmail(String email, AutoDto autoDto) throws DriverAlreadyHaveAutoException,
+    public HttpStatus setAutoByEmail(String email, AutoDto autoDto)
+            throws DriverAlreadyHaveAutoException,
             DriverNotFoundException {
         return setAuto(
                 email,
@@ -338,15 +333,17 @@ public class DriverService {
                                    String exceptionMessage
     ) throws DriverAlreadyHaveAutoException,
             DriverNotFoundException {
+        HttpStatus result;
         Optional<Driver> driver_opt = repositoryFunc.apply(param);
-        if(driver_opt.isPresent()){
-            if(driver_opt.get().getAuto() != null)
-                throw new DriverAlreadyHaveAutoException("driver already have auto.");
-            else{
-                driver_opt.get().setAuto(autoMapper.dtoToEntity(autoDto));
-                return HttpStatus.OK;
-            }
-        }else throw new DriverNotFoundException(exceptionMessage);
+                if (driver_opt.isPresent()) {
+                    if (driver_opt.get().getAuto() != null)
+                        throw new DriverAlreadyHaveAutoException("driver already have auto.");
+                    else {
+                        driver_opt.get().setAuto(autoMapper.dtoToEntity(autoDto));
+                        result = HttpStatus.OK;
+                    }
+                } else throw new DriverNotFoundException(exceptionMessage);
+        return result;
     }
 
     public HttpStatus replaceAutoById(Long driver_id, AutoDto autoDto)
@@ -384,11 +381,13 @@ public class DriverService {
             Function<T,Optional<Driver>> driverRepositoryFunc,
             String exceptionMessage
     ) throws DriverNotFoundException {
+        HttpStatus result;
         Optional<Driver> driver_opt = driverRepositoryFunc.apply(param);
-        if(driver_opt.isPresent()){
+        if (driver_opt.isPresent()) {
             driver_opt.get().setAuto(autoMapper.dtoToEntity(autoDto));
-            return HttpStatus.OK;
-        }else throw new DriverNotFoundException(exceptionMessage);
+            result = HttpStatus.OK;
+        } else throw new DriverNotFoundException(exceptionMessage);
+        return result;
     }
 
 }
