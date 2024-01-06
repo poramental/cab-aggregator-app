@@ -45,9 +45,10 @@ public class AutoController {
     }
 
     @PutMapping("/update")
-    public HttpStatus update(@RequestBody @Valid AutoDto autoDto)
-            throws AutoNotFoundException{
-        return autoService.update(autoDto);
+    public HttpStatus update(@RequestBody @Valid AutoDto autoDto,
+                             @RequestParam(name = "id") Long id)
+            throws AutoNotFoundException, AutoAlreadyExistException{
+        return autoService.update(id, autoDto);
     }
 
     @GetMapping("/get-by-id")

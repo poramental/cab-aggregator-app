@@ -1,6 +1,7 @@
 package com.modsen.driverservice.dto;
 
 import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -10,7 +11,8 @@ import jakarta.validation.constraints.Max;
 @Accessors(chain = true)
 public class DriverDto {
 
-    @Max(value = 5, message = "average rating can't more than 5.")
+    @Max(value = 5, message = "average rating can't be more than 5.")
+    @Min(value = 0, message = "average rating can't be lower then 0.")
     private float averageRating;
 
     private int ratingsCount;

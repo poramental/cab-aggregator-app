@@ -65,9 +65,10 @@ public class DriverController {
     }
 
     @PutMapping("/update")
-    public HttpStatus update(@RequestBody @Valid DriverDto driverDto)
-            throws DriverNotFoundException{
-        return driverService.update(driverDto);
+    public HttpStatus update(@RequestParam(name = "driver-id") Long id,
+                             @RequestBody @Valid DriverDto driverDto)
+            throws DriverNotFoundException, DriverAlreadyExistException{
+        return driverService.update(id,driverDto);
     }
 
     @PatchMapping("/add-rating-by-phone/{phone}")

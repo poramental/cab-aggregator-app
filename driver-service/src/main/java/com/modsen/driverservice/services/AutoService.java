@@ -2,9 +2,7 @@ package com.modsen.driverservice.services;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.entities.Auto;
-import com.modsen.driverservice.exceptions.AutoAlreadyExistException;
-import com.modsen.driverservice.exceptions.AutoNotFoundException;
-import com.modsen.driverservice.exceptions.SortTypeException;
+import com.modsen.driverservice.exceptions.*;
 import com.modsen.driverservice.mappers.AutoMapper;
 import com.modsen.driverservice.repositories.AutoRepository;
 import lombok.RequiredArgsConstructor;
@@ -39,24 +37,26 @@ public class AutoService {
     }
 
     public void checkAutoExist(AutoDto autoDto) throws AutoAlreadyExistException{
-
         if(autoRepository.findByNumber(autoDto.getNumber()).isPresent()){
-            throw new AutoAlreadyExistException(String.format("auto with number: %s is present.",
+            throw new AutoAlreadyExistException(String
+                    .format("auto with number: %s is present.",
                     autoDto.getNumber()));
         }
     }
 
     public HttpStatus deleteByNumber(String number) throws AutoNotFoundException{
         Optional<Auto> auto_opt = autoRepository.findByNumber(number);
-
         if(auto_opt.isPresent()){
             autoRepository.delete(auto_opt.get());
             return HttpStatus.OK;
-        }else
-            throw new AutoNotFoundException(String.format("auto with number: %s is not found.", number));
+        } else
+            throw new AutoNotFoundException(String
+                            .format("auto with number: %s is not found.", number));
     }
 
-    public HttpStatus update(AutoDto autoDto) throws AutoNotFoundException{
+    public HttpStatus update(Long id, AutoDto autoDto)
+            throws AutoNotFoundException, AutoAlreadyExistException{
+        preUpdateNumberCheck(id,autoDto);
         Optional<Auto> auto_opt = autoRepository.findByNumber(autoDto.getNumber());
         if(auto_opt.isPresent()){
             Auto auto_db = auto_opt.get();
@@ -75,20 +75,22 @@ public class AutoService {
 
             return HttpStatus.OK;
         }else
-            throw new AutoNotFoundException(String.format("auto with number: %s is not found",
-                autoDto.getNumber()));
+            throw new AutoNotFoundException(String
+                            .format("auto with number: %s is not found", autoDto.getNumber()));
     }
 
     public ResponseEntity<AutoDto> getByNumber(String number)throws AutoNotFoundException{
         Optional<Auto> auto_opt = autoRepository.findByNumber(number);
         if(auto_opt.isPresent()) return ResponseEntity.ok(autoMapper.entityToDto(auto_opt.get()));
-        throw new AutoNotFoundException(String.format("auto with number :%s is not found.", number));
+        throw new AutoNotFoundException(String
+                .format("auto with number :%s is not found.", number));
     }
 
     public ResponseEntity<AutoDto> getById(Long id) throws AutoNotFoundException{
         Optional<Auto> auto_opt = autoRepository.findById(id);
         if(auto_opt.isPresent()) return ResponseEntity.ok(autoMapper.entityToDto(auto_opt.get()));
-        throw new AutoNotFoundException(String.format("auto with id :%s is not found.", id));
+        throw new AutoNotFoundException(String
+                        .format("auto with id :%s is not found.", id));
     }
 
    public HttpStatus deleteById(Long id) throws AutoNotFoundException {
@@ -96,7 +98,9 @@ public class AutoService {
         if(auto_opt.isPresent()){
             autoRepository.delete(auto_opt.get());
             return HttpStatus.OK;
-        } throw new AutoNotFoundException(String.format("auto with id: %s is not found", id));
+        } throw
+               new AutoNotFoundException(String
+                       .format("auto with id: %s is not found", id));
    }
 
    public ResponseEntity<List<AutoDto>> getSortedList(String type)
@@ -115,5 +119,25 @@ public class AutoService {
                HttpStatus.OK);
    }
 
+   public void checkAutoNumberExist(String number) throws AutoAlreadyExistException{
+        Optional<Auto> auto_opt = autoRepository.findByNumber(number);
+        if(auto_opt.isPresent()) throw new AutoAlreadyExistException(String
+                .format("auto with number: %s is present.", number));
+   }
+
+   public void preUpdateNumberCheck(Long id, AutoDto autoDto)
+       throws AutoAlreadyExistException {
+           Optional<Auto> auto_opt = autoRepository.findById(id);
+           if (auto_opt.isPresent()){
+               if (!auto_opt.get().getNumber().equals(autoDto.getNumber()))
+                   checkAutoNumberExist(autoDto.getNumber());
+           }
+           else
+               throw new AutoAlreadyExistException(String
+                       .format("auto with id: %s is not found.",id));
+       }
+
 }
+
+
 

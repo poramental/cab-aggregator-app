@@ -73,19 +73,18 @@ public class DriverService {
                     .format("driver with id: %s is not found.",id));
     }
 
-    private boolean checkDriverEmailExist(String email){
-        return driverRepository.findByEmail(email).isPresent();
+    private void checkDriverEmailExist(String email) throws DriverAlreadyExistException{
+        checkDriverParamExist(
+                email,
+                driverRepository::findByEmail,
+                String.format("driver with email: %s is present.",email)
+        );
     }
 
     private void checkDriverParamsExist(String email, String phone)
             throws DriverAlreadyExistException {
-        if(checkDriverEmailExist(email))
-            throw new DriverAlreadyExistException(String
-                    .format("driver with email: %s is present.",email));
-
-        if(checkDriverPhoneExist(phone))
-            throw new DriverAlreadyExistException(String
-                    .format("driver with phone: %s is present.",phone));
+        checkDriverEmailExist(email);
+        checkDriverPhoneExist(phone);
     }
 
     public HttpStatus deleteByEmail(String email) throws DriverNotFoundException{
@@ -115,7 +114,10 @@ public class DriverService {
                     .format("driver with phone: %s is not found.",phone));
     }
 
-    public HttpStatus update(DriverDto driverDto) throws DriverNotFoundException{
+    public HttpStatus update(Long id, DriverDto driverDto)
+            throws DriverNotFoundException, DriverAlreadyExistException{
+        preUpdateEmailCheck(id, driverDto);
+        preUpdatePhoneCheck(id, driverDto);
         Optional<Driver> driver_opt = driverRepository.findByPhone(driverDto.getPhone());
 
         if(driver_opt.isPresent()){
@@ -182,8 +184,13 @@ public class DriverService {
 
         throw new DriverNotFoundException(exMessage);
     }
-    private boolean checkDriverPhoneExist(String phone){
-        return driverRepository.findByPhone(phone).isPresent();
+    private void checkDriverPhoneExist(String phone)
+            throws DriverAlreadyExistException{
+        checkDriverParamExist(
+                phone,
+                driverRepository::findByEmail,
+                String.format("driver with phone: %s is present.",phone)
+        );
     }
 
     public ResponseEntity<List<DriverDto>> getSortedList(String type) throws SortTypeException {
@@ -196,5 +203,41 @@ public class DriverService {
                 .map(driverMapper::entityToDto)
                 .collect(Collectors.toList()),
                 HttpStatus.OK);
+    }
+
+
+    public <T> void checkDriverParamExist(T param,
+                                          Function<T, Optional<Driver>> repositoryFunc,
+                                          String exMessage)
+            throws DriverAlreadyExistException{
+        Optional<Driver> opt_driver = repositoryFunc.apply(param);
+        if (opt_driver.isPresent()) {
+            throw new DriverAlreadyExistException(exMessage);
+        }
+    }
+
+    private void preUpdateEmailCheck(Long id, DriverDto driverDto)
+            throws DriverAlreadyExistException, DriverNotFoundException {
+        Optional<Driver> opt_driver = driverRepository.findById(id);
+        if(opt_driver.isPresent()) {
+            if (!opt_driver.get().getEmail().equals(driverDto.getEmail()))
+                checkDriverEmailExist(driverDto.getEmail());
+        }
+        else
+            throw new DriverNotFoundException(String
+                    .format("driver with id : %s is not found.",id));
+    }
+
+    public void preUpdatePhoneCheck(Long id,DriverDto driverDto)
+            throws DriverNotFoundException,
+            DriverAlreadyExistException {
+        Optional<Driver> opt_driver = driverRepository.findById(id);
+        if (opt_driver.isPresent()){
+            if (!opt_driver.get().getPhone().equals(driverDto.getPhone()))
+                checkDriverPhoneExist(driverDto.getPhone());
+        }
+        else
+            throw new DriverNotFoundException(String
+                    .format("driver with id: %s is not found.",id));
     }
 }
