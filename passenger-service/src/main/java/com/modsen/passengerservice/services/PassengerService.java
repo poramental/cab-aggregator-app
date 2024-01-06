@@ -150,9 +150,12 @@ public class PassengerService {
 
     public ResponseEntity<List<PassengerDto>> getSortedListOfPassengers(String type) throws SortTypeException {
         List<Passenger> sortedPassengers = switch (type.toLowerCase()) {
-            case "name" -> passengerRepository.findAll(Sort.by(Sort.Order.asc("name")));
-            case "surname" -> passengerRepository.findAll(Sort.by(Sort.Order.asc("surname")));
-            default -> throw new SortTypeException("Invalid type of sort");
+            case "name" ->
+                    passengerRepository.findAll(Sort.by(Sort.Order.asc("name")));
+            case "surname" ->
+                    passengerRepository.findAll(Sort.by(Sort.Order.asc("surname")));
+            default ->
+                    throw new SortTypeException("Invalid type of sort");
         };
 
         return new ResponseEntity<>(sortedPassengers.stream()
