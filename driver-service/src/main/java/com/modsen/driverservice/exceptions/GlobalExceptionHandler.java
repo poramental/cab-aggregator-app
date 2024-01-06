@@ -58,4 +58,9 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<AppError> driverAlreadyHaveAutoExceptionHandler(DriverAlreadyHaveAutoException e){
+        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.CONFLICT);
+    }
+
 }

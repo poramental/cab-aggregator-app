@@ -1,11 +1,9 @@
 package com.modsen.driverservice.controllers;
 
 
+import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.DriverDto;
-import com.modsen.driverservice.exceptions.DriverAlreadyExistException;
-import com.modsen.driverservice.exceptions.DriverNotFoundException;
-import com.modsen.driverservice.exceptions.RatingException;
-import com.modsen.driverservice.exceptions.SortTypeException;
+import com.modsen.driverservice.exceptions.*;
 import com.modsen.driverservice.services.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -94,6 +92,69 @@ public class DriverController {
     public ResponseEntity<List<DriverDto>> getSortedList(@RequestParam("type") String type)
             throws SortTypeException {
         return driverService.getSortedList(type);
+    }
+
+    @PatchMapping("/add-auto-by-id")
+    public HttpStatus addAuto(@RequestParam(name = "auto_id") Long auto_id,
+                              @RequestParam(name = "driver_id") Long driver_id)
+            throws DriverNotFoundException,
+            AutoNotFoundException,
+            DriverAlreadyHaveAutoException{
+        return driverService.addAutoById(auto_id,driver_id);
+    }
+
+    @PatchMapping("/add-auto-by-phone-and-number")
+    public HttpStatus addAuto(@RequestParam(name = "phone") String phone,
+                              @RequestParam(name = "number") String number)
+            throws DriverNotFoundException,
+            AutoNotFoundException,
+            DriverAlreadyHaveAutoException{
+        return driverService.addAutoByPhoneAndNumber(phone,number);
+    }
+
+    @PostMapping("/set-auto-by-id")
+    public HttpStatus setAutoById(@RequestParam(name = "driver_id") Long driver_id,
+                                  @RequestBody AutoDto autoDto)
+            throws DriverNotFoundException,
+            DriverAlreadyHaveAutoException {
+        return driverService.setAutoById(driver_id,autoDto);
+    }
+
+    @PostMapping("/set-auto-by-phone")
+    public HttpStatus setAutoByPhone(@RequestParam(name = "phone") String phone,
+                                     @RequestBody AutoDto autoDto)
+            throws DriverNotFoundException,
+            DriverAlreadyHaveAutoException {
+        return driverService.setAutoByPhone(phone,autoDto);
+    }
+
+    @PostMapping("/set-auto-by-email")
+    public HttpStatus setAutoByEmail(@RequestParam(name = "email") String email,
+                                     @RequestBody AutoDto autoDto)
+            throws DriverNotFoundException,
+            DriverAlreadyHaveAutoException {
+        return driverService.setAutoByEmail(email,autoDto);
+    }
+
+    @PostMapping("/replace-auto-by-id")
+    public HttpStatus replaceAutoById(@RequestParam(name = "driver_id") Long driver_id,
+                                      AutoDto autoDto)
+            throws DriverNotFoundException {
+        return driverService.replaceAutoById(driver_id,autoDto);
+    }
+
+    @PostMapping("/replace-auto-by-phone")
+    public HttpStatus replaceAutoByPhone(@RequestParam(name = "phone") String phone,
+                                      AutoDto autoDto)
+            throws DriverNotFoundException {
+        return driverService.replaceAutoByPhone(phone,autoDto);
+    }
+
+    @PostMapping("/replace-auto-by-email")
+    public HttpStatus replaceAutoByEmail(@RequestParam(name = "email") String email,
+                                         AutoDto autoDto)
+            throws DriverNotFoundException {
+        return driverService.replaceAutoByEmail(email,autoDto);
     }
 
 }

@@ -1,12 +1,13 @@
 package com.modsen.driverservice.services;
 
+import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.DriverDto;
+import com.modsen.driverservice.entities.Auto;
 import com.modsen.driverservice.entities.Driver;
-import com.modsen.driverservice.exceptions.DriverAlreadyExistException;
-import com.modsen.driverservice.exceptions.DriverNotFoundException;
-import com.modsen.driverservice.exceptions.RatingException;
-import com.modsen.driverservice.exceptions.SortTypeException;
+import com.modsen.driverservice.exceptions.*;
+import com.modsen.driverservice.mappers.AutoMapper;
 import com.modsen.driverservice.mappers.DriverMapper;
+import com.modsen.driverservice.repositories.AutoRepository;
 import com.modsen.driverservice.repositories.DriverRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
@@ -27,6 +28,10 @@ public class DriverService {
     private final DriverMapper driverMapper;
 
     private final DriverRepository driverRepository;
+
+    private final AutoRepository autoRepository;
+
+    private final AutoMapper autoMapper;
 
     public ResponseEntity<List<DriverDto>> getAll(){
         return new ResponseEntity<>(driverRepository.findAll().stream()
@@ -240,4 +245,150 @@ public class DriverService {
             throw new DriverNotFoundException(String
                     .format("driver with id: %s is not found.",id));
     }
+
+    public HttpStatus addAutoById(Long auto_id, Long driver_id)
+            throws AutoNotFoundException,
+            DriverAlreadyHaveAutoException,
+            DriverNotFoundException {
+            return addAuto(
+                    driver_id,
+                    auto_id,
+                    driverRepository::findById,
+                    autoRepository::findById,
+                    String.format("driver with id: %s is not found",driver_id),
+                    String.format("auto with id: %s is not found",auto_id)
+            );
+    }
+
+    private <T,V> HttpStatus addAuto(T driverParam,
+                                     V autoParam,
+                                     Function<T,Optional<Driver>> driverRepositoryFunc,
+                                     Function<V,Optional<Auto>> autoRepositoryFunc,
+                                     String driverExceptionMessage,
+                                     String autoExceptionMessage
+                                     )
+            throws AutoNotFoundException,
+            DriverAlreadyHaveAutoException,
+            DriverNotFoundException {
+        Optional<Driver> driver_opt = driverRepositoryFunc.apply(driverParam);
+        Optional<Auto> auto_opt = autoRepositoryFunc.apply(autoParam);
+        if(auto_opt.isEmpty()) throw new AutoNotFoundException(autoExceptionMessage);
+        if(driver_opt.isPresent()){
+            if(driver_opt.get().getAuto() != null)
+                throw new DriverAlreadyHaveAutoException("driver already have auto.");
+            else{
+                driver_opt.get().setAuto(auto_opt.get());
+                return HttpStatus.OK;
+            }
+        }else
+            throw new DriverNotFoundException(driverExceptionMessage);
+
+    }
+
+
+    public HttpStatus addAutoByPhoneAndNumber(String phone, String number)
+            throws AutoNotFoundException,
+            DriverAlreadyHaveAutoException,
+            DriverNotFoundException {
+        return addAuto(
+                phone,
+                number,
+                driverRepository::findByPhone,
+                autoRepository::findByNumber,
+                String.format("driver with phone: %s is not found.",phone),
+                String.format("auto with number: %s is not found.",number)
+        );
+    }
+
+    public HttpStatus setAutoById(Long driver_id, AutoDto autoDto)
+            throws DriverAlreadyHaveAutoException,
+            DriverNotFoundException {
+        return setAuto(
+                driver_id,
+                autoDto,
+                driverRepository::findById,
+                String.format("driver with id: %s is not found.",driver_id)
+        );
+    }
+
+    public HttpStatus setAutoByPhone(String phone, AutoDto autoDto)
+      throws DriverAlreadyHaveAutoException,
+                DriverNotFoundException {
+            return setAuto(
+                    phone,
+                    autoDto,
+                    driverRepository::findByPhone,
+                    String.format("driver with phone: %s is not found.", phone)
+            );
+    }
+
+    public HttpStatus setAutoByEmail(String email, AutoDto autoDto) throws DriverAlreadyHaveAutoException,
+            DriverNotFoundException {
+        return setAuto(
+                email,
+                autoDto,
+                driverRepository::findByEmail,
+                String.format("driver with email: %s is not found.", email)
+        );
+    }
+
+    private <T> HttpStatus setAuto(T param,
+                                   AutoDto autoDto,
+                                   Function<T, Optional<Driver>>repositoryFunc,
+                                   String exceptionMessage
+    ) throws DriverAlreadyHaveAutoException,
+            DriverNotFoundException {
+        Optional<Driver> driver_opt = repositoryFunc.apply(param);
+        if(driver_opt.isPresent()){
+            if(driver_opt.get().getAuto() != null)
+                throw new DriverAlreadyHaveAutoException("driver already have auto.");
+            else{
+                driver_opt.get().setAuto(autoMapper.dtoToEntity(autoDto));
+                return HttpStatus.OK;
+            }
+        }else throw new DriverNotFoundException(exceptionMessage);
+    }
+
+    public HttpStatus replaceAutoById(Long driver_id, AutoDto autoDto)
+            throws DriverNotFoundException {
+        return replaceAuto(
+                driver_id,
+                autoDto,
+                driverRepository::findById,
+                String.format("driver with id: %s is not found.",driver_id)
+        );
+    }
+    public HttpStatus replaceAutoByPhone(String phone, AutoDto autoDto)
+            throws DriverNotFoundException {
+        return replaceAuto(
+                phone,
+                autoDto,
+                driverRepository::findByPhone,
+                String.format("driver with phone: %s is not found.",phone)
+        );
+    }
+
+    public HttpStatus replaceAutoByEmail(String email, AutoDto autoDto)
+            throws DriverNotFoundException {
+        return replaceAuto(
+                email,
+                autoDto,
+                driverRepository::findByEmail,
+                String.format("driver with phone: %s is not found.",email)
+        );
+    }
+
+    private <T> HttpStatus replaceAuto(
+            T param,
+            AutoDto autoDto,
+            Function<T,Optional<Driver>> driverRepositoryFunc,
+            String exceptionMessage
+    ) throws DriverNotFoundException {
+        Optional<Driver> driver_opt = driverRepositoryFunc.apply(param);
+        if(driver_opt.isPresent()){
+            driver_opt.get().setAuto(autoMapper.dtoToEntity(autoDto));
+            return HttpStatus.OK;
+        }else throw new DriverNotFoundException(exceptionMessage);
+    }
+
 }
