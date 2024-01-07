@@ -63,4 +63,5 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.CONFLICT);
     }
 
+
 }

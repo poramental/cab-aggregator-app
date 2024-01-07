@@ -7,9 +7,11 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 import jakarta.validation.constraints.Max;
 
+import java.util.List;
+
 @Data
 @Accessors(chain = true)
-public class DriverDto {
+public class DriverRespDto {
 
     @Max(value = 5, message = "average rating can't be more than 5.")
     @Min(value = 0, message = "average rating can't be lower then 0.")
@@ -23,7 +25,7 @@ public class DriverDto {
     @NotBlank(message = "surname should be not empty.")
     private String surname;
 
-    private AutoDto auto;
+    private List<AutoDto> autos;
 
     @NotBlank(message = "phone should be not empty.")
     private String phone;

@@ -49,6 +49,12 @@ databaseChangeLog:
                   type: varchar(40)
                   constraints:
                     nullable: false
+              - column:
+                  name: auto_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+
       rollback:
         - dropTable:
             tableName: passengers

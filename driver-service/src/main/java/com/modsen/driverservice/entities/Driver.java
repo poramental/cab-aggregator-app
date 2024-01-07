@@ -1,9 +1,12 @@
 package com.modsen.driverservice.entities;
 
 
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
+
+import java.util.List;
 
 @Entity
 @Table(name = "drivers")
@@ -26,11 +29,16 @@ public class Driver {
 
     private String surname;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = false)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "driver_id")
-    private Auto auto;
+    private List<Auto> autos;
 
     private String phone;
 
     private String email;
+
+    public Driver addAuto(Auto auto){
+        autos.add(auto);
+        return this;
+    }
 }

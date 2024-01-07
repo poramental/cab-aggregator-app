@@ -1,6 +1,7 @@
 package com.modsen.driverservice.entities;
 
 
+
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -21,6 +22,7 @@ public class Auto {
 
     private String number;
 
-    @Column(name = "driver_id")
+    @Column(name ="driver_id")
     private Long driverId;
+
 }

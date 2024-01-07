@@ -2,7 +2,8 @@ package com.modsen.driverservice.controllers;
 
 
 import com.modsen.driverservice.dto.AutoDto;
-import com.modsen.driverservice.dto.DriverDto;
+import com.modsen.driverservice.dto.DriverReqDto;
+import com.modsen.driverservice.dto.DriverRespDto;
 import com.modsen.driverservice.exceptions.*;
 import com.modsen.driverservice.services.DriverService;
 import jakarta.validation.Valid;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@RestController
 @RequestMapping("/drivers")
 @RequiredArgsConstructor
 public class DriverController {
@@ -22,18 +24,18 @@ public class DriverController {
 
 
     @GetMapping("/get-all")
-    public ResponseEntity<List<DriverDto>> getAll(){
+    public ResponseEntity<List<DriverRespDto>> getAll(){
         return driverService.getAll();
     }
 
     @PostMapping("/add")
-    public HttpStatus add(DriverDto driverDto)
+    public HttpStatus add(@RequestBody @Valid DriverReqDto driverDto)
             throws DriverAlreadyExistException {
         return driverService.add(driverDto);
     }
 
     @GetMapping("/get-by-email")
-    public ResponseEntity<DriverDto> getByEmail(@RequestParam(name = "email") String email)
+    public ResponseEntity<DriverRespDto> getByEmail(@RequestParam(name = "email") String email)
             throws DriverNotFoundException {
         return driverService.getByEmail(email);
     }
@@ -51,20 +53,20 @@ public class DriverController {
     }
 
     @GetMapping("/get-by-id")
-    public ResponseEntity<DriverDto> getById(@RequestParam(name = "id") Long id)
+    public ResponseEntity<DriverRespDto> getById(@RequestParam(name = "id") Long id)
             throws DriverNotFoundException{
         return driverService.getById(id);
     }
 
     @GetMapping("/get-by-phone")
-    public ResponseEntity<DriverDto> getByPhone(@RequestParam(name = "phone") String phone)
+    public ResponseEntity<DriverRespDto> getByPhone(@RequestParam(name = "phone") String phone)
             throws DriverNotFoundException{
         return driverService.getByPhone(phone);
     }
 
     @PutMapping("/update")
     public HttpStatus update(@RequestParam(name = "driver-id") Long id,
-                             @RequestBody @Valid DriverDto driverDto)
+                             @RequestBody @Valid DriverReqDto driverDto)
             throws DriverNotFoundException, DriverAlreadyExistException{
         return driverService.update(id,driverDto);
     }
@@ -88,35 +90,19 @@ public class DriverController {
             throws DriverNotFoundException{
         return driverService.deleteByEmail(email);
     }
+
     @GetMapping("/get-sorted-list")
-    public ResponseEntity<List<DriverDto>> getSortedList(@RequestParam("type") String type)
+    public ResponseEntity<List<DriverRespDto>> getSortedList(@RequestParam("type") String type)
             throws SortTypeException {
         return driverService.getSortedList(type);
-    }
-
-    @PatchMapping("/add-auto-by-id")
-    public HttpStatus addAuto(@RequestParam(name = "auto_id") Long auto_id,
-                              @RequestParam(name = "driver_id") Long driver_id)
-            throws DriverNotFoundException,
-            AutoNotFoundException,
-            DriverAlreadyHaveAutoException{
-        return driverService.addAutoById(auto_id,driver_id);
-    }
-
-    @PatchMapping("/add-auto-by-phone-and-number")
-    public HttpStatus addAuto(@RequestParam(name = "phone") String phone,
-                              @RequestParam(name = "number") String number)
-            throws DriverNotFoundException,
-            AutoNotFoundException,
-            DriverAlreadyHaveAutoException{
-        return driverService.addAutoByPhoneAndNumber(phone,number);
     }
 
     @PostMapping("/set-auto-by-id")
     public HttpStatus setAutoById(@RequestParam(name = "driver_id") Long driver_id,
                                   @RequestBody AutoDto autoDto)
             throws DriverNotFoundException,
-            DriverAlreadyHaveAutoException {
+            DriverAlreadyHaveAutoException,
+            AutoAlreadyExistException {
         return driverService.setAutoById(driver_id,autoDto);
     }
 
@@ -124,7 +110,7 @@ public class DriverController {
     public HttpStatus setAutoByPhone(@RequestParam(name = "phone") String phone,
                                      @RequestBody @Valid AutoDto autoDto)
             throws DriverNotFoundException,
-            DriverAlreadyHaveAutoException {
+            DriverAlreadyHaveAutoException,AutoAlreadyExistException {
         return driverService.setAutoByPhone(phone,autoDto);
     }
 
@@ -132,28 +118,32 @@ public class DriverController {
     public HttpStatus setAutoByEmail(@RequestParam(name = "email") String email,
                                      @RequestBody @Valid AutoDto autoDto)
             throws DriverNotFoundException,
-            DriverAlreadyHaveAutoException {
+            DriverAlreadyHaveAutoException,
+            AutoAlreadyExistException {
         return driverService.setAutoByEmail(email,autoDto);
     }
 
     @PostMapping("/replace-auto-by-id")
     public HttpStatus replaceAutoById(@RequestParam(name = "driver_id") Long driver_id,
                                       @RequestBody @Valid AutoDto autoDto)
-            throws DriverNotFoundException {
+            throws DriverNotFoundException,
+            AutoAlreadyExistException {
         return driverService.replaceAutoById(driver_id,autoDto);
     }
 
     @PostMapping("/replace-auto-by-phone")
     public HttpStatus replaceAutoByPhone(@RequestParam(name = "phone") String phone,
                                          @RequestBody @Valid AutoDto autoDto)
-            throws DriverNotFoundException {
+            throws DriverNotFoundException,
+            AutoAlreadyExistException {
         return driverService.replaceAutoByPhone(phone,autoDto);
     }
 
     @PostMapping("/replace-auto-by-email")
     public HttpStatus replaceAutoByEmail(@RequestParam(name = "email") String email,
                                          @RequestBody @Valid AutoDto autoDto)
-            throws DriverNotFoundException {
+            throws DriverNotFoundException,
+            AutoAlreadyExistException {
         return driverService.replaceAutoByEmail(email,autoDto);
     }
 
