@@ -24,6 +24,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<AppError> rideAlreadyHaveDriverExceptionHandler(RideAlreadyHaveDriverException e){
+        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {

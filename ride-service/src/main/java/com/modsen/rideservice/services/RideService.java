@@ -1,6 +1,8 @@
 package com.modsen.rideservice.services;
 
 import com.modsen.rideservice.dto.RideRespDto;
+import com.modsen.rideservice.entities.Ride;
+import com.modsen.rideservice.exceptions.RideAlreadyHaveDriverException;
 import com.modsen.rideservice.exceptions.RideNotFoundException;
 import com.modsen.rideservice.mappers.RideMapper;
 import com.modsen.rideservice.repositories.RideRepository;
@@ -10,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,7 +34,7 @@ public class RideService {
         return new ResponseEntity<>(
                 mapper.entityToRespDto(
                         repository.findById(id).orElseThrow(() -> new RideNotFoundException(
-                        String.format(ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION_MESSAGE,id)))),
+                        String.format(ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,id)))),
                 HttpStatus.OK
         );
     }
@@ -47,5 +51,21 @@ public class RideService {
                 .stream()
                 .map(mapper::entityToRespDto)
                 .collect(Collectors.toList()), HttpStatus.OK);
+    }
+
+    public HttpStatus acceptRide(Long rideId, Long driverId)
+            throws RideNotFoundException,
+            RideAlreadyHaveDriverException {
+        Optional<Ride> ride_opt = repository.findById(rideId);
+        if(ride_opt.isPresent()){
+            if(Objects.nonNull(ride_opt.get().getDriverId()))
+                throw new RideAlreadyHaveDriverException(String
+                        .format(ExceptionMessages.RIDE_WITH_ID_ALREADY_HAVE_DRIVER_EXCEPTION, rideId));
+            repository.save(ride_opt.get().setDriverId(driverId));
+            return HttpStatus.OK;
+        }else
+            throw new RideNotFoundException(String
+                .format(ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,rideId));
+
     }
 }

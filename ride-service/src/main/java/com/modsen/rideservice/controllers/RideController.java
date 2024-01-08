@@ -1,14 +1,13 @@
 package com.modsen.rideservice.controllers;
 
 import com.modsen.rideservice.dto.RideRespDto;
+import com.modsen.rideservice.exceptions.RideAlreadyHaveDriverException;
 import com.modsen.rideservice.exceptions.RideNotFoundException;
 import com.modsen.rideservice.services.RideService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -18,6 +17,16 @@ import java.util.List;
 public class RideController {
 
     private final RideService rideService;
+
+    @PatchMapping("/accept-ride-driver")
+    public HttpStatus acceptRideByDriver(
+            @RequestParam(name = "driver_id") Long driverId,
+            @RequestParam(name = "ride_id") Long rideId
+    )
+            throws RideNotFoundException,
+            RideAlreadyHaveDriverException {
+        return rideService.acceptRide(rideId,driverId);
+    }
 
     @GetMapping("/get-all")
     public ResponseEntity<List<RideRespDto>> getAll(){
