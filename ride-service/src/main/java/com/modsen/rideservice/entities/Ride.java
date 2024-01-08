@@ -2,12 +2,14 @@ package com.modsen.rideservice.entities;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Table(name = "rides")
 @Data
 @Entity
+@Accessors(chain = true)
 public class Ride {
 
     @Id
@@ -27,10 +29,10 @@ public class Ride {
     private String dropOffAddress;
 
     @Column(name = "start_date")
-    private Date startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date")
-    private Date endDate;
+    private LocalDate endDate;
 
     private Integer price;
 
