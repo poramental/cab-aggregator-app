@@ -79,7 +79,4 @@ public class RideController {
             RideHaveNoDriverException {
         return rideService.endRide(rideId);
     }
-
-
-
 }
