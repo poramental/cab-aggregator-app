@@ -39,6 +39,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<AppError> rideAlreadyActiveExceptionHandler(RideAlreadyActiveException e){
+        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> rideAlreadyActiveExceptionHandler(RideAlreadyInactiveException e){
+        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {

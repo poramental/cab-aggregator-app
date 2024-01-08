@@ -1,10 +1,7 @@
 package com.modsen.rideservice.controllers;
 
 import com.modsen.rideservice.dto.RideRespDto;
-import com.modsen.rideservice.exceptions.RideAlreadyHaveDriverException;
-import com.modsen.rideservice.exceptions.RideHaveNoDriverException;
-import com.modsen.rideservice.exceptions.RideHaveNoPassengerException;
-import com.modsen.rideservice.exceptions.RideNotFoundException;
+import com.modsen.rideservice.exceptions.*;
 import com.modsen.rideservice.services.RideService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -14,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/rides")
+@RequestMapping("api/v1/rides")
 @RequiredArgsConstructor
 public class RideController {
 
@@ -39,12 +36,12 @@ public class RideController {
         return rideService.cancelRide(rideId,driverId);
     }
 
-    @GetMapping("/get-all")
+    @GetMapping()
     public ResponseEntity<List<RideRespDto>> getAll(){
         return rideService.getAll();
     }
 
-    @GetMapping("/get-by-id")
+    @GetMapping("/by-id")
     public ResponseEntity<RideRespDto> getById(@RequestParam(name = "id") Long id)
             throws RideNotFoundException {
         return rideService.getById(id);
@@ -57,7 +54,7 @@ public class RideController {
         return rideService.getAllPassengerRidesById(passengerId);
     }
 
-    @GetMapping("/get-all-driver-rides-by-id")
+    @GetMapping("/all-driver-rides-by-id")
     public ResponseEntity<List<RideRespDto>> getAllDriverRidesById(
             @RequestParam(name = "driver_id") Long driverId
     ){
@@ -68,8 +65,19 @@ public class RideController {
     public ResponseEntity<RideRespDto> startRide(@RequestParam("ride_id") Long rideId)
             throws RideHaveNoPassengerException,
             RideHaveNoDriverException,
-            RideNotFoundException {
+            RideNotFoundException,
+            RideAlreadyActiveException {
         return rideService.startRide(rideId);
+    }
+
+
+    @PatchMapping("/end-ride")
+    public ResponseEntity<RideRespDto> endRide(@RequestParam(name = "ride_id") Long rideId)
+            throws RideNotFoundException,
+            RideAlreadyInactiveException,
+            RideHaveNoPassengerException,
+            RideHaveNoDriverException {
+        return rideService.endRide(rideId);
     }
 
 

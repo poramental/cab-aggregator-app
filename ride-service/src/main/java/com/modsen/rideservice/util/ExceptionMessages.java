@@ -11,4 +11,8 @@ public class ExceptionMessages {
     public final String RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION = "Ride with id: '%s' have no driver.";
 
     public final String RIDE_WITH_ID_HAVE_NO_PASSENGER_EXCEPTION = "Ride with id: '%s' have no passenger.";
+
+    public final String RIDE_WITH_ID_ALREADY_ACTIVE_EXCEPTION = "Ride with id: '%s' already active.";
+
+    public final String RIDE_WITH_ID_ALREADY_INACTIVE_EXCEPTION = "Ride with id: '%s' already inactive";
 }
