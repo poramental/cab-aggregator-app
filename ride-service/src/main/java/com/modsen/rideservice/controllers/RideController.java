@@ -70,7 +70,6 @@ public class RideController {
         return rideService.startRide(rideId);
     }
 
-
     @PatchMapping("/end-ride")
     public ResponseEntity<RideRespDto> endRide(@RequestParam(name = "ride_id") Long rideId)
             throws RideNotFoundException,

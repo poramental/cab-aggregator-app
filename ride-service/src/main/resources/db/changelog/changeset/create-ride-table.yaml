@@ -7,10 +7,10 @@ databaseChangeLog:
           or:
             - not:
           tableExists:
-          tableName: autos
+          tableName: rides
       changes:
         - createTable:
-            tableName: autos
+            tableName: rides
             columns:
               - column:
                   name: ride_id
@@ -48,4 +48,4 @@ databaseChangeLog:
                   type: VARCHAR(255)
       rollback:
         - dropTable:
-            tableName: passengers
+            tableName: rides
