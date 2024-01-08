@@ -3,7 +3,6 @@ package com.modsen.rideservice.dto;
 import java.time.LocalDate;
 
 public class RideRespDto {
-    private Long id;
 
     private Long driverId;
 
