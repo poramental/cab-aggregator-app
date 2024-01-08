@@ -2,6 +2,8 @@ package com.modsen.rideservice.controllers;
 
 import com.modsen.rideservice.dto.RideRespDto;
 import com.modsen.rideservice.exceptions.RideAlreadyHaveDriverException;
+import com.modsen.rideservice.exceptions.RideHaveNoDriverException;
+import com.modsen.rideservice.exceptions.RideHaveNoPassengerException;
 import com.modsen.rideservice.exceptions.RideNotFoundException;
 import com.modsen.rideservice.services.RideService;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +30,15 @@ public class RideController {
         return rideService.acceptRide(rideId,driverId);
     }
 
+    @PatchMapping("/cancel-ride-driver")
+    public HttpStatus cancelRideByDriver(
+            @RequestParam(name = "driver_id") Long driverId,
+            @RequestParam(name = "ride_id") Long rideId
+    )
+            throws RideNotFoundException  {
+        return rideService.cancelRide(rideId,driverId);
+    }
+
     @GetMapping("/get-all")
     public ResponseEntity<List<RideRespDto>> getAll(){
         return rideService.getAll();
@@ -51,6 +62,14 @@ public class RideController {
             @RequestParam(name = "driver_id") Long driverId
     ){
         return rideService.getAllDriverRidesById(driverId);
+    }
+
+    @PatchMapping("/start-ride")
+    public ResponseEntity<RideRespDto> startRide(@RequestParam("ride_id") Long rideId)
+            throws RideHaveNoPassengerException,
+            RideHaveNoDriverException,
+            RideNotFoundException {
+        return rideService.startRide(rideId);
     }
 
 

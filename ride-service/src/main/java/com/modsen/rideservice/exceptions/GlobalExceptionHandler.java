@@ -29,6 +29,16 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<AppError> rideHaveNoDriverExceptionHandler(RideHaveNoDriverException e){
+        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> rideHaveNoPassengerExceptionHandler(RideHaveNoPassengerException e){
+        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {

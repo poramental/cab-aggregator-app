@@ -3,6 +3,8 @@ package com.modsen.rideservice.services;
 import com.modsen.rideservice.dto.RideRespDto;
 import com.modsen.rideservice.entities.Ride;
 import com.modsen.rideservice.exceptions.RideAlreadyHaveDriverException;
+import com.modsen.rideservice.exceptions.RideHaveNoDriverException;
+import com.modsen.rideservice.exceptions.RideHaveNoPassengerException;
 import com.modsen.rideservice.exceptions.RideNotFoundException;
 import com.modsen.rideservice.mappers.RideMapper;
 import com.modsen.rideservice.repositories.RideRepository;
@@ -11,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -67,5 +71,33 @@ public class RideService {
             throw new RideNotFoundException(String
                 .format(ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,rideId));
 
+    }
+
+    public HttpStatus cancelRide(Long rideId, Long driverId) throws RideNotFoundException {
+        Optional<Ride> ride_opt = repository.findById(rideId);
+        if(ride_opt.isPresent()) return HttpStatus.OK;
+        throw new RideNotFoundException(String.format(ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,rideId));
+
+    }
+
+    public ResponseEntity<RideRespDto> startRide(Long rideId)
+            throws RideNotFoundException,
+            RideHaveNoDriverException,
+            RideHaveNoPassengerException {
+        Optional<Ride> ride_opt = repository.findById(rideId);
+        if(ride_opt.isPresent()){
+            Ride ride = ride_opt.get();
+            if(Objects.isNull(ride.getDriverId()))
+                throw new RideHaveNoDriverException(String
+                        .format(ExceptionMessages.RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION,rideId));
+            if(Objects.isNull(ride.getPassengerId()))
+                throw new RideHaveNoPassengerException(String
+                        .format(ExceptionMessages.RIDE_WITH_ID_HAVE_NO_PASSENGER_EXCEPTION,rideId));
+            ride
+                    .setIsActive(true)
+                    .setStartDate(LocalDate.now());
+            return new ResponseEntity<>(mapper.entityToRespDto(ride),HttpStatus.OK);
+        }else
+            throw new RideNotFoundException(String.format(ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,rideId));
     }
 }
