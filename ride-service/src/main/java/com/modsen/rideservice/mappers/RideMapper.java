@@ -17,11 +17,11 @@ public class RideMapper {
 
 
     public RideRespDto entityToRespDto(Ride ride){
-        return ride == null ? new RideRespDto() : mapper.map(ride, RideRespDto.class);
+        return mapper.map(ride, RideRespDto.class);
     }
 
     public Ride reqDtoToEntity(RideReqDto reqDto){
-        return reqDto == null ? new Ride() : mapper.map(reqDto,Ride.class);
+        return mapper.map(reqDto,Ride.class);
     }
 
 

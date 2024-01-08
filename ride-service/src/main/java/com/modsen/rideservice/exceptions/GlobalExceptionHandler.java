@@ -19,6 +19,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler
     public ResponseEntity<AppError> rideNotFoundExceptionHandler(RideNotFoundException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
     }

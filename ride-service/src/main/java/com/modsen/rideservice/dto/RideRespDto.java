@@ -1,7 +1,12 @@
 package com.modsen.rideservice.dto;
 
+import lombok.Data;
+import lombok.experimental.Accessors;
+
 import java.time.LocalDate;
 
+@Data
+@Accessors(chain = true)
 public class RideRespDto {
 
     private Long driverId;
