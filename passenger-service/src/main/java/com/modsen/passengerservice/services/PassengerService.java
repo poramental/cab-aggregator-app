@@ -31,7 +31,6 @@ public class PassengerService {
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
 
-
     public ResponseEntity<List<PassengerDto>> getAll(){
         return new ResponseEntity<>(passengerRepository.findAll().stream()
                 .map(passengerMapper::entityToDto)
@@ -105,32 +104,31 @@ public class PassengerService {
                                       Supplier<String> passengerDtoGetter,
                                       PassengerDto passengerDto,
                                       String exceptionMessage) throws PassengerNotFoundException{
-        Optional<Passenger> passenger_opt = repositoryFunc.apply(passengerDtoGetter.get());
-        if(passenger_opt.isPresent()){
-            Passenger passenger_db = passenger_opt.get();
+        Passenger passenger = repositoryFunc.apply(passengerDtoGetter.get())
+                                                .orElseThrow( () -> new PassengerNotFoundException(exceptionMessage));
+
             if(Objects.nonNull(passengerDto.getEmail()) && !passengerDto.getEmail().isEmpty()){
-                passenger_db.setEmail(passengerDto.getEmail());
+                passenger.setEmail(passengerDto.getEmail());
             }
             if(Objects.nonNull(passengerDto.getUsername()) && !passengerDto.getUsername().isEmpty()){
-                passenger_db.setUsername(passengerDto.getUsername());
+                passenger.setUsername(passengerDto.getUsername());
             }
             if(Objects.nonNull(passengerDto.getPhone()) && !passengerDto.getPhone().isEmpty()){
-                passenger_db.setPhone(passengerDto.getPhone());
+                passenger.setPhone(passengerDto.getPhone());
             }
             return HttpStatus.OK;
-        }else throw new PassengerNotFoundException(exceptionMessage);
+
     }
 
     private <T> HttpStatus  delete(T param,
                                    String exceptionMessage,
                                    Function<T, Optional<Passenger>> repositoryFunc)
             throws PassengerNotFoundException{
-        Optional<Passenger> passenger_opt = repositoryFunc.apply(param);
-        if(passenger_opt.isPresent()) {
-            passengerRepository.delete(passenger_opt.get());
-            return HttpStatus.OK;
-        }
-        else throw new PassengerNotFoundException(exceptionMessage);
+        Passenger passenger = repositoryFunc.apply(param)
+        .orElseThrow( () -> new PassengerNotFoundException(exceptionMessage));
+        
+         passengerRepository.delete(passenger);
+         return HttpStatus.OK;
     }
 
     public boolean checkPhoneExist(PassengerDto passengerDto){

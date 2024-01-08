@@ -17,26 +17,26 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/passengers")
+@RequestMapping("/api/v1/passengers")
 @RequiredArgsConstructor
 public class PassengerController {
 
     private final PassengerService passengerService;
 
 
-    @GetMapping("/get-all")
+    @GetMapping("")
     public ResponseEntity<List<PassengerDto>> getAll(){
         return passengerService.getAll();
     }
 
-    @PostMapping("/add")
+    @PostMapping("")
     public HttpStatus addPassenger(@RequestBody @Valid PassengerDto passengerDto)
             throws PassengerAlreadyExistException{
         return passengerService.addPassenger(passengerDto);
     }
 
-    @DeleteMapping("/delete-by-id")
-    public HttpStatus deletePassengerById(@RequestParam(name = "id") Long passengerId)
+    @DeleteMapping("/{id}")
+    public HttpStatus deletePassengerById(@PathVariable(name = "id") Long passengerId)
             throws PassengerNotFoundException {
         return passengerService.deletePassengerById(passengerId);
     }
@@ -103,7 +103,8 @@ public class PassengerController {
             throws PassengerNotFoundException, RatingException{
         return passengerService.addRatingByPhone(rating,phone);
     }
-    @PatchMapping("/add-rating-by-id/{passengerId}")
+
+    @PatchMapping("/{passengerId}/rating")
     public HttpStatus addRatingByEmail(@RequestParam("rating") int rating,
                                        @PathVariable(name = "passengerId") Long passengerId)
             throws PassengerNotFoundException, RatingException {
@@ -118,3 +119,4 @@ public class PassengerController {
     }
 
 }
+

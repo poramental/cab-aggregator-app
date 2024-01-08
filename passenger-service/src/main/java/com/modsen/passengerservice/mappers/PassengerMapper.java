@@ -1,6 +1,5 @@
 package com.modsen.passengerservice.mappers;
 
-
 import com.modsen.passengerservice.dto.PassengerDto;
 import com.modsen.passengerservice.entities.Passenger;
 import org.modelmapper.ModelMapper;
@@ -14,7 +13,6 @@ public class PassengerMapper {
         this.mapper = new ModelMapper();
     }
 
-
     public PassengerDto entityToDto(Passenger passenger){
         return mapper.map(passenger,PassengerDto.class);
     }
@@ -22,7 +20,5 @@ public class PassengerMapper {
     public Passenger dtoToEntity(PassengerDto passengerDto){
         return mapper.map(passengerDto,Passenger.class);
     }
-
-
 
 }
