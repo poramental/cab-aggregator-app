@@ -38,10 +38,12 @@ public class RideController {
     }
 
     @GetMapping("/get-all-driver-rides-by-id")
-    public ResponseEntity<List<RideRespDto>> getAllDriverRidesById(@RequestParam(name = "driver_id") Long driverId){
+    public ResponseEntity<List<RideRespDto>> getAllDriverRidesById(
+            @RequestParam(name = "driver_id") Long driverId
+    ){
         return rideService.getAllDriverRidesById(driverId);
-
     }
+
 
 
 }
