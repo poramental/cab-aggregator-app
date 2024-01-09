@@ -1,0 +1,49 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-passenger
+      author: Alexey
+      preConditions:
+        - onFail: MARK_RAN
+          or:
+            - not:
+          tableExists:
+          tableName: passengers
+      changes:
+        - createTable:
+            tableName: passengers
+            columns:
+              - column:
+                  name: passenger_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: varchar(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: average_rating
+                  type: decimal
+                  constraints:
+                    nullable: true
+              - column:
+                  name: ratings_count
+                  type: integer
+                  constraints:
+                    nullable: true
+      rollback:
+        - dropTable:
+            tableName: passengers

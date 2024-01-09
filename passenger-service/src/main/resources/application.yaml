@@ -1,0 +1,15 @@
+server:
+  port: 8081
+
+spring:
+  liquibase:
+    enabled: true
+  datasource:
+    url: jdbc:postgresql://localhost:5444/passenger-db
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
