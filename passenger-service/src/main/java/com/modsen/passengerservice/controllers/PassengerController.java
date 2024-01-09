@@ -67,7 +67,5 @@ public class PassengerController {
         return ResponseEntity.ok(passengerService.addRatingById(rating,passengerId));
     }
 
-
-
 }
 
