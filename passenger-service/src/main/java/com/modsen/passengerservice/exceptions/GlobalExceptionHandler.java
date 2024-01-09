@@ -38,6 +38,7 @@ public class GlobalExceptionHandler {
                 .body(errors);
     }
 
+
     @ExceptionHandler
     public ResponseEntity<AppError> sortTypeExceptionHandler(SortTypeException ex){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
