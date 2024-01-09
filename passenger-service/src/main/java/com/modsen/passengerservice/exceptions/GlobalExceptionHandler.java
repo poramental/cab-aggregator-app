@@ -15,14 +15,15 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler
     public ResponseEntity<AppError> passengerExistExceptionHandler(PassengerAlreadyExistException ex){
-        return new ResponseEntity<>(new AppError(ex.getMessage()), HttpStatus.CONFLICT);
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(new AppError(ex.getMessage()));
     }
 
     @ExceptionHandler
     public ResponseEntity<AppError> passengerNotFoundExceptionHandler(PassengerNotFoundException ex){
-        return new ResponseEntity<>(new AppError(ex.getMessage()), HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new AppError(ex.getMessage()));
     }
-
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
@@ -33,16 +34,25 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(errors);
     }
 
     @ExceptionHandler
     public ResponseEntity<AppError> sortTypeExceptionHandler(SortTypeException ex){
-        return new ResponseEntity<>(new AppError(ex.getMessage()), HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new AppError(ex.getMessage()));
     }
 
     @ExceptionHandler
     public ResponseEntity<AppError> ratingExceptionHandler(RatingException ex){
-        return new ResponseEntity<>(new AppError(ex.getMessage()),HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new AppError(ex.getMessage()));
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<AppError> paginationFormatExceptionHandler(PaginationFormatException ex){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new AppError(ex.getMessage()));
     }
 }

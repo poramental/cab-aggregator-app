@@ -1,16 +1,13 @@
 package com.modsen.passengerservice.controllers;
 
 
-import com.modsen.passengerservice.dto.PassengerDto;
-import com.modsen.passengerservice.exceptions.PassengerAlreadyExistException;
-import com.modsen.passengerservice.exceptions.PassengerNotFoundException;
-import com.modsen.passengerservice.exceptions.RatingException;
-import com.modsen.passengerservice.exceptions.SortTypeException;
+import com.modsen.passengerservice.dto.PassengerPageResp;
+import com.modsen.passengerservice.dto.PassengerReqDto;
+import com.modsen.passengerservice.dto.PassengerRespDto;
+import com.modsen.passengerservice.exceptions.*;
 import com.modsen.passengerservice.services.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,100 +20,54 @@ public class PassengerController {
 
     private final PassengerService passengerService;
 
-
     @GetMapping("")
-    public ResponseEntity<List<PassengerDto>> getAll(){
-        return passengerService.getAll();
+    public ResponseEntity<List<PassengerRespDto>> getAll(){
+        return ResponseEntity.ok(passengerService.getAll());
     }
 
     @PostMapping("")
-    public HttpStatus addPassenger(@RequestBody @Valid PassengerDto passengerDto)
+    public ResponseEntity<PassengerRespDto> addPassenger(@RequestBody @Valid PassengerReqDto passengerDto)
             throws PassengerAlreadyExistException{
-        return passengerService.addPassenger(passengerDto);
+        return ResponseEntity.ok(passengerService.addPassenger(passengerDto));
     }
 
     @DeleteMapping("/{id}")
-    public HttpStatus deletePassengerById(@PathVariable(name = "id") Long passengerId)
+    public ResponseEntity<PassengerRespDto> deletePassenger(@PathVariable(name = "id") Long passengerId)
             throws PassengerNotFoundException {
-        return passengerService.deletePassengerById(passengerId);
+        return ResponseEntity.ok(passengerService.deletePassengerById(passengerId));
     }
 
-    @DeleteMapping("/delete-by-phone")
-    public HttpStatus deletePassengerByPhone(@RequestParam(name = "phone") String phone)
-            throws PassengerNotFoundException{
-        return passengerService.deletePassengerByPhone(phone);
+    @GetMapping("/{id}")
+    public ResponseEntity<PassengerRespDto> getById(@PathVariable(name = "id") Long id)
+            throws PassengerNotFoundException {
+        return ResponseEntity.ok(passengerService.getById(id));
     }
 
-    @PutMapping("/update-by-email")
-    public HttpStatus updatePassengerByEmail(@RequestBody @Valid PassengerDto passengerDto)
-            throws PassengerNotFoundException{
-        return passengerService.updatePassengerByEmail(passengerDto);
-    }
+   @PutMapping("/{id}")
+   public ResponseEntity<PassengerRespDto> updateById(@PathVariable(name = "id") Long id,
+                                 @RequestBody PassengerReqDto passengerDto)
+           throws PassengerAlreadyExistException,
+           PassengerNotFoundException {
+        return ResponseEntity.ok(passengerService.updateById(id, passengerDto));
+   }
 
-    @PutMapping("/update-by-username")
-    public HttpStatus updatePassengerByUsername(@RequestBody @Valid PassengerDto passengerDto)
-            throws PassengerNotFoundException{
-        return passengerService.updatePassengerByUsername(passengerDto);
-    }
+   @GetMapping("/page")
+   public ResponseEntity<PassengerPageResp> getPage(@RequestParam int page,
+                                                    @RequestParam int size,
+                                                    @RequestParam String orderBy)
+           throws PaginationFormatException, SortTypeException {
+        return ResponseEntity.ok(passengerService.getPassengerPage(page,size,orderBy ));
+   }
 
-    @PutMapping("/update-by-phone")
-    public HttpStatus updatePassengerByPhone(@RequestBody @Valid PassengerDto passengerDto)
-            throws PassengerNotFoundException{
-        return passengerService.updatePassengerByPhone(passengerDto);
-    }
-
-    @DeleteMapping("/delete-by-username")
-    public HttpStatus deletePassengerByUsername(@RequestParam(name="username") String username)
-            throws PassengerNotFoundException{
-        return passengerService.deletePassengerByUsername(username);
-    }
-
-    @DeleteMapping("/delete-by-email")
-    public HttpStatus deletePassengerByEmail(@RequestParam(name="email") String email)
-            throws PassengerNotFoundException{
-        return passengerService.deletePassengerByEmail(email);
-    }
-
-    @GetMapping("/get-limited-list")
-    public ResponseEntity<Page<PassengerDto>> getLimitedList(@RequestParam(name = "offset") int offset,
-                                                             @RequestParam(name = "limit") int limit){
-        return passengerService.getLimitedList(offset,limit);
-
-    }
-
-    @GetMapping("/sorted-list")
-    public ResponseEntity<List<PassengerDto>> SortedListOfPassengers(@RequestParam String type)
-            throws SortTypeException {
-        return passengerService.getSortedListOfPassengers(type);
-    }
-
-    @PatchMapping("/add-rating-by-email/{passengerEmail}")
-    public HttpStatus addRatingByEmail(@RequestParam("rating") int rating,
-                                @PathVariable(name = "passengerEmail") String email)
-            throws PassengerNotFoundException, RatingException{
-        return passengerService.addRatingByEmail(rating,email);
-    }
-
-    @PatchMapping("/add-rating-by-phone/{passengerPhone}")
-    public HttpStatus addRatingByPhone(@RequestParam("rating") int rating,
-                                       @PathVariable(name = "passengerPhone") String phone)
-            throws PassengerNotFoundException, RatingException{
-        return passengerService.addRatingByPhone(rating,phone);
-    }
 
     @PatchMapping("/{passengerId}/rating")
-    public HttpStatus addRatingByEmail(@RequestParam("rating") int rating,
-                                       @PathVariable(name = "passengerId") Long passengerId)
+    public ResponseEntity<PassengerRespDto> addRating(@RequestParam("rating") int rating,
+                                                      @PathVariable(name = "passengerId") Long passengerId)
             throws PassengerNotFoundException, RatingException {
-        return passengerService.addRatingById(rating,passengerId);
+        return ResponseEntity.ok(passengerService.addRatingById(rating,passengerId));
     }
 
-    @PatchMapping("/add-rating-by-username/{username}")
-    public HttpStatus addRatingByUsername(@RequestParam("rating") int rating,
-                                          @PathVariable(name = "username") String username)
-            throws PassengerNotFoundException,RatingException{
-        return passengerService.addRatingByUsername(rating,username);
-    }
+
 
 }
 
