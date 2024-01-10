@@ -20,12 +20,12 @@ public class PassengerController {
 
     private final PassengerService passengerService;
 
-    @GetMapping("")
+    @GetMapping()
     public ResponseEntity<List<PassengerRespDto>> getAll(){
         return ResponseEntity.ok(passengerService.getAll());
     }
 
-    @PostMapping("")
+    @PostMapping()
     public ResponseEntity<PassengerRespDto> addPassenger(@RequestBody @Valid PassengerReqDto passengerDto)
             throws PassengerAlreadyExistException{
         return ResponseEntity.ok(passengerService.addPassenger(passengerDto));
