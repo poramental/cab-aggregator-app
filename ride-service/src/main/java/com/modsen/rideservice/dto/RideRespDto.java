@@ -9,6 +9,8 @@ import java.time.LocalDate;
 @Accessors(chain = true)
 public class RideRespDto {
 
+    private Long id;
+
     private Long driverId;
 
     private Long passengerId;

@@ -43,6 +43,7 @@ databaseChangeLog:
               - column:
                   name: is_active
                   type: BOOLEAN
+                  defaultValue: "false"
               - column:
                   name: instructions
                   type: VARCHAR(255)

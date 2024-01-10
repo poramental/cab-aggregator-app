@@ -1,8 +1,10 @@
 package com.modsen.rideservice.controllers;
 
+import com.modsen.rideservice.dto.RideReqDto;
 import com.modsen.rideservice.dto.RideRespDto;
 import com.modsen.rideservice.exceptions.*;
 import com.modsen.rideservice.services.RideService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,12 +30,12 @@ public class RideController {
     }
 
     @PatchMapping("/cancel-ride-driver")
-    public HttpStatus cancelRideByDriver(
+    public ResponseEntity<RideRespDto> cancelRideByDriver(
             @RequestParam(name = "driver_id") Long driverId,
             @RequestParam(name = "ride_id") Long rideId
     )
             throws RideNotFoundException  {
-        return rideService.cancelRide(rideId,driverId);
+        return ResponseEntity.ok(rideService.cancelRide(rideId,driverId));
     }
 
     @GetMapping()
@@ -47,7 +49,7 @@ public class RideController {
         return rideService.getById(id);
     }
 
-    @GetMapping("/get-all-passenger-rides-by-id")
+    @GetMapping("/all-passenger-rides-by-id")
     public ResponseEntity<List<RideRespDto>> getAllPassengerRidesById(
             @RequestParam(name = "passenger_id") Long passengerId
     ){
@@ -66,8 +68,14 @@ public class RideController {
             throws RideHaveNoPassengerException,
             RideHaveNoDriverException,
             RideNotFoundException,
-            RideAlreadyActiveException {
+            RideAlreadyActiveException,
+            RideAlreadyInactiveException {
         return rideService.startRide(rideId);
+    }
+
+    @PostMapping("/find-ride")
+    public ResponseEntity<RideRespDto> findRide(@Valid @RequestBody RideReqDto rideRequest){
+        return ResponseEntity.ok(rideService.findRide(rideRequest));
     }
 
     @PatchMapping("/end-ride")
