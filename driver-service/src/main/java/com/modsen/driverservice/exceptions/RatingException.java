@@ -1,6 +1,6 @@
 package com.modsen.driverservice.exceptions;
 
-public class RatingException extends Exception{
+public class RatingException extends RuntimeException{
     public RatingException(String m){
         super(m);
     }

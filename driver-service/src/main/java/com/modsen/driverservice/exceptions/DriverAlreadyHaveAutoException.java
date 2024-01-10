@@ -1,6 +1,6 @@
 package com.modsen.driverservice.exceptions;
 
-public class DriverAlreadyHaveAutoException extends Exception{
+public class DriverAlreadyHaveAutoException extends RuntimeException{
     public DriverAlreadyHaveAutoException(String m){
         super(m);
     }
