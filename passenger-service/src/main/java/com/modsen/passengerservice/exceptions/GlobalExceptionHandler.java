@@ -13,14 +13,9 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler
-    public ResponseEntity<AppError> passengerExistExceptionHandler(PassengerAlreadyExistException ex){
-        return ResponseEntity.status(HttpStatus.CONFLICT)
-                .body(new AppError(ex.getMessage()));
-    }
 
-    @ExceptionHandler
-    public ResponseEntity<AppError> passengerNotFoundExceptionHandler(PassengerNotFoundException ex){
+    @ExceptionHandler({PassengerNotFoundException.class,PassengerAlreadyExistException.class})
+    public ResponseEntity<AppError> notFoundException(PassengerNotFoundException ex){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new AppError(ex.getMessage()));
     }
@@ -39,20 +34,8 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler
-    public ResponseEntity<AppError> sortTypeExceptionHandler(SortTypeException ex){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new AppError(ex.getMessage()));
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<AppError> ratingExceptionHandler(RatingException ex){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body(new AppError(ex.getMessage()));
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<AppError> paginationFormatExceptionHandler(PaginationFormatException ex){
+    @ExceptionHandler({PaginationFormatException.class,RatingException.class,SortTypeException.class})
+    public ResponseEntity<AppError> badRequestException(PaginationFormatException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new AppError(ex.getMessage()));
     }

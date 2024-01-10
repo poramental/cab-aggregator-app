@@ -1,7 +1,7 @@
 package com.modsen.passengerservice.mappers;
 
-import com.modsen.passengerservice.dto.PassengerReqDto;
-import com.modsen.passengerservice.dto.PassengerRespDto;
+import com.modsen.passengerservice.dto.PassengerRequest;
+import com.modsen.passengerservice.dto.PassengerResponse;
 import com.modsen.passengerservice.entities.Passenger;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -14,11 +14,11 @@ public class PassengerMapper {
         this.mapper = new ModelMapper();
     }
 
-    public PassengerRespDto entityToRespDto(Passenger passenger){
-        return mapper.map(passenger,PassengerRespDto.class);
+    public PassengerResponse entityToResponse(Passenger passenger){
+        return mapper.map(passenger, PassengerResponse.class);
     }
 
-    public Passenger reqDtoToEntity(PassengerReqDto passengerReqDto){
+    public Passenger requestToEntity(PassengerRequest passengerReqDto){
         return mapper.map(passengerReqDto,Passenger.class);
     }
 

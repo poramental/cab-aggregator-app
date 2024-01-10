@@ -1,13 +1,14 @@
 package com.modsen.passengerservice.services;
 
 
-import com.modsen.passengerservice.dto.PassengerPageResp;
-import com.modsen.passengerservice.dto.PassengerReqDto;
-import com.modsen.passengerservice.dto.PassengerRespDto;
+import com.modsen.passengerservice.dto.PassengerPageResponse;
+import com.modsen.passengerservice.dto.PassengerRequest;
+import com.modsen.passengerservice.dto.PassengerResponse;
 import com.modsen.passengerservice.entities.Passenger;
 import com.modsen.passengerservice.exceptions.*;
 import com.modsen.passengerservice.mappers.PassengerMapper;
 import com.modsen.passengerservice.repositories.PassengerRepository;
+import com.modsen.passengerservice.services.interfaces.PassengerService;
 import com.modsen.passengerservice.util.ExceptionMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,48 +23,48 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class PassengerService {
+public class PassengerServiceImpl implements PassengerService {
 
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
 
-    public List<PassengerRespDto> getAll(){
+    public List<PassengerResponse> getAll(){
         return passengerRepository.findAll().stream()
-                .map(passengerMapper::entityToRespDto)
+                .map(passengerMapper::entityToResponse)
                 .collect(Collectors.toList());
     }
 
-    public PassengerRespDto addPassenger(PassengerReqDto passengerReqDto)
+    public PassengerResponse addPassenger(PassengerRequest passengerReqDto)
             throws PassengerAlreadyExistException{
         checkPassengerParamsExists(passengerReqDto);
-        return passengerMapper.entityToRespDto(passengerRepository
-                .save(passengerMapper.reqDtoToEntity(passengerReqDto)));
+        return passengerMapper.entityToResponse(passengerRepository
+                .save(passengerMapper.requestToEntity(passengerReqDto)));
     }
 
-    public PassengerRespDto deletePassengerById(Long passengerId)
+    public PassengerResponse deletePassengerById(Long passengerId)
             throws PassengerNotFoundException{
         return delete(passengerId,String.format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION,
                 passengerId),passengerRepository::findById);
     }
 
-    public PassengerRespDto getById(Long id) throws PassengerNotFoundException {
-        return passengerMapper.entityToRespDto(passengerRepository.findById(id)
+    public PassengerResponse getById(Long id) throws PassengerNotFoundException {
+        return passengerMapper.entityToResponse(passengerRepository.findById(id)
                 .orElseThrow(() -> new PassengerNotFoundException(String
                         .format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION, id))));
     }
 
-    public PassengerRespDto updateById(Long id, PassengerReqDto passengerDto)
+    public PassengerResponse updateById(Long id, PassengerRequest passengerDto)
             throws PassengerNotFoundException,
             PassengerAlreadyExistException {
         preUpdateCheckAllParams(id,passengerDto);
-        Passenger passenger = passengerMapper.reqDtoToEntity(passengerDto);
+        Passenger passenger = passengerMapper.requestToEntity(passengerDto);
         passenger.setId(id);
 
-        return passengerMapper.entityToRespDto(passengerRepository.save(passenger));
+        return passengerMapper.entityToResponse(passengerRepository.save(passenger));
 
     }
 
-    private void preUpdateCheckAllParams(Long passengerId, PassengerReqDto passengerDto)
+    private void preUpdateCheckAllParams(Long passengerId, PassengerRequest passengerDto)
             throws PassengerAlreadyExistException,
             PassengerNotFoundException {
         preUpdateEmailCheck(passengerId, passengerDto);
@@ -72,7 +73,7 @@ public class PassengerService {
     }
 
 
-    private void preUpdateEmailCheck(Long passengerId, PassengerReqDto passengerDto)
+    private void preUpdateEmailCheck(Long passengerId, PassengerRequest passengerDto)
             throws PassengerNotFoundException,
             PassengerAlreadyExistException {
         Passenger passenger =  passengerRepository.findById(passengerId)
@@ -85,7 +86,7 @@ public class PassengerService {
 
     }
 
-    private void preUpdatePhoneCheck(Long passengerId, PassengerReqDto passengerDto)
+    private void preUpdatePhoneCheck(Long passengerId, PassengerRequest passengerDto)
             throws PassengerNotFoundException,
             PassengerAlreadyExistException {
 
@@ -98,7 +99,7 @@ public class PassengerService {
         }
     }
 
-    private void preUpdateUsernameCheck(Long passengerId, PassengerReqDto passengerDto)
+    private void preUpdateUsernameCheck(Long passengerId, PassengerRequest passengerDto)
             throws PassengerNotFoundException,
             PassengerAlreadyExistException {
 
@@ -111,18 +112,18 @@ public class PassengerService {
         }
     }
 
-    private <T> PassengerRespDto delete(T param,
-                                   String exceptionMessage,
-                                   Function<T, Optional<Passenger>> repositoryFunc)
+    private <T> PassengerResponse delete(T param,
+                                         String exceptionMessage,
+                                         Function<T, Optional<Passenger>> repositoryFunc)
             throws PassengerNotFoundException{
         Passenger passenger = repositoryFunc.apply(param)
         .orElseThrow( () -> new PassengerNotFoundException(exceptionMessage));
         passengerRepository.delete(passenger);
-        return passengerMapper.entityToRespDto(passenger);
+        return passengerMapper.entityToResponse(passenger);
 
     }
 
-    public void checkPhoneExist(PassengerReqDto passengerDto)
+    private void checkPhoneExist(PassengerRequest passengerDto)
             throws PassengerAlreadyExistException {
         if(passengerRepository.existsByPhone(passengerDto.getPhone())){
             throw new PassengerAlreadyExistException(String
@@ -131,7 +132,7 @@ public class PassengerService {
         }
     }
 
-    public void checkEmailExist(PassengerReqDto passengerDto)
+    private void checkEmailExist(PassengerRequest passengerDto)
             throws PassengerAlreadyExistException {
         if(passengerRepository.existsByEmail(passengerDto.getEmail())){
             throw new PassengerAlreadyExistException(String
@@ -140,7 +141,7 @@ public class PassengerService {
         }
     }
 
-    public void checkUsernameExist(PassengerReqDto passengerDto)
+    private void checkUsernameExist(PassengerRequest passengerDto)
             throws PassengerAlreadyExistException {
         if(passengerRepository.existsByUsername(passengerDto.getUsername())){
             throw new PassengerAlreadyExistException(String
@@ -149,7 +150,7 @@ public class PassengerService {
         }
     }
 
-    public void checkPassengerParamsExists(PassengerReqDto passengerDto)
+    private void checkPassengerParamsExists(PassengerRequest passengerDto)
             throws PassengerAlreadyExistException{
         checkEmailExist(passengerDto);
         checkPhoneExist(passengerDto);
@@ -157,7 +158,7 @@ public class PassengerService {
 
     }
 
-    public PassengerRespDto addRatingById(int rating, Long id)
+    public PassengerResponse addRatingById(int rating, Long id)
             throws PassengerNotFoundException,RatingException{
         return addRating(
                 rating,
@@ -168,17 +169,17 @@ public class PassengerService {
 
     }
 
-    private <T> PassengerRespDto  addRating(int rating,
-                                 T param,
-                                 String exMessage,
-                                 Function<T,Optional<Passenger>> repositoryFunc)
+    private <T> PassengerResponse addRating(int rating,
+                                            T param,
+                                            String exMessage,
+                                            Function<T,Optional<Passenger>> repositoryFunc)
             throws PassengerNotFoundException ,RatingException{
         if(rating > 5 || rating < 0) {
             throw new RatingException(ExceptionMessages.RATING_EXCEPTION);
         }
         Passenger passenger = repositoryFunc.apply(param).orElseThrow(() ->
                 new PassengerNotFoundException(exMessage));
-        return  passengerMapper.entityToRespDto(
+        return  passengerMapper.entityToResponse(
                 passengerRepository.save(passenger.setAverageRating(
                         (passenger.getAverageRating() * passenger.getRatingsCount() + rating ) /
                                 (passenger.getRatingsCount() + 1))
@@ -207,7 +208,7 @@ public class PassengerService {
 
     private void validateSortingParameter(String orderBy)
             throws SortTypeException {
-        List<String> fieldNames = Arrays.stream(PassengerRespDto.class.getDeclaredFields())
+        List<String> fieldNames = Arrays.stream(PassengerResponse.class.getDeclaredFields())
                 .map(Field::getName)
                 .toList();
         if (!fieldNames.contains(orderBy)) {
@@ -215,7 +216,7 @@ public class PassengerService {
         }
     }
 
-    public PassengerPageResp getPassengerPage(int page, int size, String orderBy)
+    public PassengerPageResponse getPassengerPage(int page, int size, String orderBy)
             throws PaginationFormatException,
             SortTypeException {
 
@@ -225,11 +226,11 @@ public class PassengerService {
         List<Passenger> retrievedPassengers = passengersPage.getContent();
         long total = passengersPage.getTotalElements();
 
-        List<PassengerRespDto> passengers = retrievedPassengers.stream()
-                .map(passengerMapper::entityToRespDto)
+        List<PassengerResponse> passengers = retrievedPassengers.stream()
+                .map(passengerMapper::entityToResponse)
                 .toList();
 
-        return PassengerPageResp.builder()
+        return PassengerPageResponse.builder()
                 .passengerList(passengers)
                 .totalPages(page)
                 .totalElements(total)

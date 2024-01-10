@@ -11,8 +11,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @Builder
-public class PassengerPageResp {
-    private List<PassengerRespDto> passengerList;
+public class PassengerPageResponse {
+    private List<PassengerResponse> passengerList;
     private long totalElements;
     private int totalPages;
 
