@@ -13,6 +13,8 @@ import java.util.List;
 @Accessors(chain = true)
 public class DriverRespDto {
 
+    private Long id;
+
     @Max(value = 5, message = "average rating can't be more than 5.")
     @Min(value = 0, message = "average rating can't be lower then 0.")
     private float averageRating;
