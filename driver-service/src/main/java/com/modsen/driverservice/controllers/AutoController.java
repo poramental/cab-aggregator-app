@@ -1,11 +1,11 @@
 package com.modsen.driverservice.controllers;
 
 import com.modsen.driverservice.dto.AutoDto;
+import com.modsen.driverservice.dto.AutoPageResponse;
 import com.modsen.driverservice.exceptions.AutoNotFoundException;
-import com.modsen.driverservice.exceptions.SortTypeException;
-import com.modsen.driverservice.services.AutoService;
+import com.modsen.driverservice.exceptions.PaginationFormatException;
+import com.modsen.driverservice.services.AutoServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,42 +16,39 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AutoController {
 
-    private final AutoService autoService;
+
+    private final AutoServiceImpl autoService;
 
 
-    @GetMapping("/get-all")
+    @GetMapping()
     public ResponseEntity<List<AutoDto>> getAll(){
-        return autoService.getAll();
+        return ResponseEntity.ok(autoService.getAll());
     }
 
-    @GetMapping("/get-by-number")
+    @GetMapping("/by-number")
     public ResponseEntity<AutoDto> getByNumber(@RequestParam(name = "number") String number)
             throws AutoNotFoundException{
-        return autoService.getByNumber(number);
+        return ResponseEntity.ok(autoService.getByNumber(number));
     }
 
-    @DeleteMapping("/delete-by-number")
-    public HttpStatus deleteByNumber(@RequestParam(name = "number") String number)
-            throws AutoNotFoundException {
-        return autoService.deleteByNumber(number);
-    }
-
-    @GetMapping("/get-by-id")
-    public ResponseEntity<AutoDto> getById(@RequestParam(name = "id") Long id)
+    @GetMapping("/{id}")
+    public ResponseEntity<AutoDto> getById(@PathVariable(name = "id") Long id)
             throws AutoNotFoundException{
-        return autoService.getById(id);
+        return ResponseEntity.ok(autoService.getById(id));
     }
 
-    @DeleteMapping("/delete-by-id")
-    public HttpStatus deleteById(@RequestParam(name = "id") Long id)
+    @DeleteMapping("/{id}")
+    public ResponseEntity<AutoDto> deleteById(@PathVariable(name = "id") Long id)
             throws AutoNotFoundException{
-        return autoService.deleteById(id);
+        return ResponseEntity.ok(autoService.deleteById(id));
     }
 
-    @GetMapping("/get-sorted-list")
-    public ResponseEntity<List<AutoDto>> getSortedList(@RequestParam(name = "type") String type)
-            throws SortTypeException {
-        return autoService.getSortedList(type);
+    @GetMapping("/page")
+    public ResponseEntity<AutoPageResponse> getPage(@RequestParam int page,
+                                                    @RequestParam int size,
+                                                    @RequestParam String orderBy)
+            throws PaginationFormatException {
+        return ResponseEntity.ok(autoService.getAutosPage(page,size,orderBy));
     }
 
 }

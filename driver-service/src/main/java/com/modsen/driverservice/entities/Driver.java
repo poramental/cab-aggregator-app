@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,14 +32,10 @@ public class Driver {
 
     @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
     @JoinColumn(name = "driver_id")
-    private List<Auto> autos;
+    private List<Auto> autos = new ArrayList<>();
 
     private String phone;
 
     private String email;
 
-    public Driver addAuto(Auto auto){
-        autos.add(auto);
-        return this;
-    }
 }

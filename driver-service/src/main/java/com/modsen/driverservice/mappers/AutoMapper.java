@@ -13,7 +13,6 @@ public class AutoMapper {
         this.mapper = new ModelMapper();
     }
 
-
     public AutoDto entityToDto(Auto auto){
         return mapper.map(auto,AutoDto.class);
     }
@@ -21,7 +20,5 @@ public class AutoMapper {
     public Auto dtoToEntity(AutoDto autoDto){
         return mapper.map(autoDto,Auto.class);
     }
-
-
 
 }

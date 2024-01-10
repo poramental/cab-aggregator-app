@@ -8,13 +8,13 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 public class AutoDto {
-    @NotBlank(message = "color should be not empty.")
+    @NotBlank(message = "color.not-blank")
     private String color;
 
-    @NotBlank(message = "model should be not empty.")
+    @NotBlank(message = "model.not-blank")
     private String model;
 
-    @NotBlank(message = "number should be not empty.")
+    @NotBlank(message = "number.not-blank")
     private String number;
 
     private Long driverId;

@@ -16,13 +16,13 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler
+    @ExceptionHandler({AutoAlreadyExistException.class,DriverAlreadyExistException.class,DriverAlreadyHaveAutoException.class})
     public ResponseEntity<AppError> autoAlreadyExistExceptionHandler(AutoAlreadyExistException e){
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<AppError> autoNotFoundExceptionHandler(AutoNotFoundException e){
+    @ExceptionHandler({AutoNotFoundException.class,DriverNotFoundException.class })
+    public ResponseEntity<AppError> notFoundException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
     }
 
@@ -38,30 +38,14 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<AppError> driverAlreadyExistException(DriverAlreadyExistException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<AppError> driverNotFoundExceptionHandler(DriverNotFoundException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
-    }
-
-    @ExceptionHandler
+    @ExceptionHandler()
     public ResponseEntity<AppError> ratingExceptionHandler(RatingException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
-    public ResponseEntity<AppError> sortTypeExceptionHandler(SortTypeException e){
+    public ResponseEntity<AppError> sortTypeExceptionHandler(PaginationFormatException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
     }
-
-    @ExceptionHandler
-    public ResponseEntity<AppError> driverAlreadyHaveAutoExceptionHandler(DriverAlreadyHaveAutoException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.CONFLICT);
-    }
-
 
 }
