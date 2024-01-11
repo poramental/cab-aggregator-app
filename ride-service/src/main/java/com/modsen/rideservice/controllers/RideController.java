@@ -1,12 +1,11 @@
 package com.modsen.rideservice.controllers;
 
-import com.modsen.rideservice.dto.RideReqDto;
-import com.modsen.rideservice.dto.RideRespDto;
+import com.modsen.rideservice.dto.RideRequest;
+import com.modsen.rideservice.dto.RideResponse;
 import com.modsen.rideservice.exceptions.*;
 import com.modsen.rideservice.services.RideService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,17 +19,17 @@ public class RideController {
     private final RideService rideService;
 
     @PatchMapping("/accept-ride-driver")
-    public HttpStatus acceptRideByDriver(
+    public ResponseEntity<RideResponse> acceptRideByDriver(
             @RequestParam(name = "driver_id") Long driverId,
             @RequestParam(name = "ride_id") Long rideId
     )
             throws RideNotFoundException,
             RideAlreadyHaveDriverException {
-        return rideService.acceptRide(rideId,driverId);
+        return ResponseEntity.ok(rideService.acceptRide(rideId,driverId));
     }
 
     @PatchMapping("/cancel-ride-driver")
-    public ResponseEntity<RideRespDto> cancelRideByDriver(
+    public ResponseEntity<RideResponse> cancelRideByDriver(
             @RequestParam(name = "driver_id") Long driverId,
             @RequestParam(name = "ride_id") Long rideId
     )
@@ -39,51 +38,51 @@ public class RideController {
     }
 
     @GetMapping()
-    public ResponseEntity<List<RideRespDto>> getAll(){
-        return rideService.getAll();
+    public ResponseEntity<List<RideResponse>> getAll(){
+        return ResponseEntity.ok(rideService.getAll());
     }
 
-    @GetMapping("/by-id")
-    public ResponseEntity<RideRespDto> getById(@RequestParam(name = "id") Long id)
+    @GetMapping("/{id}")
+    public ResponseEntity<RideResponse> getById(@PathVariable(name = "id") Long id)
             throws RideNotFoundException {
-        return rideService.getById(id);
+        return ResponseEntity.ok(rideService.getById(id));
     }
 
     @GetMapping("/all-passenger-rides-by-id")
-    public ResponseEntity<List<RideRespDto>> getAllPassengerRidesById(
+    public ResponseEntity<List<RideResponse>> getAllPassengerRidesById(
             @RequestParam(name = "passenger_id") Long passengerId
     ){
-        return rideService.getAllPassengerRidesById(passengerId);
+        return ResponseEntity.ok(rideService.getAllPassengerRidesById(passengerId));
     }
 
     @GetMapping("/all-driver-rides-by-id")
-    public ResponseEntity<List<RideRespDto>> getAllDriverRidesById(
+    public ResponseEntity<List<RideResponse>> getAllDriverRidesById(
             @RequestParam(name = "driver_id") Long driverId
     ){
-        return rideService.getAllDriverRidesById(driverId);
+        return ResponseEntity.ok(rideService.getAllDriverRidesById(driverId));
     }
 
-    @PatchMapping("/start-ride")
-    public ResponseEntity<RideRespDto> startRide(@RequestParam("ride_id") Long rideId)
+    @PatchMapping("/start")
+    public ResponseEntity<RideResponse> startRide(@RequestParam("ride_id") Long rideId)
             throws RideHaveNoPassengerException,
             RideHaveNoDriverException,
             RideNotFoundException,
             RideAlreadyActiveException,
             RideAlreadyInactiveException {
-        return rideService.startRide(rideId);
+        return ResponseEntity.ok(rideService.startRide(rideId));
     }
 
-    @PostMapping("/find-ride")
-    public ResponseEntity<RideRespDto> findRide(@Valid @RequestBody RideReqDto rideRequest){
+    @PostMapping("/find")
+    public ResponseEntity<RideResponse> findRide(@Valid @RequestBody RideRequest rideRequest){
         return ResponseEntity.ok(rideService.findRide(rideRequest));
     }
 
-    @PatchMapping("/end-ride")
-    public ResponseEntity<RideRespDto> endRide(@RequestParam(name = "ride_id") Long rideId)
+    @PatchMapping("/end")
+    public ResponseEntity<RideResponse> endRide(@RequestParam(name = "ride_id") Long rideId)
             throws RideNotFoundException,
             RideAlreadyInactiveException,
             RideHaveNoPassengerException,
             RideHaveNoDriverException {
-        return rideService.endRide(rideId);
+        return ResponseEntity.ok(rideService.endRide(rideId));
     }
 }

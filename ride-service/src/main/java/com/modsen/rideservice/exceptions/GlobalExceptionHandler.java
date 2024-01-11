@@ -14,8 +14,8 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler
-    public ResponseEntity<AppError> rideIsPresentExceptionHandler(RideIsPresentException e){
+    @ExceptionHandler({RideIsPresentException.class,RideAlreadyHaveDriverException.class})
+    public ResponseEntity<AppError> conflictException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }
 
@@ -24,28 +24,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<AppError> rideAlreadyHaveDriverExceptionHandler(RideAlreadyHaveDriverException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.CONFLICT);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<AppError> rideHaveNoDriverExceptionHandler(RideHaveNoDriverException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<AppError> rideHaveNoPassengerExceptionHandler(RideHaveNoPassengerException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<AppError> rideAlreadyActiveExceptionHandler(RideAlreadyActiveException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<AppError> rideAlreadyActiveExceptionHandler(RideAlreadyInactiveException e){
+    @ExceptionHandler({
+            RideHaveNoDriverException.class,
+            RideHaveNoPassengerException.class,
+            RideAlreadyActiveException.class,
+            RideAlreadyInactiveException.class
+    })
+    public ResponseEntity<AppError> badRequestException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
     }
 

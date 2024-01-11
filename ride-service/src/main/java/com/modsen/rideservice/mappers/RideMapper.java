@@ -1,7 +1,7 @@
 package com.modsen.rideservice.mappers;
 
-import com.modsen.rideservice.dto.RideReqDto;
-import com.modsen.rideservice.dto.RideRespDto;
+import com.modsen.rideservice.dto.RideRequest;
+import com.modsen.rideservice.dto.RideResponse;
 import com.modsen.rideservice.entities.Ride;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
@@ -16,11 +16,11 @@ public class RideMapper {
     }
 
 
-    public RideRespDto entityToRespDto(Ride ride){
-        return mapper.map(ride, RideRespDto.class);
+    public RideResponse entityToResponse(Ride ride){
+        return mapper.map(ride, RideResponse.class);
     }
 
-    public Ride reqDtoToEntity(RideReqDto reqDto){
+    public Ride requestToEntity(RideRequest reqDto){
         return mapper.map(reqDto,Ride.class);
     }
 

@@ -1,6 +1,6 @@
 package com.modsen.rideservice.exceptions;
 
-public class RideHaveNoDriverException extends Exception{
+public class RideHaveNoDriverException extends RuntimeException{
     public RideHaveNoDriverException(String m){
         super(m);
     }
