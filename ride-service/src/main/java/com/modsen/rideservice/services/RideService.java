@@ -33,7 +33,6 @@ public class RideService {
         return mapper.entityToResponse(
                         repository.findById(id).orElseThrow(() -> new RideNotFoundException(
                         String.format(ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,id))));
-
     }
 
     public List<RideResponse> getAllPassengerRidesById(Long passengerId) {
@@ -83,8 +82,7 @@ public class RideService {
             ride
                     .setIsActive(true)
                     .setStartDate(LocalDate.now());
-            repository.save(ride);
-            return mapper.entityToResponse(ride);
+            return mapper.entityToResponse(repository.save(ride));
         }
 
 
