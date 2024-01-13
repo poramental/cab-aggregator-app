@@ -22,12 +22,12 @@ public class DriverController {
     private final DriverServiceImpl driverService;
 
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<DriverResponse>> getAll(){
         return driverService.getAll();
     }
 
-    @PostMapping()
+    @PostMapping
     public ResponseEntity<DriverResponse> add(@RequestBody @Valid DriverRequest driverDto)
             throws DriverAlreadyExistException {
         return ResponseEntity.ok(driverService.add(driverDto));

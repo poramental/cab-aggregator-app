@@ -31,32 +31,26 @@ public class AutoServiceImpl implements AutoService {
     }
 
     public AutoDto getByNumber(String number)
-            throws AutoNotFoundException{
-        Auto auto = autoRepository.findByNumber(number).orElseThrow(() -> new AutoNotFoundException(String
-                .format(ExceptionMessage.AUTO_NUMBER_NOT_FOUND_EXCEPTION, number)));
+    {
+        Auto auto = getOrThrowByNumber(number);
         return autoMapper.entityToDto(auto);
     }
 
     public AutoDto getById(Long id)
-            throws AutoNotFoundException{
-        Auto auto = autoRepository.findById(id).orElseThrow(() -> new AutoNotFoundException(String
-                .format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, id)));
+    {
+        Auto auto = getOrThrowById(id);
         return autoMapper.entityToDto(auto);
     }
 
     public AutoDto deleteById(Long id)
-            throws AutoNotFoundException {
-        Auto auto = autoRepository.findById(id).orElseThrow(() -> new AutoNotFoundException(String
-                .format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, id)));
+    {
+        Auto auto = getOrThrowById(id);
         autoRepository.delete(auto);
         return autoMapper.entityToDto(auto);
     }
 
-
-
     public AutoPageResponse getAutosPage(int page, int size, String orderBy)
-            throws PaginationFormatException {
-
+    {
        Page<Auto> autosPage = paginationService.getPage(
                page,
                size,
@@ -77,6 +71,16 @@ public class AutoServiceImpl implements AutoService {
                 .totalPages(page)
                 .totalElements(total)
                 .build();
+    }
+
+    public Auto getOrThrowById(Long id){
+        return autoRepository.findById(id).orElseThrow(() -> new AutoNotFoundException(String
+                .format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, id)));
+    }
+
+    public Auto getOrThrowByNumber(String number){
+        return autoRepository.findByNumber(number).orElseThrow(() -> new AutoNotFoundException(String
+                .format(ExceptionMessage.AUTO_NUMBER_NOT_FOUND_EXCEPTION, number)));
     }
 
 }

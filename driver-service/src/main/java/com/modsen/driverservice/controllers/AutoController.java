@@ -20,7 +20,7 @@ public class AutoController {
     private final AutoServiceImpl autoService;
 
 
-    @GetMapping()
+    @GetMapping
     public ResponseEntity<List<AutoDto>> getAll(){
         return ResponseEntity.ok(autoService.getAll());
     }
