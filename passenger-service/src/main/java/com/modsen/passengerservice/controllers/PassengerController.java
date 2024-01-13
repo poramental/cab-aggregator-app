@@ -7,6 +7,7 @@ import com.modsen.passengerservice.dto.PassengerResponse;
 import com.modsen.passengerservice.services.PassengerServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,9 +32,11 @@ public class PassengerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity.HeadersBuilder<?> deletePassenger(@PathVariable(name = "id") Long passengerId)
+    public ResponseEntity<PassengerResponse> deletePassenger(@PathVariable(name = "id") Long passengerId)
     {
-        return ResponseEntity.noContent();
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .body(passengerService.deletePassengerById(passengerId));
     }
 
     @GetMapping("/{id}")
