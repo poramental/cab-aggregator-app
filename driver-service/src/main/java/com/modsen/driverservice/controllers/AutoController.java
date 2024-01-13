@@ -2,8 +2,6 @@ package com.modsen.driverservice.controllers;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.exceptions.AutoNotFoundException;
-import com.modsen.driverservice.exceptions.PaginationFormatException;
 import com.modsen.driverservice.services.AutoServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -27,19 +25,19 @@ public class AutoController {
 
     @GetMapping("/by-number")
     public ResponseEntity<AutoDto> getByNumber(@RequestParam(name = "number") String number)
-            throws AutoNotFoundException{
+    {
         return ResponseEntity.ok(autoService.getByNumber(number));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AutoDto> getById(@PathVariable(name = "id") Long id)
-            throws AutoNotFoundException{
+    {
         return ResponseEntity.ok(autoService.getById(id));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<AutoDto> deleteById(@PathVariable(name = "id") Long id)
-            throws AutoNotFoundException{
+    {
         return ResponseEntity.ok(autoService.deleteById(id));
     }
 
@@ -47,7 +45,7 @@ public class AutoController {
     public ResponseEntity<AutoPageResponse> getPage(@RequestParam int page,
                                                     @RequestParam int size,
                                                     @RequestParam String orderBy)
-            throws PaginationFormatException {
+    {
         return ResponseEntity.ok(autoService.getAutosPage(page,size,orderBy));
     }
 

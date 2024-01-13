@@ -5,7 +5,6 @@ import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.DriverPageResponse;
 import com.modsen.driverservice.dto.DriverRequest;
 import com.modsen.driverservice.dto.DriverResponse;
-import com.modsen.driverservice.exceptions.*;
 import com.modsen.driverservice.services.DriverServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,26 +28,26 @@ public class DriverController {
 
     @PostMapping
     public ResponseEntity<DriverResponse> add(@RequestBody @Valid DriverRequest driverDto)
-            throws DriverAlreadyExistException {
+    {
         return ResponseEntity.ok(driverService.add(driverDto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<DriverResponse> deleteById(@PathVariable(name = "id") Long id)
-            throws DriverNotFoundException{
+    {
         return ResponseEntity.ok(driverService.deleteById(id));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DriverResponse> getById(@PathVariable(name = "id") Long id)
-            throws DriverNotFoundException{
+    {
         return ResponseEntity.ok(driverService.getById(id));
     }
 
     @PutMapping("/{driver_id}")
     public ResponseEntity<DriverResponse> update(@PathVariable(name = "driver_id") Long id,
                                                  @RequestBody @Valid DriverRequest driverDto)
-            throws DriverNotFoundException, DriverAlreadyExistException{
+    {
         return ResponseEntity.ok(driverService.update(id,driverDto));
     }
 
@@ -56,32 +55,28 @@ public class DriverController {
     public ResponseEntity<DriverPageResponse> getPage(@RequestParam int page,
                                                       @RequestParam int size,
                                                       @RequestParam String orderBy)
-            throws PaginationFormatException {
+    {
         return ResponseEntity.ok(driverService.getDriversPage(page,size,orderBy));
     }
 
     @PostMapping("{driver_id}/auto")
     public ResponseEntity<DriverResponse> setAutoById(@PathVariable(name = "driver_id") Long driver_id,
                                                       @RequestBody AutoDto autoDto)
-            throws DriverNotFoundException,
-            DriverAlreadyHaveAutoException,
-            AutoAlreadyExistException {
+    {
         return ResponseEntity.ok(driverService.setAutoById(driver_id,autoDto));
     }
 
     @PatchMapping("/{driver_id}/rating")
     public ResponseEntity<DriverResponse> addRating(@PathVariable("driver_id") Long id,
                                                     @RequestParam("rating") int rating)
-            throws DriverNotFoundException,
-            RatingException {
+    {
         return ResponseEntity.ok(driverService.addRatingById(id,rating));
     }
 
     @PutMapping("/{driver_id}/auto")
     public  ResponseEntity<DriverResponse> replaceAutoById(@PathVariable(name = "driver_id") Long driver_id,
                                                            @RequestBody @Valid AutoDto autoDto)
-            throws DriverNotFoundException,
-            AutoAlreadyExistException {
+    {
         return ResponseEntity.ok(driverService.replaceAutoById(driver_id,autoDto));
     }
 
