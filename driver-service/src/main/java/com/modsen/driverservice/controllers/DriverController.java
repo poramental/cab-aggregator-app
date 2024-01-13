@@ -8,6 +8,8 @@ import com.modsen.driverservice.dto.DriverResponse;
 import com.modsen.driverservice.services.DriverServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
@@ -35,7 +37,9 @@ public class DriverController {
     @DeleteMapping("/{id}")
     public ResponseEntity<DriverResponse> deleteById(@PathVariable(name = "id") Long id)
     {
-        return ResponseEntity.ok(driverService.deleteById(id));
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .body(driverService.deleteById(id));
     }
 
     @GetMapping("/{id}")

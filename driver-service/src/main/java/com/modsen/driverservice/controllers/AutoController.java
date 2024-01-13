@@ -4,6 +4,7 @@ import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
 import com.modsen.driverservice.services.AutoServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -38,7 +39,9 @@ public class AutoController {
     @DeleteMapping("/{id}")
     public ResponseEntity<AutoDto> deleteById(@PathVariable(name = "id") Long id)
     {
-        return ResponseEntity.ok(autoService.deleteById(id));
+        return ResponseEntity
+                .status(HttpStatus.NO_CONTENT)
+                .body(autoService.deleteById(id));
     }
 
     @GetMapping("/page")
