@@ -17,7 +17,7 @@ public class PassengerRequest {
     private String email;
 
     @NotBlank(message = "phone.not-blank")
-    @Pattern(regexp = ValidationFormat.PHONE_REGEX, message = "{phone.invalid.message}")
+    @Pattern(regexp = ValidationFormat.PHONE_REGEX, message = "phone.invalid.message")
     private String phone;
 
     @NotBlank(message = "username.not-blank")

@@ -41,21 +41,19 @@ public class PassengerServiceImpl implements PassengerService {
                 .save(passengerMapper.requestToEntity(passengerReqDto)));
     }
 
-    public PassengerResponse deletePassengerById(Long passengerId)
-            throws PassengerNotFoundException{
-        return delete(passengerId,String.format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION,
-                passengerId),passengerRepository::findById);
+    public PassengerResponse deletePassengerById(Long passengerId) {
+        return delete(
+                passengerId,
+                String.format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION, passengerId),
+                passengerRepository::findById
+        );
     }
 
-    public PassengerResponse getById(Long id) throws PassengerNotFoundException {
-        return passengerMapper.entityToResponse(passengerRepository.findById(id)
-                .orElseThrow(() -> new PassengerNotFoundException(String
-                        .format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION, id))));
+    public PassengerResponse getById(Long id) {
+        return passengerMapper.entityToResponse(getOrThrow(id));
     }
 
-    public PassengerResponse updateById(Long id, PassengerRequest passengerDto)
-            throws PassengerNotFoundException,
-            PassengerAlreadyExistException {
+    public PassengerResponse updateById(Long id, PassengerRequest passengerDto) {
         preUpdateCheckAllParams(id,passengerDto);
         Passenger passenger = passengerMapper.requestToEntity(passengerDto);
         passenger.setId(id);
@@ -64,49 +62,30 @@ public class PassengerServiceImpl implements PassengerService {
 
     }
 
-    private void preUpdateCheckAllParams(Long passengerId, PassengerRequest passengerDto)
-            throws PassengerAlreadyExistException,
-            PassengerNotFoundException {
+    private void preUpdateCheckAllParams(Long passengerId, PassengerRequest passengerDto) {
         preUpdateEmailCheck(passengerId, passengerDto);
         preUpdatePhoneCheck(passengerId, passengerDto);
         preUpdateUsernameCheck(passengerId, passengerDto);
     }
 
 
-    private void preUpdateEmailCheck(Long passengerId, PassengerRequest passengerDto)
-            throws PassengerNotFoundException,
-            PassengerAlreadyExistException {
-        Passenger passenger =  passengerRepository.findById(passengerId)
-                .orElseThrow(()-> new PassengerNotFoundException(String
-                        .format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION, passengerId)));
-
+    private void preUpdateEmailCheck(Long passengerId, PassengerRequest passengerDto) {
+        Passenger passenger = getOrThrow(passengerId);
         if (!passenger.getEmail().equals(passengerDto.getEmail())) {
             checkEmailExist(passengerDto);
         }
 
     }
 
-    private void preUpdatePhoneCheck(Long passengerId, PassengerRequest passengerDto)
-            throws PassengerNotFoundException,
-            PassengerAlreadyExistException {
-
-        Passenger passenger =  passengerRepository.findById(passengerId)
-                .orElseThrow(()-> new PassengerNotFoundException(String
-                        .format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION, passengerId)));
-
+    private void preUpdatePhoneCheck(Long passengerId, PassengerRequest passengerDto) {
+        Passenger passenger =  getOrThrow(passengerId);
         if (!passenger.getPhone().equals(passengerDto.getPhone())) {
             checkPhoneExist(passengerDto);
         }
     }
 
-    private void preUpdateUsernameCheck(Long passengerId, PassengerRequest passengerDto)
-            throws PassengerNotFoundException,
-            PassengerAlreadyExistException {
-
-        Passenger passenger =  passengerRepository.findById(passengerId)
-                .orElseThrow(()-> new PassengerNotFoundException(String
-                        .format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION, passengerId)));
-
+    private void preUpdateUsernameCheck(Long passengerId, PassengerRequest passengerDto) {
+        Passenger passenger =  getOrThrow(passengerId);
         if (!passenger.getUsername().equals(passengerDto.getUsername())) {
             checkUsernameExist(passengerDto);
         }
@@ -114,8 +93,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     private <T> PassengerResponse delete(T param,
                                          String exceptionMessage,
-                                         Function<T, Optional<Passenger>> repositoryFunc)
-            throws PassengerNotFoundException{
+                                         Function<T, Optional<Passenger>> repositoryFunc) {
         Passenger passenger = repositoryFunc.apply(param)
         .orElseThrow( () -> new PassengerNotFoundException(exceptionMessage));
         passengerRepository.delete(passenger);
@@ -123,8 +101,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     }
 
-    private void checkPhoneExist(PassengerRequest passengerDto)
-            throws PassengerAlreadyExistException {
+    private void checkPhoneExist(PassengerRequest passengerDto) {
         if(passengerRepository.existsByPhone(passengerDto.getPhone())){
             throw new PassengerAlreadyExistException(String
                     .format(ExceptionMessages.PASSENGER_WITH_PHONE_ALREADY_EXIST,
@@ -132,8 +109,7 @@ public class PassengerServiceImpl implements PassengerService {
         }
     }
 
-    private void checkEmailExist(PassengerRequest passengerDto)
-            throws PassengerAlreadyExistException {
+    private void checkEmailExist(PassengerRequest passengerDto) {
         if(passengerRepository.existsByEmail(passengerDto.getEmail())){
             throw new PassengerAlreadyExistException(String
                     .format(ExceptionMessages.PASSENGER_WITH_EMAIL_ALREADY_EXIST,
@@ -141,8 +117,7 @@ public class PassengerServiceImpl implements PassengerService {
         }
     }
 
-    private void checkUsernameExist(PassengerRequest passengerDto)
-            throws PassengerAlreadyExistException {
+    private void checkUsernameExist(PassengerRequest passengerDto) {
         if(passengerRepository.existsByUsername(passengerDto.getUsername())){
             throw new PassengerAlreadyExistException(String
                     .format(ExceptionMessages.PASSENGER_WITH_USERNAME_ALREADY_EXIST,
@@ -150,16 +125,14 @@ public class PassengerServiceImpl implements PassengerService {
         }
     }
 
-    private void checkPassengerParamsExists(PassengerRequest passengerDto)
-            throws PassengerAlreadyExistException{
+    private void checkPassengerParamsExists(PassengerRequest passengerDto) {
         checkEmailExist(passengerDto);
         checkPhoneExist(passengerDto);
         checkUsernameExist(passengerDto);
 
     }
 
-    public PassengerResponse addRatingById(int rating, Long id)
-            throws PassengerNotFoundException,RatingException{
+    public PassengerResponse addRatingById(int rating, Long id) {
         return addRating(
                 rating,
                 id,
@@ -172,8 +145,7 @@ public class PassengerServiceImpl implements PassengerService {
     private <T> PassengerResponse addRating(int rating,
                                             T param,
                                             String exMessage,
-                                            Function<T,Optional<Passenger>> repositoryFunc)
-            throws PassengerNotFoundException ,RatingException{
+                                            Function<T,Optional<Passenger>> repositoryFunc) {
         if(rating > 5 || rating < 0) {
             throw new RatingException(ExceptionMessages.RATING_EXCEPTION);
         }
@@ -188,9 +160,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     }
 
-    public PageRequest getPageRequest(int page, int size, String orderBy)
-            throws PaginationFormatException,
-            SortTypeException {
+    public PageRequest getPageRequest(int page, int size, String orderBy) {
         if (page < 1 || size < 1) {
             throw new PaginationFormatException(ExceptionMessages.PAGINATION_FORMAT_EXCEPTION);
         }
@@ -206,8 +176,7 @@ public class PassengerServiceImpl implements PassengerService {
         return pageRequest;
     }
 
-    private void validateSortingParameter(String orderBy)
-            throws SortTypeException {
+    private void validateSortingParameter(String orderBy) {
         List<String> fieldNames = Arrays.stream(PassengerResponse.class.getDeclaredFields())
                 .map(Field::getName)
                 .toList();
@@ -216,9 +185,7 @@ public class PassengerServiceImpl implements PassengerService {
         }
     }
 
-    public PassengerPageResponse getPassengerPage(int page, int size, String orderBy)
-            throws PaginationFormatException,
-            SortTypeException {
+    public PassengerPageResponse getPassengerPage(int page, int size, String orderBy) {
 
         PageRequest pageRequest = getPageRequest(page, size, orderBy);
         Page<Passenger> passengersPage = passengerRepository.findAll(pageRequest);
@@ -237,4 +204,9 @@ public class PassengerServiceImpl implements PassengerService {
                 .build();
     }
 
+    private Passenger getOrThrow(Long id){
+        return passengerRepository.findById(id)
+                .orElseThrow(()-> new PassengerNotFoundException(String
+                        .format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION, id)));
+    }
 }
