@@ -4,6 +4,7 @@ package com.modsen.passengerservice.controllers;
 import com.modsen.passengerservice.dto.PassengerPageResponse;
 import com.modsen.passengerservice.dto.PassengerRequest;
 import com.modsen.passengerservice.dto.PassengerResponse;
+import com.modsen.passengerservice.dto.PassengerResponseList;
 import com.modsen.passengerservice.services.PassengerServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/passengers")
@@ -21,14 +21,15 @@ public class PassengerController {
     private final PassengerServiceImpl passengerService;
 
     @GetMapping
-    public ResponseEntity<List<PassengerResponse>> getAll(){
+    public ResponseEntity<PassengerResponseList> getAll(){
         return ResponseEntity.ok(passengerService.getAll());
     }
 
     @PostMapping
     public ResponseEntity<PassengerResponse> addPassenger(@RequestBody @Valid PassengerRequest passengerDto)
     {
-        return ResponseEntity.ok(passengerService.addPassenger(passengerDto));
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(passengerService.addPassenger(passengerDto));
     }
 
     @DeleteMapping("/{id}")
