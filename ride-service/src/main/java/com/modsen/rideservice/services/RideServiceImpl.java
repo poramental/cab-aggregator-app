@@ -33,9 +33,10 @@ public class RideServiceImpl implements RideService {
 
     public RideResponse getById(Long id)
     {
-        return mapper.entityToResponse(
-                        repository.findById(id).orElseThrow(() -> new RideNotFoundException(
-                        String.format(ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,id))));
+        return mapper.entityToResponse(repository.findById(id)
+                .orElseThrow(() -> new RideNotFoundException(String.format(
+                        ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,
+                        id))));
     }
 
     public RideResponseList getAllPassengerRidesById(Long passengerId)
@@ -58,8 +59,9 @@ public class RideServiceImpl implements RideService {
     {
         Ride ride =getOrThrow(rideId);
         if (Objects.nonNull(ride.getDriverId())) {
-            throw new RideAlreadyHaveDriverException(String
-                    .format(ExceptionMessages.RIDE_WITH_ID_ALREADY_HAVE_DRIVER_EXCEPTION, rideId));
+            throw new RideAlreadyHaveDriverException(String.format(
+                    ExceptionMessages.RIDE_WITH_ID_ALREADY_HAVE_DRIVER_EXCEPTION,
+                    rideId));
         }
         return mapper.entityToResponse(repository.save(ride.setDriverId(driverId)));
 
@@ -85,38 +87,50 @@ public class RideServiceImpl implements RideService {
     private static void checkRideToStart(Ride ride)
     {
         if (Objects.isNull(ride.getDriverId())){
-            throw new RideHaveNoDriverException(String
-                    .format(ExceptionMessages.RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION, ride.getId()));
+            throw new RideHaveNoDriverException(String.format(
+                    ExceptionMessages.RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION,
+                    ride.getId())
+            );
         }
         if (Objects.isNull(ride.getPassengerId())) {
-            throw new RideHaveNoPassengerException(String
-                    .format(ExceptionMessages.RIDE_WITH_ID_HAVE_NO_PASSENGER_EXCEPTION, ride.getId()));
+            throw new RideHaveNoPassengerException(String.format(
+                    ExceptionMessages.RIDE_WITH_ID_HAVE_NO_PASSENGER_EXCEPTION,
+                    ride.getId())
+            );
         }
         if (Objects.nonNull(ride.getEndDate())) {
-            throw new RideAlreadyInactiveException(String
-                    .format(ExceptionMessages.RIDE_WITH_ID_ALREADY_INACTIVE_EXCEPTION, ride.getId()));
+            throw new RideAlreadyInactiveException(String.format(
+                    ExceptionMessages.RIDE_WITH_ID_ALREADY_INACTIVE_EXCEPTION,
+                    ride.getId())
+            );
         }
         if (Objects.nonNull(ride.getIsActive()) && ride.getIsActive()){
-            throw new RideAlreadyActiveException(String
-                    .format(ExceptionMessages.RIDE_WITH_ID_ALREADY_ACTIVE_EXCEPTION, ride.getId()));
-
+            throw new RideAlreadyActiveException(String.format(
+                    ExceptionMessages.RIDE_WITH_ID_ALREADY_ACTIVE_EXCEPTION,
+                    ride.getId())
+            );
         }
-
     }
 
     private static void checkRideToEnd(Ride ride)
     {
         if (Objects.isNull(ride.getDriverId())) {
-            throw new RideHaveNoDriverException(String
-                    .format(ExceptionMessages.RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION, ride.getId()));
+            throw new RideHaveNoDriverException(String.format(
+                    ExceptionMessages.RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION,
+                    ride.getId())
+            );
         }
         if (Objects.isNull(ride.getPassengerId())) {
-            throw new RideHaveNoPassengerException(String
-                    .format(ExceptionMessages.RIDE_WITH_ID_HAVE_NO_PASSENGER_EXCEPTION, ride.getId()));
+            throw new RideHaveNoPassengerException(String.format(
+                    ExceptionMessages.RIDE_WITH_ID_HAVE_NO_PASSENGER_EXCEPTION,
+                    ride.getId())
+            );
         }
         if (Objects.nonNull(ride.getEndDate())) {
-            throw new RideAlreadyInactiveException(String
-                    .format(ExceptionMessages.RIDE_WITH_ID_ALREADY_INACTIVE_EXCEPTION, ride.getId()));
+            throw new RideAlreadyInactiveException(String.format(
+                    ExceptionMessages.RIDE_WITH_ID_ALREADY_INACTIVE_EXCEPTION,
+                    ride.getId())
+            );
         }
     }
 
