@@ -2,20 +2,19 @@ package com.modsen.rideservice.controllers;
 
 import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.RideResponse;
-import com.modsen.rideservice.services.RideService;
+import com.modsen.rideservice.dto.RideResponseList;
+import com.modsen.rideservice.services.RideServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/rides")
 @RequiredArgsConstructor
 public class RideController {
 
-    private final RideService rideService;
+    private final RideServiceImpl rideService;
 
     @PatchMapping("/accept-ride-driver")
     public ResponseEntity<RideResponse> acceptRideByDriver(
@@ -34,7 +33,7 @@ public class RideController {
     }
 
     @GetMapping
-    public ResponseEntity<List<RideResponse>> getAll(){
+    public ResponseEntity<RideResponseList> getAll(){
         return ResponseEntity.ok(rideService.getAll());
     }
 
@@ -45,14 +44,14 @@ public class RideController {
     }
 
     @GetMapping("/all-passenger-rides-by-id")
-    public ResponseEntity<List<RideResponse>> getAllPassengerRidesById(
+    public ResponseEntity<RideResponseList> getAllPassengerRidesById(
             @RequestParam(name = "passenger_id") Long passengerId
     ) {
         return ResponseEntity.ok(rideService.getAllPassengerRidesById(passengerId));
     }
 
     @GetMapping("/all-driver-rides-by-id")
-    public ResponseEntity<List<RideResponse>> getAllDriverRidesById(
+    public ResponseEntity<RideResponseList> getAllDriverRidesById(
             @RequestParam(name = "driver_id") Long driverId
     ){
         return ResponseEntity.ok(rideService.getAllDriverRidesById(driverId));
@@ -65,7 +64,8 @@ public class RideController {
     }
 
     @PostMapping("/find")
-    public ResponseEntity<RideResponse> findRide(@Valid @RequestBody RideRequest rideRequest){
+    public ResponseEntity<RideResponse> findRide(@Valid @RequestBody RideRequest rideRequest)
+    {
         return ResponseEntity.ok(rideService.findRide(rideRequest));
     }
 
