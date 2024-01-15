@@ -2,25 +2,18 @@ package com.modsen.driverservice.services.interfaces;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.exceptions.AutoNotFoundException;
-import com.modsen.driverservice.exceptions.PaginationFormatException;
-
-import java.util.List;
+import com.modsen.driverservice.dto.AutoResponseList;
 
 public interface AutoService {
-    List<AutoDto> getAll();
+    AutoResponseList getAll();
 
-    AutoDto getByNumber(String number)
-            throws AutoNotFoundException;
+    AutoDto getByNumber(String number);
 
-    AutoDto getById(Long id)
-            throws AutoNotFoundException;
+    AutoDto getById(Long id);
 
-    AutoDto deleteById(Long id)
-            throws AutoNotFoundException;
+    AutoDto deleteById(Long id);
 
-    AutoPageResponse getAutosPage(int page, int size, String orderBy)
-            throws PaginationFormatException;
+    AutoPageResponse getAutosPage(int page, int size, String orderBy);
 
 
 }

@@ -2,13 +2,12 @@ package com.modsen.driverservice.controllers;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
+import com.modsen.driverservice.dto.AutoResponseList;
 import com.modsen.driverservice.services.AutoServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/autos")
@@ -20,7 +19,8 @@ public class AutoController {
 
 
     @GetMapping
-    public ResponseEntity<List<AutoDto>> getAll(){
+    public ResponseEntity<AutoResponseList> getAll()
+    {
         return ResponseEntity.ok(autoService.getAll());
     }
 

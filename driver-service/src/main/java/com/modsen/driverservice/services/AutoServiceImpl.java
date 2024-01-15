@@ -2,6 +2,7 @@ package com.modsen.driverservice.services;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
+import com.modsen.driverservice.dto.AutoResponseList;
 import com.modsen.driverservice.entities.Auto;
 import com.modsen.driverservice.exceptions.*;
 import com.modsen.driverservice.mappers.AutoMapper;
@@ -25,9 +26,10 @@ public class AutoServiceImpl implements AutoService {
 
     private final PaginationService paginationService;
 
-    public List<AutoDto> getAll(){
-        return autoRepository.findAll().stream()
-                .map(autoMapper::entityToDto).collect(Collectors.toList());
+    public AutoResponseList getAll()
+    {
+        return new AutoResponseList(autoRepository.findAll().stream()
+                .map(autoMapper::entityToDto).collect(Collectors.toList()));
     }
 
     public AutoDto getByNumber(String number)
@@ -73,14 +75,18 @@ public class AutoServiceImpl implements AutoService {
                 .build();
     }
 
-    public Auto getOrThrowById(Long id){
+    public Auto getOrThrowById(Long id)
+    {
         return autoRepository.findById(id).orElseThrow(() -> new AutoNotFoundException(String
                 .format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, id)));
     }
 
-    public Auto getOrThrowByNumber(String number){
-        return autoRepository.findByNumber(number).orElseThrow(() -> new AutoNotFoundException(String
-                .format(ExceptionMessage.AUTO_NUMBER_NOT_FOUND_EXCEPTION, number)));
+    public Auto getOrThrowByNumber(String number)
+    {
+        return autoRepository.findByNumber(number)
+                .orElseThrow(() -> new AutoNotFoundException(String.format(
+                        ExceptionMessage.AUTO_NUMBER_NOT_FOUND_EXCEPTION,
+                        number)));
     }
 
 }

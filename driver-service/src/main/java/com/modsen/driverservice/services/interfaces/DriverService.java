@@ -1,36 +1,21 @@
 package com.modsen.driverservice.services.interfaces;
 
-import com.modsen.driverservice.dto.AutoDto;
-import com.modsen.driverservice.dto.DriverPageResponse;
-import com.modsen.driverservice.dto.DriverRequest;
-import com.modsen.driverservice.dto.DriverResponse;
-import com.modsen.driverservice.exceptions.*;
-import org.springframework.http.ResponseEntity;
-
-import java.util.List;
+import com.modsen.driverservice.dto.*;
 
 public interface DriverService {
-    ResponseEntity<List<DriverResponse>> getAll();
-    DriverResponse add(DriverRequest driverDto) throws DriverAlreadyExistException;
+    DriverResponseList getAll();
+    DriverResponse add(DriverRequest driverDto);
 
-    DriverResponse deleteById(Long id) throws DriverNotFoundException;
+    DriverResponse deleteById(Long id);
 
-    DriverResponse update(Long id, DriverRequest driverDto)
-            throws DriverNotFoundException, DriverAlreadyExistException;
+    DriverResponse update(Long id, DriverRequest driverDto);
 
-    DriverResponse addRatingById(Long id, int rating)
-            throws DriverNotFoundException, RatingException;
+    DriverResponse addRatingById(Long id, int rating);
 
-    DriverResponse setAutoById(Long driver_id, AutoDto autoDto)
-            throws DriverAlreadyHaveAutoException,
-            DriverNotFoundException,
-            AutoAlreadyExistException;
+    DriverResponse setAutoById(Long driver_id, AutoDto autoDto);
 
-    DriverResponse replaceAutoById(Long driver_id, AutoDto autoDto)
-            throws DriverNotFoundException,
-            AutoAlreadyExistException;
+    DriverResponse replaceAutoById(Long driver_id, AutoDto autoDto);
 
-    DriverPageResponse getDriversPage(int page, int size, String orderBy)
-            throws PaginationFormatException;
+    DriverPageResponse getDriversPage(int page, int size, String orderBy);
 
 }

@@ -9,7 +9,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.List;
 import java.util.function.Function;
 
 @Service
@@ -31,12 +30,11 @@ public class PaginationService {
 
     private void validateSortingParameter(String orderBy)
             throws PaginationFormatException {
-        List<String> fieldNames = Arrays.stream(DriverResponse.class.getDeclaredFields())
+        Arrays.stream(DriverResponse.class.getDeclaredFields())
                 .map(Field::getName)
-                .toList();
-        if (!fieldNames.contains(orderBy)) {
-            throw new PaginationFormatException(ExceptionMessage.INVALID_TYPE_OF_SORT);
-        }
+                .filter(orderBy::equals).toList().stream().findFirst()
+                .orElseThrow(() -> new PaginationFormatException(ExceptionMessage.INVALID_TYPE_OF_SORT));
+
     }
 
     public <T> Page<T> getPage(int page,

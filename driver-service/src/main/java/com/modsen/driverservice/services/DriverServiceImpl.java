@@ -1,9 +1,6 @@
 package com.modsen.driverservice.services;
 
-import com.modsen.driverservice.dto.AutoDto;
-import com.modsen.driverservice.dto.DriverPageResponse;
-import com.modsen.driverservice.dto.DriverRequest;
-import com.modsen.driverservice.dto.DriverResponse;
+import com.modsen.driverservice.dto.*;
 import com.modsen.driverservice.entities.Driver;
 import com.modsen.driverservice.exceptions.*;
 import com.modsen.driverservice.mappers.AutoMapper;
@@ -14,8 +11,6 @@ import com.modsen.driverservice.services.interfaces.DriverService;
 import com.modsen.driverservice.util.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
@@ -38,10 +33,10 @@ public class DriverServiceImpl implements DriverService {
     private final PaginationService paginationService;
 
 
-    public ResponseEntity<List<DriverResponse>> getAll(){
-        return new ResponseEntity<>(driverRepository.findAll().stream()
+    public DriverResponseList getAll(){
+        return new DriverResponseList(driverRepository.findAll().stream()
                 .map(driverMapper::entityToRespDto)
-                .collect(Collectors.toList()), HttpStatus.OK);
+                .collect(Collectors.toList()));
     }
 
 
@@ -75,8 +70,9 @@ public class DriverServiceImpl implements DriverService {
 
     public DriverResponse getById(Long id){
         return driverMapper.entityToRespDto(driverRepository.findById(id)
-                .orElseThrow(() -> new DriverNotFoundException(String
-                .format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,id))));
+                .orElseThrow(() -> new DriverNotFoundException(String.format(
+                        ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,
+                        id))));
     }
 
 
@@ -107,11 +103,11 @@ public class DriverServiceImpl implements DriverService {
         }
         Driver driver = repositoryFunc.apply(param)
                 .orElseThrow(() -> new DriverNotFoundException(exMessage));
+        float ratingSum = driver.getAverageRating() * driver.getRatingsCount();
+        int newRatingsCount = driver.getRatingsCount() + 1;
         return driverMapper.entityToRespDto(driverRepository.save(
-                    driver.setAverageRating(
-                            (driver.getAverageRating() * driver.getRatingsCount() + rating) /
-                                    (driver.getRatingsCount() + 1))
-                    .setRatingsCount(driver.getRatingsCount() + 1)
+                    driver.setAverageRating((ratingSum + rating) / newRatingsCount)
+                    .setRatingsCount(newRatingsCount)
             ));
     }
 
@@ -166,11 +162,13 @@ public class DriverServiceImpl implements DriverService {
     private <T> DriverResponse setAuto(T param,
                                        AutoDto autoDto,
                                        Function<T, Optional<Driver>>repositoryFunc,
-                                       String exceptionMessage
-    ){
+                                       String exceptionMessage)
+    {
         Driver driver = repositoryFunc.apply(param).orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
-        autoRepository.findByNumber(autoDto.getNumber()).orElseThrow(() -> new AutoAlreadyExistException(String
-                .format(ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION, autoDto.getNumber())));
+        autoRepository.findByNumber(autoDto.getNumber()).orElseThrow(() -> new AutoAlreadyExistException(String.format(
+                ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION,
+                autoDto.getNumber()))
+        );
         if (!driver.getAutos().isEmpty())
             throw new DriverAlreadyHaveAutoException(ExceptionMessage.DRIVER_ALREADY_HAVE_AUTO_EXCEPTION);
         else {
@@ -193,8 +191,8 @@ public class DriverServiceImpl implements DriverService {
             T param,
             AutoDto autoDto,
             Function<T,Optional<Driver>> driverRepositoryFunc,
-            String exceptionMessage
-    ){
+            String exceptionMessage)
+    {
         Driver driver = driverRepositoryFunc.apply(param)
                 .orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
         autoRepository.findByNumber(autoDto.getNumber())
@@ -214,7 +212,6 @@ public class DriverServiceImpl implements DriverService {
       );
         List<Driver> retrievedDrivers = driversPage.getContent();
         long total = driversPage.getTotalElements();
-
         List<DriverResponse> drivers = retrievedDrivers.stream()
                 .map(driverMapper::entityToRespDto)
                 .toList();
