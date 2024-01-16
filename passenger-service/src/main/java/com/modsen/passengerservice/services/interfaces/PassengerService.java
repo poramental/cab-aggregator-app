@@ -3,11 +3,11 @@ package com.modsen.passengerservice.services.interfaces;
 import com.modsen.passengerservice.dto.PassengerPageResponse;
 import com.modsen.passengerservice.dto.PassengerRequest;
 import com.modsen.passengerservice.dto.PassengerResponse;
-import com.modsen.passengerservice.dto.PassengerResponseList;
+import com.modsen.passengerservice.dto.PassengerListResponse;
 import org.springframework.data.domain.PageRequest;
 
 public interface PassengerService {
-    PassengerResponseList getAll();
+    PassengerListResponse getAll();
     PassengerResponse addPassenger(PassengerRequest passengerReqDto);
     PassengerResponse deletePassengerById(Long passengerId);
     PassengerResponse getById(Long id) ;

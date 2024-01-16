@@ -4,7 +4,7 @@ package com.modsen.passengerservice.controllers;
 import com.modsen.passengerservice.dto.PassengerPageResponse;
 import com.modsen.passengerservice.dto.PassengerRequest;
 import com.modsen.passengerservice.dto.PassengerResponse;
-import com.modsen.passengerservice.dto.PassengerResponseList;
+import com.modsen.passengerservice.dto.PassengerListResponse;
 import com.modsen.passengerservice.services.PassengerServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class PassengerController {
     private final PassengerServiceImpl passengerService;
 
     @GetMapping
-    public ResponseEntity<PassengerResponseList> getAll(){
+    public ResponseEntity<PassengerListResponse> getAll(){
         return ResponseEntity.ok(passengerService.getAll());
     }
 

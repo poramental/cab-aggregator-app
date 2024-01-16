@@ -8,6 +8,6 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class PassengerResponseList {
+public class PassengerListResponse {
     private List<PassengerResponse> passengerList;
 }

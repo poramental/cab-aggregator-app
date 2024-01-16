@@ -4,7 +4,7 @@ package com.modsen.passengerservice.services;
 import com.modsen.passengerservice.dto.PassengerPageResponse;
 import com.modsen.passengerservice.dto.PassengerRequest;
 import com.modsen.passengerservice.dto.PassengerResponse;
-import com.modsen.passengerservice.dto.PassengerResponseList;
+import com.modsen.passengerservice.dto.PassengerListResponse;
 import com.modsen.passengerservice.entities.Passenger;
 import com.modsen.passengerservice.exceptions.*;
 import com.modsen.passengerservice.mappers.PassengerMapper;
@@ -29,8 +29,8 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
 
-    public PassengerResponseList getAll(){
-        return new PassengerResponseList(passengerRepository.findAll().stream()
+    public PassengerListResponse getAll(){
+        return new PassengerListResponse(passengerRepository.findAll().stream()
                 .map(passengerMapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
@@ -98,7 +98,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     private void checkPhoneExist(PassengerRequest passengerDto) {
-        if(passengerRepository.existsByPhone(passengerDto.getPhone())){
+        if (passengerRepository.existsByPhone(passengerDto.getPhone())) {
             throw new PassengerAlreadyExistException(String.format(
                     ExceptionMessages.PASSENGER_WITH_PHONE_ALREADY_EXIST,
                     passengerDto.getPhone()));
@@ -106,7 +106,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     private void checkEmailExist(PassengerRequest passengerDto) {
-        if (passengerRepository.existsByEmail(passengerDto.getEmail())){
+        if (passengerRepository.existsByEmail(passengerDto.getEmail())) {
             throw new PassengerAlreadyExistException(String.format(
                     ExceptionMessages.PASSENGER_WITH_EMAIL_ALREADY_EXIST,
                     passengerDto.getEmail()));
@@ -114,7 +114,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     private void checkUsernameExist(PassengerRequest passengerDto) {
-        if (passengerRepository.existsByUsername(passengerDto.getUsername())){
+        if (passengerRepository.existsByUsername(passengerDto.getUsername())) {
             throw new PassengerAlreadyExistException(String.format(
                     ExceptionMessages.PASSENGER_WITH_USERNAME_ALREADY_EXIST,
                     passengerDto.getUsername())
@@ -141,7 +141,7 @@ public class PassengerServiceImpl implements PassengerService {
                                             T param,
                                             String exMessage,
                                             Function<T,Optional<Passenger>> repositoryFunc) {
-        if(rating > 5 || rating < 0) {
+        if (rating > 5 || rating < 0) {
             throw new RatingException(ExceptionMessages.RATING_EXCEPTION);
         }
         Passenger passenger = repositoryFunc.apply(param)
