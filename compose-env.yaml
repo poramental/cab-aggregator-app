@@ -1,6 +1,6 @@
 version: '3'
 services:
-  db-driver-service:
+  db-ride-service:
     image: postgres
     ports:
       - 5446:5432
