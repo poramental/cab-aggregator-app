@@ -1,8 +1,6 @@
 package com.modsen.paymentservice.services;
 
-import com.modsen.paymentservice.dto.CardRequest;
-import com.modsen.paymentservice.dto.CustomerRequest;
-import com.modsen.paymentservice.dto.CustomerResponse;
+import com.modsen.paymentservice.dto.*;
 import com.modsen.paymentservice.exceptions.*;
 import com.modsen.paymentservice.models.User;
 import com.modsen.paymentservice.repositories.UserRepository;
@@ -10,10 +8,10 @@ import com.modsen.paymentservice.services.interfaces.PaymentService;
 import com.modsen.paymentservice.util.ExceptionMessage;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Charge;
 import com.stripe.model.Customer;
 import com.stripe.model.PaymentMethod;
 import com.stripe.model.Token;
-import com.modsen.paymentservice.dto.TokenDto;
 import com.stripe.param.CustomerCreateParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -149,5 +147,26 @@ public class PaymentServiceImpl implements PaymentService {
         } catch (StripeException stripeException) {
             throw new PaymentException(stripeException.getMessage());
         }
+    }
+
+    private Charge checkChargeData(ChargeRequest request) {
+        try {
+            return Charge.create(
+                    Map.of(
+                            "amount", request.getAmount() * 100,
+                            "currency", request.getCurrency(),
+                            "source", request.getCardToken()
+                    )
+            );
+        } catch (StripeException stripeException) {
+            throw new PaymentException(stripeException.getMessage());
+        }
+    }
+
+    public MessageResponse charge(ChargeRequest chargeRequest) {
+        Stripe.apiKey = SECRET_KEY;
+        Charge charge = checkChargeData(chargeRequest);
+        String message = "Payment successful. ID: " + charge.getId();
+        return MessageResponse.builder().message(message).build();
     }
 }

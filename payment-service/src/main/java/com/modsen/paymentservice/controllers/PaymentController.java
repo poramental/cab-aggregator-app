@@ -1,9 +1,6 @@
 package com.modsen.paymentservice.controllers;
 
-import com.modsen.paymentservice.dto.CardRequest;
-import com.modsen.paymentservice.dto.CustomerRequest;
-import com.modsen.paymentservice.dto.CustomerResponse;
-import com.modsen.paymentservice.dto.TokenDto;
+import com.modsen.paymentservice.dto.*;
 import com.modsen.paymentservice.services.PaymentServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,4 +30,10 @@ public class PaymentController {
     public CustomerResponse findCustomer(@PathVariable long id) {
         return paymentService.retrieve(id);
     }
+
+    @PostMapping("/charge")
+    public MessageResponse chargeCard(@RequestBody @Valid ChargeRequest chargeRequest) {
+        return paymentService.charge(chargeRequest);
+    }
+
 }
