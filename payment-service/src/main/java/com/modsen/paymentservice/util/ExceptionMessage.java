@@ -9,4 +9,5 @@ public class ExceptionMessage {
     public static final String PAYMENT_EXCEPTION = "Payment creating error :";
     public static final String GENERATION_TOKEN_EXCEPTION = "Error generating token: ";
     public static final String CUSTOMER_NOT_FOUND_EXCEPTION = "Customer is not found";
+    public static final String BALANCE_EXCEPTION = "Not enough money in the account";
 }

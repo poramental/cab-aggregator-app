@@ -170,7 +170,6 @@ public class PaymentServiceImpl implements PaymentService {
         return MessageResponse.builder().message(message).build();
     }
 
-
     private Balance retrieveBalance() {
         try {
             return Balance.retrieve();
@@ -220,7 +219,7 @@ public class PaymentServiceImpl implements PaymentService {
         Customer customer = retrieveCustomer(customerId);
         Long balance = customer.getBalance();
         if (balance < amount) {
-            throw new BalanceException("Not enough money in the account");
+            throw new BalanceException(ExceptionMessage.BALANCE_EXCEPTION);
         }
     }
 
