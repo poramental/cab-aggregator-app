@@ -36,4 +36,11 @@ public class PaymentController {
         return paymentService.charge(chargeRequest);
     }
 
+    @GetMapping("/balance")
+    public BalanceResponse balance() {
+        return paymentService.balance();
+    }
+
+
+
 }

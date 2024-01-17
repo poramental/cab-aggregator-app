@@ -8,10 +8,7 @@ import com.modsen.paymentservice.services.interfaces.PaymentService;
 import com.modsen.paymentservice.util.ExceptionMessage;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Charge;
-import com.stripe.model.Customer;
-import com.stripe.model.PaymentMethod;
-import com.stripe.model.Token;
+import com.stripe.model.*;
 import com.stripe.param.CustomerCreateParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -168,5 +165,25 @@ public class PaymentServiceImpl implements PaymentService {
         Charge charge = checkChargeData(chargeRequest);
         String message = "Payment successful. ID: " + charge.getId();
         return MessageResponse.builder().message(message).build();
+    }
+
+
+    private Balance retrieveBalance() {
+        try {
+            return Balance.retrieve();
+
+        } catch (StripeException stripeException) {
+            throw new PaymentException(stripeException.getMessage());
+        }
+    }
+
+    public BalanceResponse balance() {
+        Stripe.apiKey = SECRET_KEY;
+        Balance balance = retrieveBalance();
+        return BalanceResponse
+                .builder()
+                .amount(balance.getPending().get(0).getAmount())
+                .currency(balance.getPending().get(0).getCurrency())
+                .build();
     }
 }
