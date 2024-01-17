@@ -41,6 +41,9 @@ public class PaymentController {
         return paymentService.balance();
     }
 
-
+    @PostMapping("/customers/charge")
+    public ChargeResponse chargeFromCustomer(@RequestBody @Valid CustomerChargeRequest request) {
+        return paymentService.chargeFromCustomer(request);
+    }
 
 }

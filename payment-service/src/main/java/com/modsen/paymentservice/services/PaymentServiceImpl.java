@@ -3,6 +3,7 @@ package com.modsen.paymentservice.services;
 import com.modsen.paymentservice.dto.*;
 import com.modsen.paymentservice.exceptions.*;
 import com.modsen.paymentservice.models.User;
+import com.modsen.paymentservice.enums.PaymentMethodEnum;
 import com.modsen.paymentservice.repositories.UserRepository;
 import com.modsen.paymentservice.services.interfaces.PaymentService;
 import com.modsen.paymentservice.util.ExceptionMessage;
@@ -10,6 +11,8 @@ import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.param.CustomerCreateParams;
+import com.stripe.param.CustomerUpdateParams;
+import com.stripe.param.PaymentIntentConfirmParams;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -185,5 +188,70 @@ public class PaymentServiceImpl implements PaymentService {
                 .amount(balance.getPending().get(0).getAmount())
                 .currency(balance.getPending().get(0).getCurrency())
                 .build();
+    }
+
+    private PaymentIntent confirmIntent(CustomerChargeRequest request, String customerId) {
+        PaymentIntent intent = createIntent(request, customerId);
+        PaymentIntentConfirmParams params =
+                PaymentIntentConfirmParams.builder()
+                        .setPaymentMethod(PaymentMethodEnum.VISA.getMethod())
+                        .build();
+        try {
+            return intent.confirm(params);
+        } catch (StripeException stripeException) {
+            throw new PaymentException(stripeException.getMessage());
+        }
+
+    }
+
+    private PaymentIntent createIntent(CustomerChargeRequest request, String customerId) {
+        try {
+            PaymentIntent intent = PaymentIntent.create(Map.of("amount", request.getAmount() * 100,
+                    "currency", request.getCurrency(),
+                    "customer", customerId));
+            intent.setPaymentMethod(customerId);
+            return intent;
+        } catch (StripeException stripeException) {
+            throw new PaymentException(stripeException.getMessage());
+        }
+    }
+
+    private void checkBalance(String customerId, long amount) {
+        Customer customer = retrieveCustomer(customerId);
+        Long balance = customer.getBalance();
+        if (balance < amount) {
+            throw new BalanceException("Not enough money in the account");
+        }
+    }
+
+    private void updateBalance(String customerId, long amount) {
+        Customer customer = retrieveCustomer(customerId);
+        CustomerUpdateParams params =
+                CustomerUpdateParams.builder()
+                        .setBalance(customer.getBalance() - amount * 100)
+                        .build();
+        Stripe.apiKey = SECRET_KEY;
+        updateCustomer(customer, params);
+    }
+
+    private void updateCustomer(Customer customer, CustomerUpdateParams params) {
+        try {
+            customer.update(params);
+        } catch (StripeException stripeException) {
+            throw new PaymentException(stripeException.getMessage());
+        }
+    }
+
+    public ChargeResponse chargeFromCustomer(CustomerChargeRequest customerChargeRequest) {
+        Stripe.apiKey = SECRET_KEY;
+        Long passengerId = customerChargeRequest.getPassengerId();
+        User user = getOrThrow(passengerId);
+        String customerId = user.getCustomerId();
+        checkBalance(customerId, customerChargeRequest.getAmount());
+        PaymentIntent intent = confirmIntent(customerChargeRequest, customerId);
+        updateBalance(customerId, customerChargeRequest.getAmount());
+        return ChargeResponse.builder().id(intent.getId())
+                .amount(intent.getAmount() / 100)
+                .currency(intent.getCurrency()).build();
     }
 }
