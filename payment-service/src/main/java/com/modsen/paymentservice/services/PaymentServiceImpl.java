@@ -3,10 +3,7 @@ package com.modsen.paymentservice.services;
 import com.modsen.paymentservice.dto.CardRequest;
 import com.modsen.paymentservice.dto.CustomerRequest;
 import com.modsen.paymentservice.dto.CustomerResponse;
-import com.modsen.paymentservice.exceptions.CustomerAlreadyExistException;
-import com.modsen.paymentservice.exceptions.CustomerCreatingException;
-import com.modsen.paymentservice.exceptions.PaymentException;
-import com.modsen.paymentservice.exceptions.TokenException;
+import com.modsen.paymentservice.exceptions.*;
 import com.modsen.paymentservice.models.User;
 import com.modsen.paymentservice.repositories.UserRepository;
 import com.modsen.paymentservice.services.interfaces.PaymentService;
@@ -128,5 +125,29 @@ public class PaymentServiceImpl implements PaymentService {
             Stripe.apiKey = SECRET_KEY;
         }
 
+    }
+
+    public CustomerResponse retrieve(long id) {
+        Stripe.apiKey = SECRET_KEY;
+        String customerId = getOrThrow(id).getCustomerId();
+        Customer customer = retrieveCustomer(customerId);
+        return CustomerResponse.builder()
+                .id(customer.getId())
+                .email(customer.getEmail())
+                .phone(customer.getPhone())
+                .name(customer.getName()).build();
+    }
+
+    private User getOrThrow(Long id){
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND_EXCEPTION));
+    }
+
+    private Customer retrieveCustomer(String customerId) {
+        try {
+            return Customer.retrieve(customerId);
+        } catch (StripeException stripeException) {
+            throw new PaymentException(stripeException.getMessage());
+        }
     }
 }

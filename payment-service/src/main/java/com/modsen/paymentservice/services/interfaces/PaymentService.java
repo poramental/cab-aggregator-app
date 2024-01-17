@@ -8,4 +8,5 @@ import com.modsen.paymentservice.dto.TokenDto;
 public interface PaymentService {
     CustomerResponse createCustomer(CustomerRequest customerRequest);
     TokenDto generateTokenByCard(CardRequest cardRequest);
+    public CustomerResponse retrieve(long id);
 }

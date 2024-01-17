@@ -8,4 +8,5 @@ public class ExceptionMessage {
     public static final String CUSTOMER_ALREADY_EXIST_EXCEPTION = "Customer with id: '%s' is present";
     public static final String PAYMENT_EXCEPTION = "Payment creating error :";
     public static final String GENERATION_TOKEN_EXCEPTION = "Error generating token: ";
+    public static final String CUSTOMER_NOT_FOUND_EXCEPTION = "Customer is not found";
 }

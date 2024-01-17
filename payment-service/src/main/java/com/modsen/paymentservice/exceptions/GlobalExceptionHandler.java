@@ -22,4 +22,11 @@ public class GlobalExceptionHandler {
                 .body(new AppError(e.getMessage()));
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<AppError> notFoundException(RuntimeException e){
+        return ResponseEntity
+                .status(HttpStatus.NOT_FOUND)
+                .body(new AppError(e.getMessage()));
+    }
+
 }
