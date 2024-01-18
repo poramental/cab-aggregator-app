@@ -172,7 +172,8 @@ public class PassengerServiceImpl implements PassengerService {
     private void validateSortingParameter(String orderBy) {
        Arrays.stream(PassengerResponse.class.getDeclaredFields())
                 .map(Field::getName)
-                .filter(orderBy::equals).toList().stream().findFirst()
+                .filter(orderBy::equals)
+                .findFirst()
                 .orElseThrow(() -> new SortTypeException(ExceptionMessages.INVALID_TYPE_OF_SORT));
 
     }
