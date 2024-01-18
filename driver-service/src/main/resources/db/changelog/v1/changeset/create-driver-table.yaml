@@ -1,0 +1,60 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-driver
+      author: Alexey
+      preConditions:
+        - onFail: MARK_RAN
+          or:
+            - not:
+          tableExists:
+          tableName: drivers
+      changes:
+        - createTable:
+            tableName: drivers
+            columns:
+              - column:
+                  name: driver_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: phone
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: surname
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: average_rating
+                  type: decimal
+                  constraints:
+                    nullable: true
+              - column:
+                  name: ratings_count
+                  type: integer
+                  constraints:
+                    nullable: true
+              - column:
+                  name: email
+                  type: varchar(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: auto_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+
+      rollback:
+        - dropTable:
+            tableName: passengers
