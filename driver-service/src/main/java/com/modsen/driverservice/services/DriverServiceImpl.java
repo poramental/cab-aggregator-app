@@ -1,6 +1,7 @@
 package com.modsen.driverservice.services;
 
 import com.modsen.driverservice.dto.*;
+import com.modsen.driverservice.entities.Auto;
 import com.modsen.driverservice.entities.Driver;
 import com.modsen.driverservice.exceptions.*;
 import com.modsen.driverservice.mappers.AutoMapper;
@@ -33,8 +34,8 @@ public class DriverServiceImpl implements DriverService {
     private final PaginationService paginationService;
 
 
-    public DriverResponseList getAll(){
-        return new DriverResponseList(driverRepository.findAll().stream()
+    public DriverListResponse getAll(){
+        return new DriverListResponse(driverRepository.findAll().stream()
                 .map(driverMapper::entityToRespDto)
                 .collect(Collectors.toList()));
     }
@@ -57,7 +58,7 @@ public class DriverServiceImpl implements DriverService {
     private void checkDriverEmailExist(String email){
         checkDriverParamExist(
                 email,
-                driverRepository::findByEmail,
+                driverRepository::existsByEmail,
                 String.format(ExceptionMessage.DRIVER_EMAIL_ALREADY_EXIST_EXCEPTION,email)
         );
     }
@@ -78,9 +79,12 @@ public class DriverServiceImpl implements DriverService {
 
     public DriverResponse update(Long id, DriverRequest driverDto)
     {
+        Driver oldDriver = getDriverOrThrow(id);
         preUpdateAllParamsCheck(driverDto, id);
-        Driver driver = driverMapper.reqDtoToEntity(driverDto);
-        return driverMapper.entityToRespDto(driverRepository.save(driver));
+        Driver newDriver = driverMapper.reqDtoToEntity(driverDto);
+        newDriver.setId(oldDriver.getId());
+        return driverMapper.entityToRespDto(driverRepository
+                .save(newDriver.setAutos(oldDriver.getAutos())));
     }
 
     public DriverResponse addRatingById(Long id, int rating)
@@ -115,7 +119,7 @@ public class DriverServiceImpl implements DriverService {
     {
         checkDriverParamExist(
                 phone,
-                driverRepository::findByPhone,
+                driverRepository::existsByPhone,
                 String.format(ExceptionMessage.DRIVER_PHONE_ALREADY_EXIST_EXCEPTION,phone)
         );
     }
@@ -126,12 +130,13 @@ public class DriverServiceImpl implements DriverService {
         preUpdatePhoneCheck(id, driverDto);
     }
 
-    private <T> void checkDriverParamExist(T param,
-                                          Function<T, Optional<Driver>> repositoryFunc,
+    private void checkDriverParamExist(String param,
+                                          Function<String, Boolean> repositoryFunc,
                                           String exMessage)
-            throws DriverAlreadyExistException{
-        repositoryFunc.apply(param).orElseThrow(() -> new DriverAlreadyExistException(exMessage));
-
+    {
+        if(repositoryFunc.apply(param)){
+            throw new DriverAlreadyExistException(exMessage);
+        }
     }
 
     private void preUpdateEmailCheck(Long id, DriverRequest driverDto)
@@ -149,7 +154,7 @@ public class DriverServiceImpl implements DriverService {
             checkDriverPhoneExist(driverDto.getPhone());
     }
 
-    public DriverResponse setAutoById(Long driver_id, AutoDto autoDto)
+    public DriverResponse setAutoById(Long driver_id, AutoRequest autoDto)
     {
         return setAuto(
                 driver_id,
@@ -159,16 +164,20 @@ public class DriverServiceImpl implements DriverService {
         );
     }
 
+    //метод ставит машину водителю если машина и водитель свободны
     private <T> DriverResponse setAuto(T param,
-                                       AutoDto autoDto,
+                                       AutoRequest autoDto,
                                        Function<T, Optional<Driver>>repositoryFunc,
                                        String exceptionMessage)
     {
         Driver driver = repositoryFunc.apply(param).orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
-        autoRepository.findByNumber(autoDto.getNumber()).orElseThrow(() -> new AutoAlreadyExistException(String.format(
-                ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION,
-                autoDto.getNumber()))
-        );
+
+        if(autoRepository.existsByNumber(autoDto.getNumber())){
+            throw new AutoAlreadyExistException(String.format(
+                    ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION,
+                    autoDto.getNumber()));
+        }
+
         if (!driver.getAutos().isEmpty())
             throw new DriverAlreadyHaveAutoException(ExceptionMessage.DRIVER_ALREADY_HAVE_AUTO_EXCEPTION);
         else {
@@ -177,7 +186,7 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
-    public DriverResponse replaceAutoById(Long driver_id, AutoDto autoDto)
+    public DriverResponse replaceAutoById(Long driver_id, AutoRequest autoDto)
     {
         return replaceAuto(
                 driver_id,
@@ -187,18 +196,27 @@ public class DriverServiceImpl implements DriverService {
         );
     }
 
+    //метод ставит новую машину если такой нет, и старую если находит машину в базе по номеру
     private <T> DriverResponse replaceAuto(
             T param,
-            AutoDto autoDto,
+            AutoRequest autoDto,
             Function<T,Optional<Driver>> driverRepositoryFunc,
             String exceptionMessage)
     {
+        Optional<Auto> autoOpt = autoRepository.findByNumber(autoDto.getNumber());
+
         Driver driver = driverRepositoryFunc.apply(param)
                 .orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
-        autoRepository.findByNumber(autoDto.getNumber())
-                .orElseThrow(() -> new AutoAlreadyExistException(String
-                        .format(ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION, autoDto.getNumber())));
-        driver.getAutos().set(0,autoMapper.dtoToEntity(autoDto));
+        driver.getAutos().get(0).setDriverId(null);
+        driver.getAutos().clear();
+        if(autoOpt.isPresent()){
+            Auto oldAuto = autoOpt.get();
+            Auto newAuto = autoMapper.dtoToEntity(autoDto).setId(oldAuto.getId());
+            driver.getAutos().add(autoRepository.save(newAuto.setDriverId(driver.getId())));
+        }else {
+            driver.getAutos().add(autoMapper.dtoToEntity(autoDto).setDriverId(driver.getId()));
+        }
+
         return driverMapper.entityToRespDto(driverRepository.save(driver));
     }
 

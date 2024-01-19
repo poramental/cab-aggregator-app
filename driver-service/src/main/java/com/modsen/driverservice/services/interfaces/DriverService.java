@@ -3,7 +3,7 @@ package com.modsen.driverservice.services.interfaces;
 import com.modsen.driverservice.dto.*;
 
 public interface DriverService {
-    DriverResponseList getAll();
+    DriverListResponse getAll();
     DriverResponse add(DriverRequest driverDto);
 
     DriverResponse deleteById(Long id);
@@ -12,9 +12,9 @@ public interface DriverService {
 
     DriverResponse addRatingById(Long id, int rating);
 
-    DriverResponse setAutoById(Long driver_id, AutoDto autoDto);
+    DriverResponse setAutoById(Long driver_id, AutoRequest autoDto);
 
-    DriverResponse replaceAutoById(Long driver_id, AutoDto autoDto);
+    DriverResponse replaceAutoById(Long driver_id, AutoRequest autoDto);
 
     DriverPageResponse getDriversPage(int page, int size, String orderBy);
 

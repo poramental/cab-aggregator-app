@@ -1,17 +1,18 @@
 package com.modsen.driverservice.services.interfaces;
 
-import com.modsen.driverservice.dto.AutoDto;
+import com.modsen.driverservice.dto.AutoRequest;
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.dto.AutoResponseList;
+import com.modsen.driverservice.dto.AutoListResponse;
+import com.modsen.driverservice.dto.AutoResponse;
 
 public interface AutoService {
-    AutoResponseList getAll();
+    AutoListResponse getAll();
 
-    AutoDto getByNumber(String number);
+    AutoResponse getByNumber(String number);
 
-    AutoDto getById(Long id);
+    AutoResponse getById(Long id);
 
-    AutoDto deleteById(Long id);
+    AutoResponse deleteById(Long id);
 
     AutoPageResponse getAutosPage(int page, int size, String orderBy);
 

@@ -2,7 +2,7 @@ package com.modsen.rideservice.controllers;
 
 import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.RideResponse;
-import com.modsen.rideservice.dto.RideResponseList;
+import com.modsen.rideservice.dto.RideListReponse;
 import com.modsen.rideservice.services.RideServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class RideController {
     }
 
     @GetMapping
-    public ResponseEntity<RideResponseList> getAll(){
+    public ResponseEntity<RideListReponse> getAll(){
         return ResponseEntity.ok(rideService.getAll());
     }
 
@@ -44,14 +44,14 @@ public class RideController {
     }
 
     @GetMapping("/all-passenger-rides-by-id")
-    public ResponseEntity<RideResponseList> getAllPassengerRidesById(
+    public ResponseEntity<RideListReponse> getAllPassengerRidesById(
             @RequestParam(name = "passenger_id") Long passengerId
     ) {
         return ResponseEntity.ok(rideService.getAllPassengerRidesById(passengerId));
     }
 
     @GetMapping("/all-driver-rides-by-id")
-    public ResponseEntity<RideResponseList> getAllDriverRidesById(
+    public ResponseEntity<RideListReponse> getAllDriverRidesById(
             @RequestParam(name = "driver_id") Long driverId
     ){
         return ResponseEntity.ok(rideService.getAllDriverRidesById(driverId));

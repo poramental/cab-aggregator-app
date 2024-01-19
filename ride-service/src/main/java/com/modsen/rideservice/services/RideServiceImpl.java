@@ -2,9 +2,11 @@ package com.modsen.rideservice.services;
 
 import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.RideResponse;
-import com.modsen.rideservice.dto.RideResponseList;
+import com.modsen.rideservice.dto.RideListReponse;
 import com.modsen.rideservice.entities.Ride;
 import com.modsen.rideservice.exceptions.*;
+import com.modsen.rideservice.feignclients.DriverFeignClient;
+import com.modsen.rideservice.feignclients.PassengerFeignClient;
 import com.modsen.rideservice.mappers.RideMapper;
 import com.modsen.rideservice.repositories.RideRepository;
 import com.modsen.rideservice.services.interfaces.RideService;
@@ -24,9 +26,13 @@ public class RideServiceImpl implements RideService {
 
     private final RideMapper mapper;
 
-    public RideResponseList getAll()
+    private final PassengerFeignClient passengerFeignClient;
+
+    private final DriverFeignClient driverFeignClient;
+
+    public RideListReponse getAll()
     {
-        return new RideResponseList(repository.findAll().stream()
+        return new RideListReponse(repository.findAll().stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
@@ -39,17 +45,17 @@ public class RideServiceImpl implements RideService {
                         id))));
     }
 
-    public RideResponseList getAllPassengerRidesById(Long passengerId)
+    public RideListReponse getAllPassengerRidesById(Long passengerId)
     {
-        return new RideResponseList(repository.findAllByPassengerId(passengerId)
+        return new RideListReponse(repository.findAllByPassengerId(passengerId)
                 .stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
 
-    public RideResponseList getAllDriverRidesById(Long driverId)
+    public RideListReponse getAllDriverRidesById(Long driverId)
     {
-        return new RideResponseList(repository.findAllByDriverId(driverId)
+        return new RideListReponse(repository.findAllByDriverId(driverId)
                 .stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
@@ -57,6 +63,7 @@ public class RideServiceImpl implements RideService {
 
     public RideResponse acceptRide(Long rideId, Long driverId)
     {
+        driverFeignClient.getDriverById(driverId);
         Ride ride =getOrThrow(rideId);
         if (Objects.nonNull(ride.getDriverId())) {
             throw new RideAlreadyHaveDriverException(String.format(
@@ -69,10 +76,12 @@ public class RideServiceImpl implements RideService {
 
     public RideResponse cancelRide(Long rideId, Long driverId)
     {
+        driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
         return mapper.entityToResponse(ride);
     }
 
+    //TODO надо добавить драйвер айди что бы не любой мог начать
     public RideResponse startRide(Long rideId)
     {
         Ride ride = getOrThrow(rideId);
@@ -133,7 +142,7 @@ public class RideServiceImpl implements RideService {
             );
         }
     }
-
+    //TODO надо добавить драйвер айди что бы не любой мог закончить
     public RideResponse endRide(Long rideId)
     {
         Ride ride = getOrThrow(rideId);
@@ -148,6 +157,7 @@ public class RideServiceImpl implements RideService {
     public RideResponse findRide(RideRequest rideReqDto)
     {
         Ride ride = mapper.requestToEntity(rideReqDto);
+        System.out.println(passengerFeignClient.getPassengerById(ride.getPassengerId()));
         ride.setStartDate(LocalDate.now());
         return mapper.entityToResponse(repository.save(ride));
     }

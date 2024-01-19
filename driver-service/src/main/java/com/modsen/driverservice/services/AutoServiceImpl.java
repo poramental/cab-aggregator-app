@@ -1,8 +1,9 @@
 package com.modsen.driverservice.services;
 
-import com.modsen.driverservice.dto.AutoDto;
+import com.modsen.driverservice.dto.AutoRequest;
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.dto.AutoResponseList;
+import com.modsen.driverservice.dto.AutoListResponse;
+import com.modsen.driverservice.dto.AutoResponse;
 import com.modsen.driverservice.entities.Auto;
 import com.modsen.driverservice.exceptions.*;
 import com.modsen.driverservice.mappers.AutoMapper;
@@ -26,25 +27,25 @@ public class AutoServiceImpl implements AutoService {
 
     private final PaginationService paginationService;
 
-    public AutoResponseList getAll()
+    public AutoListResponse getAll()
     {
-        return new AutoResponseList(autoRepository.findAll().stream()
+        return new AutoListResponse(autoRepository.findAll().stream()
                 .map(autoMapper::entityToDto).collect(Collectors.toList()));
     }
 
-    public AutoDto getByNumber(String number)
+    public AutoResponse getByNumber(String number)
     {
         Auto auto = getOrThrowByNumber(number);
         return autoMapper.entityToDto(auto);
     }
 
-    public AutoDto getById(Long id)
+    public AutoResponse getById(Long id)
     {
         Auto auto = getOrThrowById(id);
         return autoMapper.entityToDto(auto);
     }
 
-    public AutoDto deleteById(Long id)
+    public AutoResponse deleteById(Long id)
     {
         Auto auto = getOrThrowById(id);
         autoRepository.delete(auto);
@@ -64,7 +65,7 @@ public class AutoServiceImpl implements AutoService {
         List<Auto> retrievedDrivers = autosPage.getContent();
         long total = autosPage.getTotalElements();
 
-        List<AutoDto> autos = retrievedDrivers.stream()
+        List<AutoResponse> autos = retrievedDrivers.stream()
                 .map(autoMapper::entityToDto)
                 .toList();
 

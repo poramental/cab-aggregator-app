@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class AutoResponseList {
-    private List<AutoDto> autoDtoList;
+public class AutoListResponse {
+    private List<AutoResponse> autoDtoList;
 }

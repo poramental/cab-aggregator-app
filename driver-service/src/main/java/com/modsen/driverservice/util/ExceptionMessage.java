@@ -8,7 +8,7 @@ public class ExceptionMessage{
     public static final String AUTO_NUMBER_ALREADY_EXIST_EXCEPTION = "Auto with number: '%s' is present.";
     public static final String AUTO_NOT_FOUND_EXCEPTION = "Auto with id: '%s' not found.";
     public static final String DRIVER_PHONE_ALREADY_EXIST_EXCEPTION = "Driver with phone: '%s' is present.";
-    public static final String DRIVER_EMAIL_ALREADY_EXIST_EXCEPTION = "Driver with phone: '%s' is present.";
+    public static final String DRIVER_EMAIL_ALREADY_EXIST_EXCEPTION = "Driver with email: '%s' is present.";
     public static final String DRIVER_ALREADY_HAVE_AUTO_EXCEPTION = "Driver already have auto.";
     public static final String DRIVER_NOT_FOUND_EXCEPTION = "Driver with id: '%s' is not found.";
     public static final String RATING_EXCEPTION = "invalid rating.";

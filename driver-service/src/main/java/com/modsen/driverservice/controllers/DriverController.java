@@ -19,7 +19,7 @@ public class DriverController {
 
 
     @GetMapping
-    public ResponseEntity<DriverResponseList> getAll(){
+    public ResponseEntity<DriverListResponse> getAll(){
         return ResponseEntity.ok(driverService.getAll());
     }
 
@@ -62,7 +62,7 @@ public class DriverController {
 
     @PostMapping("{driver_id}/auto")
     public ResponseEntity<DriverResponse> setAutoById(@PathVariable(name = "driver_id") Long driver_id,
-                                                      @RequestBody AutoDto autoDto)
+                                                      @RequestBody AutoRequest autoDto)
     {
         return ResponseEntity.ok(driverService.setAutoById(driver_id,autoDto));
     }
@@ -76,7 +76,7 @@ public class DriverController {
 
     @PutMapping("/{driver_id}/auto")
     public  ResponseEntity<DriverResponse> replaceAutoById(@PathVariable(name = "driver_id") Long driver_id,
-                                                           @RequestBody @Valid AutoDto autoDto)
+                                                           @RequestBody @Valid AutoRequest autoDto)
     {
         return ResponseEntity.ok(driverService.replaceAutoById(driver_id,autoDto));
     }

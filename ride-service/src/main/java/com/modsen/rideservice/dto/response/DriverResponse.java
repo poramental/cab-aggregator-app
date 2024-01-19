@@ -1,8 +1,8 @@
-package com.modsen.driverservice.dto;
-
+package com.modsen.rideservice.dto.response;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
+
 import java.util.List;
 
 @Data

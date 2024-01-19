@@ -1,8 +1,9 @@
 package com.modsen.driverservice.controllers;
 
-import com.modsen.driverservice.dto.AutoDto;
+import com.modsen.driverservice.dto.AutoRequest;
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.dto.AutoResponseList;
+import com.modsen.driverservice.dto.AutoListResponse;
+import com.modsen.driverservice.dto.AutoResponse;
 import com.modsen.driverservice.services.AutoServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,25 +20,25 @@ public class AutoController {
 
 
     @GetMapping
-    public ResponseEntity<AutoResponseList> getAll()
+    public ResponseEntity<AutoListResponse> getAll()
     {
         return ResponseEntity.ok(autoService.getAll());
     }
 
     @GetMapping("/by-number")
-    public ResponseEntity<AutoDto> getByNumber(@RequestParam(name = "number") String number)
+    public ResponseEntity<AutoResponse> getByNumber(@RequestParam(name = "number") String number)
     {
         return ResponseEntity.ok(autoService.getByNumber(number));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AutoDto> getById(@PathVariable(name = "id") Long id)
+    public ResponseEntity<AutoResponse> getById(@PathVariable(name = "id") Long id)
     {
         return ResponseEntity.ok(autoService.getById(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<AutoDto> deleteById(@PathVariable(name = "id") Long id)
+    public ResponseEntity<AutoResponse> deleteById(@PathVariable(name = "id") Long id)
     {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

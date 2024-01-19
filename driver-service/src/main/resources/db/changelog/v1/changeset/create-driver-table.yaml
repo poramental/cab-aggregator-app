@@ -6,8 +6,8 @@ databaseChangeLog:
         - onFail: MARK_RAN
           or:
             - not:
-          tableExists:
-          tableName: drivers
+                tableExists:
+                  tableName: drivers
       changes:
         - createTable:
             tableName: drivers

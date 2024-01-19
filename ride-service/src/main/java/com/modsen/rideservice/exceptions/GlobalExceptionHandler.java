@@ -19,8 +19,8 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler
-    public ResponseEntity<AppError> rideNotFoundExceptionHandler(RideNotFoundException e){
+    @ExceptionHandler({RideNotFoundException.class, NotFoundException.class})
+    public ResponseEntity<AppError> notFoundException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
     }
 

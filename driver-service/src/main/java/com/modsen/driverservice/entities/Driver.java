@@ -30,7 +30,7 @@ public class Driver {
 
     private String surname;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = false)
     @JoinColumn(name = "driver_id")
     private List<Auto> autos = new ArrayList<>();
 

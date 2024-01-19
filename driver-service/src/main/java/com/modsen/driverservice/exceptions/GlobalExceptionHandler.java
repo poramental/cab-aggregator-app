@@ -17,7 +17,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({AutoAlreadyExistException.class,DriverAlreadyExistException.class,DriverAlreadyHaveAutoException.class})
-    public ResponseEntity<AppError> autoAlreadyExistExceptionHandler(AutoAlreadyExistException e){
+    public ResponseEntity<AppError> autoAlreadyExistExceptionHandler(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }
 

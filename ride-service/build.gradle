@@ -24,6 +24,7 @@ repositories {
 ext {
     validationVersion = '3.2.1'
     modelmapperVersion = '3.2.0'
+    feignClientVersion = '4.1.0'
 }
 
 dependencies {
@@ -36,8 +37,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation group: 'org.modelmapper', name: 'modelmapper', version:modelmapperVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
-
-
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version:feignClientVersion
 }
 
 tasks.named('test') {

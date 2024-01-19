@@ -6,8 +6,8 @@ databaseChangeLog:
         - onFail: MARK_RAN
           or:
             - not:
-          tableExists:
-          tableName: rides
+                tableExists:
+                  tableName: rides
       changes:
         - createTable:
             tableName: rides

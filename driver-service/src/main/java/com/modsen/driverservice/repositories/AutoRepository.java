@@ -7,4 +7,6 @@ import java.util.Optional;
 
 public interface AutoRepository extends JpaRepository<Auto,Long> {
     Optional<Auto> findByNumber(String number);
+
+    Boolean existsByNumber(String number);
 }
