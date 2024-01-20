@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Table(name = "rides")
 @Data
@@ -12,15 +13,14 @@ import java.time.LocalDateTime;
 public class Ride {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ride_id")
-    private Long id;
+    private UUID id;
 
     @Column(name = "driver_id")
     private Long driverId;
 
     @Column(name = "passenger_id")
-    private Long passengerId;
+    private Long passenger;
 
     @Column(name = "pick_up_address")
     private String pickUpAddress;

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("api/v1/rides")
 @RequiredArgsConstructor
@@ -19,7 +21,7 @@ public class RideController {
     @PatchMapping("/accept-ride-driver")
     public ResponseEntity<RideResponse> acceptRideByDriver(
             @RequestParam(name = "driver_id") Long driverId,
-            @RequestParam(name = "ride_id") Long rideId
+            @RequestParam(name = "ride_id") UUID rideId
     ) {
         return ResponseEntity.ok(rideService.acceptRide(rideId,driverId));
     }
@@ -27,7 +29,7 @@ public class RideController {
     @PatchMapping("/cancel-ride-driver")
     public ResponseEntity<RideResponse> cancelRideByDriver(
             @RequestParam(name = "driver_id") Long driverId,
-            @RequestParam(name = "ride_id") Long rideId
+            @RequestParam(name = "ride_id") UUID rideId
     ) {
         return ResponseEntity.ok(rideService.cancelRide(rideId,driverId));
     }
@@ -38,7 +40,7 @@ public class RideController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RideResponse> getById(@PathVariable(name = "id") Long id)
+    public ResponseEntity<RideResponse> getById(@PathVariable(name = "id") UUID id)
     {
         return ResponseEntity.ok(rideService.getById(id));
     }
@@ -58,7 +60,7 @@ public class RideController {
     }
 
     @PatchMapping("/start")
-    public ResponseEntity<RideResponse> startRide(@RequestParam("ride_id") Long rideId,
+    public ResponseEntity<RideResponse> startRide(@RequestParam("ride_id") UUID rideId,
                                                   @RequestParam("driver_id") Long driverId)
     {
         return ResponseEntity.ok(rideService.startRide(rideId, driverId));
@@ -71,7 +73,7 @@ public class RideController {
     }
 
     @PatchMapping("/end")
-    public ResponseEntity<RideResponse> endRide(@RequestParam("ride_id") Long rideId,
+    public ResponseEntity<RideResponse> endRide(@RequestParam("ride_id") UUID rideId,
                                                 @RequestParam("driver_id") Long driverId)
     {
         return ResponseEntity.ok(rideService.endRide(rideId, driverId));

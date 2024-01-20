@@ -14,8 +14,7 @@ databaseChangeLog:
             columns:
               - column:
                   name: ride_id
-                  type: bigint
-                  autoIncrement: true
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false

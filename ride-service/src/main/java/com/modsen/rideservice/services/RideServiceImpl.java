@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,7 +38,7 @@ public class RideServiceImpl implements RideService {
                 .collect(Collectors.toList()));
     }
 
-    public RideResponse getById(Long id)
+    public RideResponse getById(UUID id)
     {
         return mapper.entityToResponse(repository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(String.format(
@@ -47,7 +48,7 @@ public class RideServiceImpl implements RideService {
 
     public RideListResponse getAllPassengerRidesById(Long passengerId)
     {
-        return new RideListResponse(repository.findAllByPassengerId(passengerId)
+        return new RideListResponse(repository.findAllByPassenger(passengerId)
                 .stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
@@ -61,7 +62,7 @@ public class RideServiceImpl implements RideService {
                 .collect(Collectors.toList()));
     }
 
-    public RideResponse acceptRide(Long rideId, Long driverId)
+    public RideResponse acceptRide(UUID rideId, Long driverId)
     {
         driverFeignClient.getDriverById(driverId);
         Ride ride =getOrThrow(rideId);
@@ -75,14 +76,14 @@ public class RideServiceImpl implements RideService {
 
     }
 
-    public RideResponse cancelRide(Long rideId, Long driverId)
+    public RideResponse cancelRide(UUID rideId, Long driverId)
     {
         driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
         return mapper.entityToResponse(ride);
     }
 
-    public RideResponse startRide(Long rideId, Long driverId)
+    public RideResponse startRide(UUID rideId, Long driverId)
     {
         driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
@@ -115,7 +116,7 @@ public class RideServiceImpl implements RideService {
                     ride.getId())
             );
         }
-        if (Objects.isNull(ride.getPassengerId()))
+        if (Objects.isNull(ride.getPassenger()))
         {
             throw new RideHaveNoPassengerException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_HAVE_NO_PASSENGER_EXCEPTION,
@@ -135,7 +136,7 @@ public class RideServiceImpl implements RideService {
         }
     }
 
-    public RideResponse endRide(Long rideId, Long driverId)
+    public RideResponse endRide(UUID rideId, Long driverId)
     {
         driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
@@ -147,15 +148,15 @@ public class RideServiceImpl implements RideService {
         return mapper.entityToResponse(ride);
     }
 
-    public RideResponse findRide(RideRequest rideReqDto)
+    public RideResponse findRide(RideRequest rideRequest)
     {
-        Ride ride = mapper.requestToEntity(rideReqDto);
-        passengerFeignClient.getPassengerById(ride.getPassengerId());
+        Ride ride = mapper.requestToEntity(rideRequest);
+        passengerFeignClient.getPassengerById(ride.getPassenger());
         ride.setFindDate(LocalDateTime.now());
         return mapper.entityToResponse(repository.save(ride));
     }
 
-    private Ride getOrThrow(Long id)
+    private Ride getOrThrow(UUID id)
     {
         return repository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(

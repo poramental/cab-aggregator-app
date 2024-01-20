@@ -3,16 +3,17 @@ package com.modsen.rideservice.dto.response;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Accessors(chain = true)
 public class RideResponse {
 
-    private Long id;
+    private UUID id;
 
     private Long driverId;
 
-    private Long passengerId;
+    private Long passenger;
 
     private String pickUpAddress;
 
