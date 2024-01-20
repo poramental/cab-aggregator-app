@@ -3,8 +3,7 @@ package com.modsen.rideservice.entities;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.experimental.Accessors;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Table(name = "rides")
 @Data
@@ -30,10 +29,13 @@ public class Ride {
     private String dropOffAddress;
 
     @Column(name = "start_date")
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @Column(name = "end_date")
-    private LocalDate endDate;
+    private LocalDateTime endDate;
+
+    @Column(name = "find_date")
+    private LocalDateTime findDate;
 
     private Integer price;
 

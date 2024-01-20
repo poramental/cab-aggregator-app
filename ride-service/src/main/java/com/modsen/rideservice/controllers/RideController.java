@@ -1,8 +1,8 @@
 package com.modsen.rideservice.controllers;
 
 import com.modsen.rideservice.dto.RideRequest;
-import com.modsen.rideservice.dto.RideResponse;
-import com.modsen.rideservice.dto.RideListReponse;
+import com.modsen.rideservice.dto.response.RideResponse;
+import com.modsen.rideservice.dto.response.RideListResponse;
 import com.modsen.rideservice.services.RideServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class RideController {
     }
 
     @GetMapping
-    public ResponseEntity<RideListReponse> getAll(){
+    public ResponseEntity<RideListResponse> getAll(){
         return ResponseEntity.ok(rideService.getAll());
     }
 
@@ -44,23 +44,24 @@ public class RideController {
     }
 
     @GetMapping("/all-passenger-rides-by-id")
-    public ResponseEntity<RideListReponse> getAllPassengerRidesById(
+    public ResponseEntity<RideListResponse> getAllPassengerRidesById(
             @RequestParam(name = "passenger_id") Long passengerId
     ) {
         return ResponseEntity.ok(rideService.getAllPassengerRidesById(passengerId));
     }
 
     @GetMapping("/all-driver-rides-by-id")
-    public ResponseEntity<RideListReponse> getAllDriverRidesById(
+    public ResponseEntity<RideListResponse> getAllDriverRidesById(
             @RequestParam(name = "driver_id") Long driverId
     ){
         return ResponseEntity.ok(rideService.getAllDriverRidesById(driverId));
     }
 
     @PatchMapping("/start")
-    public ResponseEntity<RideResponse> startRide(@RequestParam("ride_id") Long rideId)
+    public ResponseEntity<RideResponse> startRide(@RequestParam("ride_id") Long rideId,
+                                                  @RequestParam("driver_id") Long driverId)
     {
-        return ResponseEntity.ok(rideService.startRide(rideId));
+        return ResponseEntity.ok(rideService.startRide(rideId, driverId));
     }
 
     @PostMapping("/find")
@@ -70,8 +71,9 @@ public class RideController {
     }
 
     @PatchMapping("/end")
-    public ResponseEntity<RideResponse> endRide(@RequestParam(name = "ride_id") Long rideId)
+    public ResponseEntity<RideResponse> endRide(@RequestParam("ride_id") Long rideId,
+                                                @RequestParam("driver_id") Long driverId)
     {
-        return ResponseEntity.ok(rideService.endRide(rideId));
+        return ResponseEntity.ok(rideService.endRide(rideId, driverId));
     }
 }

@@ -33,10 +33,13 @@ databaseChangeLog:
                   type: VARCHAR(255)
               - column:
                   name: start_date
-                  type: DATE
+                  type: VARCHAR(50)
               - column:
                   name: end_date
-                  type: DATE
+                  type: VARCHAR(50)
+              - column:
+                  name: find_date
+                  type: VARCHAR(50)
               - column:
                   name: price
                   type: DOUBLE

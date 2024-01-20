@@ -1,8 +1,8 @@
 package com.modsen.rideservice.services;
 
 import com.modsen.rideservice.dto.RideRequest;
-import com.modsen.rideservice.dto.RideResponse;
-import com.modsen.rideservice.dto.RideListReponse;
+import com.modsen.rideservice.dto.response.RideResponse;
+import com.modsen.rideservice.dto.response.RideListResponse;
 import com.modsen.rideservice.entities.Ride;
 import com.modsen.rideservice.exceptions.*;
 import com.modsen.rideservice.feignclients.DriverFeignClient;
@@ -14,7 +14,7 @@ import com.modsen.rideservice.util.ExceptionMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -30,9 +30,9 @@ public class RideServiceImpl implements RideService {
 
     private final DriverFeignClient driverFeignClient;
 
-    public RideListReponse getAll()
+    public RideListResponse getAll()
     {
-        return new RideListReponse(repository.findAll().stream()
+        return new RideListResponse(repository.findAll().stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
@@ -45,17 +45,17 @@ public class RideServiceImpl implements RideService {
                         id))));
     }
 
-    public RideListReponse getAllPassengerRidesById(Long passengerId)
+    public RideListResponse getAllPassengerRidesById(Long passengerId)
     {
-        return new RideListReponse(repository.findAllByPassengerId(passengerId)
+        return new RideListResponse(repository.findAllByPassengerId(passengerId)
                 .stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
 
-    public RideListReponse getAllDriverRidesById(Long driverId)
+    public RideListResponse getAllDriverRidesById(Long driverId)
     {
-        return new RideListReponse(repository.findAllByDriverId(driverId)
+        return new RideListResponse(repository.findAllByDriverId(driverId)
                 .stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
@@ -65,7 +65,8 @@ public class RideServiceImpl implements RideService {
     {
         driverFeignClient.getDriverById(driverId);
         Ride ride =getOrThrow(rideId);
-        if (Objects.nonNull(ride.getDriverId())) {
+        if (Objects.nonNull(ride.getDriverId()))
+        {
             throw new RideAlreadyHaveDriverException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_HAVE_DRIVER_EXCEPTION,
                     rideId));
@@ -81,39 +82,23 @@ public class RideServiceImpl implements RideService {
         return mapper.entityToResponse(ride);
     }
 
-    //TODO надо добавить драйвер айди что бы не любой мог начать
-    public RideResponse startRide(Long rideId)
+    public RideResponse startRide(Long rideId, Long driverId)
     {
+        driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
-        checkRideToStart(ride);
+        checkRideToStart(ride, driverId);
         ride
                 .setIsActive(true)
-                .setStartDate(LocalDate.now());
+                .setStartDate(LocalDateTime.now());
         return mapper.entityToResponse(repository.save(ride));
     }
 
 
-    private static void checkRideToStart(Ride ride)
+    private static void checkRideToStart(Ride ride, Long driverId)
     {
-        if (Objects.isNull(ride.getDriverId())){
-            throw new RideHaveNoDriverException(String.format(
-                    ExceptionMessages.RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION,
-                    ride.getId())
-            );
-        }
-        if (Objects.isNull(ride.getPassengerId())) {
-            throw new RideHaveNoPassengerException(String.format(
-                    ExceptionMessages.RIDE_WITH_ID_HAVE_NO_PASSENGER_EXCEPTION,
-                    ride.getId())
-            );
-        }
-        if (Objects.nonNull(ride.getEndDate())) {
-            throw new RideAlreadyInactiveException(String.format(
-                    ExceptionMessages.RIDE_WITH_ID_ALREADY_INACTIVE_EXCEPTION,
-                    ride.getId())
-            );
-        }
-        if (Objects.nonNull(ride.getIsActive()) && ride.getIsActive()){
+        checkRideToEnd(ride, driverId);
+        if (Objects.nonNull(ride.getIsActive()) && ride.getIsActive())
+        {
             throw new RideAlreadyActiveException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_ACTIVE_EXCEPTION,
                     ride.getId())
@@ -121,35 +106,43 @@ public class RideServiceImpl implements RideService {
         }
     }
 
-    private static void checkRideToEnd(Ride ride)
+    private static void checkRideToEnd(Ride ride, Long driverId)
     {
-        if (Objects.isNull(ride.getDriverId())) {
+        if (Objects.isNull(ride.getDriverId()))
+        {
             throw new RideHaveNoDriverException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION,
                     ride.getId())
             );
         }
-        if (Objects.isNull(ride.getPassengerId())) {
+        if (Objects.isNull(ride.getPassengerId()))
+        {
             throw new RideHaveNoPassengerException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_HAVE_NO_PASSENGER_EXCEPTION,
                     ride.getId())
             );
         }
-        if (Objects.nonNull(ride.getEndDate())) {
+        if (Objects.nonNull(ride.getEndDate()))
+        {
             throw new RideAlreadyInactiveException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_INACTIVE_EXCEPTION,
                     ride.getId())
             );
         }
+        if (!ride.getDriverId().equals(driverId))
+        {
+            throw new RideAlreadyHaveDriverException(ExceptionMessages.RIDE_HAVE_ANOTHER_DRIVER_EXCEPTION);
+        }
     }
-    //TODO надо добавить драйвер айди что бы не любой мог закончить
-    public RideResponse endRide(Long rideId)
+
+    public RideResponse endRide(Long rideId, Long driverId)
     {
+        driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
-        checkRideToEnd(ride);
+        checkRideToEnd(ride, driverId);
         ride
             .setIsActive(false)
-            .setEndDate(LocalDate.now());
+            .setEndDate(LocalDateTime.now());
         repository.save(ride);
         return mapper.entityToResponse(ride);
     }
@@ -157,8 +150,8 @@ public class RideServiceImpl implements RideService {
     public RideResponse findRide(RideRequest rideReqDto)
     {
         Ride ride = mapper.requestToEntity(rideReqDto);
-        System.out.println(passengerFeignClient.getPassengerById(ride.getPassengerId()));
-        ride.setStartDate(LocalDate.now());
+        passengerFeignClient.getPassengerById(ride.getPassengerId());
+        ride.setFindDate(LocalDateTime.now());
         return mapper.entityToResponse(repository.save(ride));
     }
 
