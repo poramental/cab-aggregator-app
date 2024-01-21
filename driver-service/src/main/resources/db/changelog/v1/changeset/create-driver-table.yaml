@@ -54,7 +54,10 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: true
-
+              - column:
+                  name: is_in_ride
+                  type: BOOLEAN
+                  defaultValue: "False"
       rollback:
         - dropTable:
             tableName: passengers

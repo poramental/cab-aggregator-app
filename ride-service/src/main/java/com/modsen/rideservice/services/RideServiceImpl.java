@@ -1,6 +1,7 @@
 package com.modsen.rideservice.services;
 
 import com.modsen.rideservice.dto.RideRequest;
+import com.modsen.rideservice.dto.response.DriverResponse;
 import com.modsen.rideservice.dto.response.RideResponse;
 import com.modsen.rideservice.dto.response.RideListResponse;
 import com.modsen.rideservice.entities.Ride;
@@ -64,8 +65,13 @@ public class RideServiceImpl implements RideService {
 
     public RideResponse acceptRide(UUID rideId, Long driverId)
     {
-        driverFeignClient.getDriverById(driverId);
-        Ride ride =getOrThrow(rideId);
+        DriverResponse driverResponse = driverFeignClient.getDriverById(driverId);
+        if (driverResponse.getIsInRide())
+        {
+            throw new DriverAlreadyHaveRideException(ExceptionMessages.DRIVER_ALREADY_HAVE_RIDE_EXCEPTION);
+        }
+        driverFeignClient.changeIsInRideStatus(driverId);
+        Ride ride = getOrThrow(rideId);
         if (Objects.nonNull(ride.getDriverId()))
         {
             throw new RideAlreadyHaveDriverException(String.format(
@@ -139,6 +145,7 @@ public class RideServiceImpl implements RideService {
     public RideResponse endRide(UUID rideId, Long driverId)
     {
         driverFeignClient.getDriverById(driverId);
+        driverFeignClient.changeIsInRideStatus(driverId);
         Ride ride = getOrThrow(rideId);
         checkRideToEnd(ride, driverId);
         ride

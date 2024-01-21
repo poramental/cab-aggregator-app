@@ -38,4 +38,7 @@ public class Driver {
 
     private String email;
 
+    @Column(name = "is_in_ride")
+    private Boolean isInRide;
+
 }

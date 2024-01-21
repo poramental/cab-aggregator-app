@@ -24,4 +24,6 @@ public class DriverResponse {
     private String phone;
 
     private String email;
+
+    private Boolean isInRide;
 }

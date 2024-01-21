@@ -36,7 +36,7 @@ public class DriverServiceImpl implements DriverService {
 
     public DriverListResponse getAll(){
         return new DriverListResponse(driverRepository.findAll().stream()
-                .map(driverMapper::entityToRespDto)
+                .map(driverMapper::entityToResp)
                 .collect(Collectors.toList()));
     }
 
@@ -44,14 +44,14 @@ public class DriverServiceImpl implements DriverService {
     public DriverResponse add(DriverRequest driverDto) {
         checkDriverParamsExist(driverDto.getEmail(),driverDto.getPhone());
         return driverMapper
-                .entityToRespDto(driverRepository.save(driverMapper.reqDtoToEntity(driverDto)));
+                .entityToResp(driverRepository.save(driverMapper.reqToEntity(driverDto).setIsInRide(false)));
     }
 
 
     public DriverResponse deleteById(Long id){
         Driver driver = getDriverOrThrow(id);
         driverRepository.delete(driver);
-        return driverMapper.entityToRespDto(driver);
+        return driverMapper.entityToResp(driver);
 
     }
 
@@ -70,7 +70,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     public DriverResponse getById(Long id){
-        return driverMapper.entityToRespDto(driverRepository.findById(id)
+        return driverMapper.entityToResp(driverRepository.findById(id)
                 .orElseThrow(() -> new DriverNotFoundException(String.format(
                         ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,
                         id))));
@@ -81,9 +81,9 @@ public class DriverServiceImpl implements DriverService {
     {
         Driver oldDriver = getDriverOrThrow(id);
         preUpdateAllParamsCheck(driverDto, id);
-        Driver newDriver = driverMapper.reqDtoToEntity(driverDto);
+        Driver newDriver = driverMapper.reqToEntity(driverDto);
         newDriver.setId(oldDriver.getId());
-        return driverMapper.entityToRespDto(driverRepository
+        return driverMapper.entityToResp(driverRepository
                 .save(newDriver.setAutos(oldDriver.getAutos())));
     }
 
@@ -109,7 +109,7 @@ public class DriverServiceImpl implements DriverService {
                 .orElseThrow(() -> new DriverNotFoundException(exMessage));
         float ratingSum = driver.getAverageRating() * driver.getRatingsCount();
         int newRatingsCount = driver.getRatingsCount() + 1;
-        return driverMapper.entityToRespDto(driverRepository.save(
+        return driverMapper.entityToResp(driverRepository.save(
                     driver.setAverageRating((ratingSum + rating) / newRatingsCount)
                     .setRatingsCount(newRatingsCount)
             ));
@@ -182,7 +182,7 @@ public class DriverServiceImpl implements DriverService {
             throw new DriverAlreadyHaveAutoException(ExceptionMessage.DRIVER_ALREADY_HAVE_AUTO_EXCEPTION);
         else {
             driver.getAutos().add(autoMapper.dtoToEntity(autoDto));
-            return driverMapper.entityToRespDto(driverRepository.save(driver));
+            return driverMapper.entityToResp(driverRepository.save(driver));
         }
     }
 
@@ -217,7 +217,7 @@ public class DriverServiceImpl implements DriverService {
             driver.getAutos().add(autoMapper.dtoToEntity(autoDto).setDriverId(driver.getId()));
         }
 
-        return driverMapper.entityToRespDto(driverRepository.save(driver));
+        return driverMapper.entityToResp(driverRepository.save(driver));
     }
 
     public DriverPageResponse getDriversPage(int page, int size, String orderBy)
@@ -231,7 +231,7 @@ public class DriverServiceImpl implements DriverService {
         List<Driver> retrievedDrivers = driversPage.getContent();
         long total = driversPage.getTotalElements();
         List<DriverResponse> drivers = retrievedDrivers.stream()
-                .map(driverMapper::entityToRespDto)
+                .map(driverMapper::entityToResp)
                 .toList();
         return DriverPageResponse.builder()
                 .driversList(drivers)
@@ -245,4 +245,8 @@ public class DriverServiceImpl implements DriverService {
                 .format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,id)));
     }
 
+    public DriverResponse changeIsInRideStatus(Long driverId) {
+        Driver driver = getDriverOrThrow(driverId);
+        return driverMapper.entityToResp(driverRepository.save(driver.setIsInRide(!driver.getIsInRide())));
+    }
 }

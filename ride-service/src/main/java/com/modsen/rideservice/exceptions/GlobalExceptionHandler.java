@@ -14,7 +14,11 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({RideIsPresentException.class,RideAlreadyHaveDriverException.class})
+    @ExceptionHandler({
+            RideIsPresentException.class,
+            RideAlreadyHaveDriverException.class,
+            DriverAlreadyHaveRideException.class
+    })
     public ResponseEntity<AppError> conflictException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }

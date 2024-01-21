@@ -20,14 +20,14 @@ public class DriverMapper {
         this.autoMapper = new AutoMapper();
     }
 
-    public DriverResponse entityToRespDto(Driver driver){
+    public DriverResponse entityToResp(Driver driver){
         DriverResponse driverDto = mapper.map(driver, DriverResponse.class);
         return driverDto.getAutos().isEmpty() ? driverDto :
                 driverDto.setAutos(driver.getAutos().stream()
                         .map(autoMapper::entityToDto).collect(Collectors.toList()));
     }
 
-    public Driver reqDtoToEntity(DriverRequest driverDto){
+    public Driver reqToEntity(DriverRequest driverDto){
         return mapper.map(driverDto,Driver.class);
 
     }

@@ -81,4 +81,8 @@ public class DriverController {
         return ResponseEntity.ok(driverService.replaceAutoById(driver_id,autoDto));
     }
 
+    @PostMapping("/{driver_id}/is-in-ride")
+    public ResponseEntity<DriverResponse> changeIsInRideStatus(@PathVariable(name = "driver_id") Long driverId){
+        return ResponseEntity.ok(driverService.changeIsInRideStatus(driverId));
+    }
 }
