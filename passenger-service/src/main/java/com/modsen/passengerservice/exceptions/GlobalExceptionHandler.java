@@ -34,8 +34,14 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler({PaginationFormatException.class,RatingException.class,SortTypeException.class})
-    public ResponseEntity<AppError> badRequestException(PaginationFormatException ex){
+    @ExceptionHandler({
+            PaginationFormatException.class,
+            RatingException.class,
+            SortTypeException.class,
+            RideHaveAnotherPassengerException.class,
+            RideIsNotInactiveException.class
+    })
+    public ResponseEntity<AppError> badRequestException(RuntimeException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new AppError(ex.getMessage()));
     }

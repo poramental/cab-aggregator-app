@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 
 @RestController
 @RequestMapping("/api/v1/passengers")
@@ -64,9 +66,10 @@ public class PassengerController {
 
     @PatchMapping("/{passengerId}/rating")
     public ResponseEntity<PassengerResponse> addRating(@RequestParam("rating") int rating,
+                                                       @RequestParam("ride_id") UUID rideId,
                                                        @PathVariable(name = "passengerId") Long passengerId)
     {
-        return ResponseEntity.ok(passengerService.addRatingById(rating,passengerId));
+        return ResponseEntity.ok(passengerService.addRatingById(rating, rideId, passengerId));
     }
 
 }

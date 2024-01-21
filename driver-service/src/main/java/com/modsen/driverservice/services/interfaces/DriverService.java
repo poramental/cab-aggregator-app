@@ -2,6 +2,7 @@ package com.modsen.driverservice.services.interfaces;
 
 import com.modsen.driverservice.dto.*;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface DriverService {
@@ -19,5 +20,7 @@ public interface DriverService {
     DriverResponse replaceAutoById(Long driver_id, AutoRequest autoDto);
 
     DriverPageResponse getDriversPage(int page, int size, String orderBy);
+
+    List<DriverResponse> getAvailableDrivers();
 
 }

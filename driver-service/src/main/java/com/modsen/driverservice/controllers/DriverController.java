@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -87,5 +88,10 @@ public class DriverController {
     @PostMapping("/{driver_id}/is-in-ride")
     public ResponseEntity<DriverResponse> changeIsInRideStatus(@PathVariable(name = "driver_id") Long driverId){
         return ResponseEntity.ok(driverService.changeIsInRideStatus(driverId));
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<DriverResponse>> getAvailableDrivers(){
+        return ResponseEntity.ok(driverService.getAvailableDrivers());
     }
 }

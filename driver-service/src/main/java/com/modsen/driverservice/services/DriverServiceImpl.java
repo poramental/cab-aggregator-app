@@ -265,4 +265,9 @@ public class DriverServiceImpl implements DriverService {
         Driver driver = getDriverOrThrow(driverId);
         return driverMapper.entityToResp(driverRepository.save(driver.setIsInRide(!driver.getIsInRide())));
     }
+
+    public List<DriverResponse> getAvailableDrivers() {
+        return driverRepository.findAllByIsInRideIsFalse().stream()
+                .map(driverMapper::entityToResp).toList();
+    }
 }

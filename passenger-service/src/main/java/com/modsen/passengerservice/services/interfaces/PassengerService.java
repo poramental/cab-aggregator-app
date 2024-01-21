@@ -6,13 +6,15 @@ import com.modsen.passengerservice.dto.PassengerResponse;
 import com.modsen.passengerservice.dto.PassengerListResponse;
 import org.springframework.data.domain.PageRequest;
 
+import java.util.UUID;
+
 public interface PassengerService {
     PassengerListResponse getAll();
     PassengerResponse addPassenger(PassengerRequest passengerReqDto);
     PassengerResponse deletePassengerById(Long passengerId);
     PassengerResponse getById(Long id) ;
     PassengerResponse updateById(Long id, PassengerRequest passengerDto);
-    PassengerResponse addRatingById(int rating, Long id);
+    PassengerResponse addRatingById(int rating, UUID rideId, Long id);
     PageRequest getPageRequest(int page, int size, String orderBy);
     PassengerPageResponse getPassengerPage(int page, int size, String orderBy);
 
