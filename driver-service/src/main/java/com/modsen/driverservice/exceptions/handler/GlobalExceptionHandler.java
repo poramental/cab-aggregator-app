@@ -1,6 +1,7 @@
-package com.modsen.driverservice.exceptions;
+package com.modsen.driverservice.exceptions.handler;
 
 
+import com.modsen.driverservice.exceptions.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -16,12 +17,20 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({AutoAlreadyExistException.class,DriverAlreadyExistException.class,DriverAlreadyHaveAutoException.class})
-    public ResponseEntity<AppError> autoAlreadyExistExceptionHandler(RuntimeException e){
+    @ExceptionHandler({
+            AutoAlreadyExistException.class,
+            DriverAlreadyExistException.class,
+            DriverAlreadyHaveAutoException.class
+    })
+    public ResponseEntity<AppError> conflictException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler({AutoNotFoundException.class,DriverNotFoundException.class })
+    @ExceptionHandler({
+            AutoNotFoundException.class,
+            DriverNotFoundException.class,
+            NotFoundException.class
+    })
     public ResponseEntity<AppError> notFoundException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
     }
@@ -38,13 +47,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler()
-    public ResponseEntity<AppError> ratingExceptionHandler(RatingException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
-    }
-
-    @ExceptionHandler
-    public ResponseEntity<AppError> sortTypeExceptionHandler(PaginationFormatException e){
+    @ExceptionHandler({
+            RatingException.class,
+            PaginationFormatException.class,
+            RideIsNotInactiveException.class,
+            RideHaveAnotherDriverException.class
+    })
+    public ResponseEntity<AppError> badRequestException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
     }
 

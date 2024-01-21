@@ -15,5 +15,7 @@ public class ExceptionMessage{
     public static final String AUTO_NUMBER_NOT_FOUND_EXCEPTION = "Auto with number: '%s' is not found.";
     public static final String PAGINATION_FORMAT_EXCEPTION = "Invalid pagination format.";
     public static final String INVALID_TYPE_OF_SORT = "Invalid type of sort.";
+    public static final String RIDE_HAVE_ANOTHER_DRIVER = "Ride have another driver.";
+    public static final String RIDE_IS_NOT_INACTIVE_EXCEPTION = "Ride is not inactive.";
 
 }

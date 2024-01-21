@@ -2,6 +2,8 @@ package com.modsen.driverservice.services.interfaces;
 
 import com.modsen.driverservice.dto.*;
 
+import java.util.UUID;
+
 public interface DriverService {
     DriverListResponse getAll();
     DriverResponse add(DriverRequest driverDto);
@@ -10,7 +12,7 @@ public interface DriverService {
 
     DriverResponse update(Long id, DriverRequest driverDto);
 
-    DriverResponse addRatingById(Long id, int rating);
+    DriverResponse addRatingById(Long id, UUID rideId, int rating);
 
     DriverResponse setAutoById(Long driver_id, AutoRequest autoDto);
 

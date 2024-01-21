@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequestMapping("api/v1/drivers")
 @RequiredArgsConstructor
@@ -69,9 +71,10 @@ public class DriverController {
 
     @PatchMapping("/{driver_id}/rating")
     public ResponseEntity<DriverResponse> addRating(@PathVariable("driver_id") Long id,
+                                                    @RequestParam("ride_id") UUID rideId,
                                                     @RequestParam("rating") int rating)
     {
-        return ResponseEntity.ok(driverService.addRatingById(id,rating));
+        return ResponseEntity.ok(driverService.addRatingById(id,rideId,rating));
     }
 
     @PutMapping("/{driver_id}/auto")

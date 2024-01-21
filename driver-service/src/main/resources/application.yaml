@@ -15,3 +15,10 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+
+feign:
+  client:
+    ride:
+      url: http://localhost:8083
+      name: ride
+      path: /api/v1/rides

@@ -4,6 +4,7 @@ import com.modsen.driverservice.dto.*;
 import com.modsen.driverservice.entities.Auto;
 import com.modsen.driverservice.entities.Driver;
 import com.modsen.driverservice.exceptions.*;
+import com.modsen.driverservice.feignclients.RideFeignClient;
 import com.modsen.driverservice.mappers.AutoMapper;
 import com.modsen.driverservice.mappers.DriverMapper;
 import com.modsen.driverservice.repositories.AutoRepository;
@@ -14,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,6 +36,7 @@ public class DriverServiceImpl implements DriverService {
 
     private final PaginationService paginationService;
 
+    private final RideFeignClient rideFeignClient;
 
     public DriverListResponse getAll(){
         return new DriverListResponse(driverRepository.findAll().stream()
@@ -87,11 +91,12 @@ public class DriverServiceImpl implements DriverService {
                 .save(newDriver.setAutos(oldDriver.getAutos())));
     }
 
-    public DriverResponse addRatingById(Long id, int rating)
+    public DriverResponse addRatingById(Long id, UUID rideId, int rating)
     {
         return addRating(
                 rating,
                 id,
+                rideId,
                 String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,id),
                 driverRepository::findById
         );
@@ -99,6 +104,7 @@ public class DriverServiceImpl implements DriverService {
 
     private <T> DriverResponse addRating(int rating,
                                          T param,
+                                         UUID rideId,
                                          String exMessage,
                                          Function<T,Optional<Driver>> repositoryFunc)
     {
@@ -107,6 +113,16 @@ public class DriverServiceImpl implements DriverService {
         }
         Driver driver = repositoryFunc.apply(param)
                 .orElseThrow(() -> new DriverNotFoundException(exMessage));
+
+        RideResponse rideResponse = rideFeignClient.getRideById(rideId);
+        if (!Objects.equals(rideResponse.getDriverId(), driver.getId())) {
+            throw new RideHaveAnotherDriverException(ExceptionMessage.RIDE_HAVE_ANOTHER_DRIVER);
+        }
+
+        if(Objects.isNull(rideResponse.getEndDate())){
+            throw new RideIsNotInactiveException(ExceptionMessage.RIDE_IS_NOT_INACTIVE_EXCEPTION);
+        }
+
         float ratingSum = driver.getAverageRating() * driver.getRatingsCount();
         int newRatingsCount = driver.getRatingsCount() + 1;
         return driverMapper.entityToResp(driverRepository.save(
