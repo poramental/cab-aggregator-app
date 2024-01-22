@@ -5,6 +5,7 @@ import com.modsen.driverservice.entities.Auto;
 import com.modsen.driverservice.entities.Driver;
 import com.modsen.driverservice.exceptions.*;
 import com.modsen.driverservice.feignclients.RideFeignClient;
+import com.modsen.driverservice.kafka.DriverProducer;
 import com.modsen.driverservice.mappers.AutoMapper;
 import com.modsen.driverservice.mappers.DriverMapper;
 import com.modsen.driverservice.repositories.AutoRepository;
@@ -12,6 +13,7 @@ import com.modsen.driverservice.repositories.DriverRepository;
 import com.modsen.driverservice.services.interfaces.DriverService;
 import com.modsen.driverservice.util.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DriverServiceImpl implements DriverService {
 
 
@@ -39,6 +42,8 @@ public class DriverServiceImpl implements DriverService {
     private final PaginationService paginationService;
 
     private final RideFeignClient rideFeignClient;
+
+    private final DriverProducer driverProducer;
 
     public DriverListResponse getAll(){
         return new DriverListResponse(driverRepository.findAll().stream()
@@ -277,5 +282,29 @@ public class DriverServiceImpl implements DriverService {
     public List<DriverResponse> getAvailableDrivers() {
         return driverRepository.findAllByIsInRideIsFalse().stream()
                 .map(driverMapper::entityToResp).toList();
+    }
+
+    public void findDriverForRide(FindDriverRequest request) {
+        List<Driver> availableDrivers = driverRepository.findAllByIsInRideIsFalse();
+        if (Objects.nonNull(request.getNotAcceptedDrivers())){
+            availableDrivers = availableDrivers.stream()
+                    .filter(x -> !request.getNotAcceptedDrivers().contains(x.getId()))
+                    .toList();
+        }
+        if (availableDrivers.isEmpty()) {
+            driverProducer.sendMessage(
+                    DriverForRideResponse.builder()
+                            .driverId(0L)
+                            .rideId(request.getRideId())
+                            .build()
+            );
+        } else {
+            driverProducer.sendMessage(
+                    DriverForRideResponse.builder()
+                            .driverId(availableDrivers.get(0).getId())
+                            .rideId(request.getRideId())
+                            .build()
+            );
+        }
     }
 }

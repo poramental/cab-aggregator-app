@@ -25,6 +25,7 @@ ext{
     set('modelMapperVersion',  '3.2.0')
     set('validationVersion', '3.2.1')
     set('stripeVersion', '24.11.0')
+    kafkaVersion = '3.1.1'
 }
 
 dependencies {
@@ -38,7 +39,7 @@ dependencies {
     implementation group: 'org.modelmapper', name: 'modelmapper', version: modelMapperVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
     implementation group: 'com.stripe', name: 'stripe-java', version:stripeVersion
-
+    implementation group: 'org.springframework.kafka', name: 'spring-kafka', version:kafkaVersion
 }
 
 tasks.named('test') {

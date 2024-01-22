@@ -25,7 +25,8 @@ ext {
     validationVersion = '3.2.1'
     modelmapperVersion = '3.2.0'
     feignClientVersion = '4.1.0'
-    springMailVersion = "3.2.2"
+    springMailVersion = '3.2.2'
+    kafkaVersion = '3.1.1'
 }
 
 dependencies {
@@ -40,6 +41,8 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version:feignClientVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version:springMailVersion
+    implementation group: 'org.springframework.kafka', name: 'spring-kafka', version:kafkaVersion
+
 }
 
 tasks.named('test') {

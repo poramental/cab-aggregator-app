@@ -33,7 +33,8 @@ public class GlobalExceptionHandler {
             RideHaveNoDriverException.class,
             RideHaveNoPassengerException.class,
             RideAlreadyActiveException.class,
-            RideAlreadyInactiveException.class
+            RideAlreadyInactiveException.class,
+            RideWaitingAnotherDriverException.class
     })
     public ResponseEntity<AppError> badRequestException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);

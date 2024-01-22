@@ -15,6 +15,27 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+  kafka:
+    consumer:
+      group-id:
+        driver: driver-creation-group
+        status: edit-status-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    bootstrap-servers: localhost:9092
+topic:
+  name:
+    ride: create.ride
+    driver: available.driver
+kafka:
+  bootstrap-servers: localhost:9092
+  partitions:
+    count: 1
+  replicas:
+    count: 1
 
 feign:
   client:
@@ -26,3 +47,4 @@ feign:
       url: http://localhost:8082
       name: driver
       path: /api/v1/drivers
+

@@ -44,4 +44,7 @@ public class Ride {
 
     private String instructions;
 
+    @Column(name = "waiting_driver_id")
+    private Long waitingForDriverId;
+
 }

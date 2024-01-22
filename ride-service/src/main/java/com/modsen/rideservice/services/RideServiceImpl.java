@@ -1,5 +1,6 @@
 package com.modsen.rideservice.services;
 
+import com.modsen.rideservice.dto.FindDriverRequest;
 import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.response.DriverResponse;
 import com.modsen.rideservice.dto.response.RideResponse;
@@ -8,6 +9,7 @@ import com.modsen.rideservice.entities.Ride;
 import com.modsen.rideservice.exceptions.*;
 import com.modsen.rideservice.feignclients.DriverFeignClient;
 import com.modsen.rideservice.feignclients.PassengerFeignClient;
+import com.modsen.rideservice.kafka.RideProducer;
 import com.modsen.rideservice.mappers.RideMapper;
 import com.modsen.rideservice.repositories.RideRepository;
 import com.modsen.rideservice.services.interfaces.RideService;
@@ -33,6 +35,8 @@ public class RideServiceImpl implements RideService {
     private final DriverFeignClient driverFeignClient;
 
     private final PassengerMailService PassengerMailService;
+
+    private final RideProducer rideProducer;
 
     public RideListResponse getAll()
     {
@@ -70,8 +74,14 @@ public class RideServiceImpl implements RideService {
         if (driverResponse.getIsInRide()) {
             throw new DriverAlreadyHaveRideException(ExceptionMessages.DRIVER_ALREADY_HAVE_RIDE_EXCEPTION);
         }
+
         driverFeignClient.changeIsInRideStatus(driverId);
         Ride ride = getOrThrow(rideId);
+
+        if (Objects.equals(ride.getWaitingForDriverId(), driverId)) {
+            throw new RideWaitingAnotherDriverException(ExceptionMessages.RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION);
+        }
+
         if (Objects.nonNull(ride.getDriverId())) {
             throw new RideAlreadyHaveDriverException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_HAVE_DRIVER_EXCEPTION,
@@ -86,6 +96,14 @@ public class RideServiceImpl implements RideService {
     {
         driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
+        if (Objects.equals(ride.getWaitingForDriverId(), driverId)) {
+            throw new RideWaitingAnotherDriverException(ExceptionMessages.RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION);
+        }
+        rideProducer.sendMessage(
+                FindDriverRequest.builder()
+                        .rideId(rideId)
+                        .build()
+        );
         return mapper.entityToResponse(ride);
     }
 
@@ -161,6 +179,11 @@ public class RideServiceImpl implements RideService {
         Ride ride = mapper.requestToEntity(rideRequest);
         passengerFeignClient.getPassengerById(ride.getPassenger());
         ride.setFindDate(LocalDateTime.now());
+        rideProducer.sendMessage(
+                FindDriverRequest.builder()
+                        .rideId(ride.getId())
+                        .build()
+        );
         return mapper.entityToResponse(repository.save(ride));
     }
 

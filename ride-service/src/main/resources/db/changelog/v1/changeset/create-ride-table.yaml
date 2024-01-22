@@ -49,6 +49,9 @@ databaseChangeLog:
               - column:
                   name: instructions
                   type: VARCHAR(255)
+              - column:
+                  name: waiting_driver_id
+                  type: bigint
       rollback:
         - dropTable:
             tableName: rides
