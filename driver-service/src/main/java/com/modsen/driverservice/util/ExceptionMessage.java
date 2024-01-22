@@ -17,5 +17,6 @@ public class ExceptionMessage{
     public static final String INVALID_TYPE_OF_SORT = "Invalid type of sort.";
     public static final String RIDE_HAVE_ANOTHER_DRIVER = "Ride have another driver.";
     public static final String RIDE_IS_NOT_INACTIVE_EXCEPTION = "Ride is not inactive.";
+    public static final String RATING_EXPIRED_EXCEPTION = "Rating expired";
 
 }

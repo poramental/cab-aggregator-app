@@ -34,7 +34,6 @@ public class PaginationService {
                 .map(Field::getName)
                 .filter(orderBy::equals).toList().stream().findFirst()
                 .orElseThrow(() -> new PaginationFormatException(ExceptionMessage.INVALID_TYPE_OF_SORT));
-
     }
 
     public <T> Page<T> getPage(int page,

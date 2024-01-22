@@ -15,6 +15,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -148,6 +149,12 @@ public class PassengerServiceImpl implements PassengerService {
         Passenger passenger = repositoryFunc.apply(param)
                 .orElseThrow(() -> new PassengerNotFoundException(exMessage));
         RideResponse rideResponse = rideFeignClient.getRideById(rideId);
+        LocalDateTime rideResponseEndDate = rideResponse.getEndDate();
+
+        if (rideResponseEndDate.isAfter(LocalDateTime.now().minusMinutes(3))) {
+            throw new RatingException(ExceptionMessage.RATING_EXPIRED_EXCEPTION);
+        }
+
         if (!Objects.equals(rideResponse.getPassenger(), passenger.getId())) {
             throw new RideHaveAnotherPassengerException(ExceptionMessage.RIDE_HAVE_ANOTHER_PASSENGER);
         }

@@ -63,17 +63,14 @@ public class RideServiceImpl implements RideService {
                 .collect(Collectors.toList()));
     }
 
-    public RideResponse acceptRide(UUID rideId, Long driverId)
-    {
+    public RideResponse acceptRide(UUID rideId, Long driverId) {
         DriverResponse driverResponse = driverFeignClient.getDriverById(driverId);
-        if (driverResponse.getIsInRide())
-        {
+        if (driverResponse.getIsInRide()) {
             throw new DriverAlreadyHaveRideException(ExceptionMessages.DRIVER_ALREADY_HAVE_RIDE_EXCEPTION);
         }
         driverFeignClient.changeIsInRideStatus(driverId);
         Ride ride = getOrThrow(rideId);
-        if (Objects.nonNull(ride.getDriverId()))
-        {
+        if (Objects.nonNull(ride.getDriverId())) {
             throw new RideAlreadyHaveDriverException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_HAVE_DRIVER_EXCEPTION,
                     rideId));

@@ -14,6 +14,8 @@ import com.modsen.driverservice.util.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -115,6 +117,12 @@ public class DriverServiceImpl implements DriverService {
                 .orElseThrow(() -> new DriverNotFoundException(exMessage));
 
         RideResponse rideResponse = rideFeignClient.getRideById(rideId);
+        LocalDateTime rideResponseEndDate = rideResponse.getEndDate();
+
+        if (rideResponseEndDate.isAfter(LocalDateTime.now().minusMinutes(3))) {
+            throw new RatingException(ExceptionMessage.RATING_EXPIRED_EXCEPTION);
+        }
+
         if (!Objects.equals(rideResponse.getDriverId(), driver.getId())) {
             throw new RideHaveAnotherDriverException(ExceptionMessage.RIDE_HAVE_ANOTHER_DRIVER);
         }
