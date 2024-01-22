@@ -32,6 +32,8 @@ public class RideServiceImpl implements RideService {
 
     private final DriverFeignClient driverFeignClient;
 
+    private final PassengerMailService PassengerMailService;
+
     public RideListResponse getAll()
     {
         return new RideListResponse(repository.findAll().stream()
@@ -75,8 +77,9 @@ public class RideServiceImpl implements RideService {
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_HAVE_DRIVER_EXCEPTION,
                     rideId));
         }
-        return mapper.entityToResponse(repository.save(ride.setDriverId(driverId)));
 
+        PassengerMailService.sendAcceptRideMessage("alexey_tsurkan@mail.ru",driverResponse);
+        return mapper.entityToResponse(repository.save(ride.setDriverId(driverId)));
     }
 
     public RideResponse cancelRide(UUID rideId, Long driverId)
@@ -94,6 +97,7 @@ public class RideServiceImpl implements RideService {
         ride
                 .setIsActive(true)
                 .setStartDate(LocalDateTime.now());
+        PassengerMailService.sendStartRideMessage("alexey_tsurkan@mail.ru");
         return mapper.entityToResponse(repository.save(ride));
     }
 
