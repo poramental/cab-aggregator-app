@@ -1,6 +1,7 @@
 package com.modsen.rideservice.services;
 
 import com.modsen.rideservice.dto.FindDriverRequest;
+import com.modsen.rideservice.dto.NotAcceptDrivers;
 import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.response.DriverResponse;
 import com.modsen.rideservice.dto.response.RideResponse;
@@ -38,31 +39,29 @@ public class RideServiceImpl implements RideService {
 
     private final RideProducer rideProducer;
 
-    public RideListResponse getAll()
-    {
+    private final NotAcceptDrivers notAcceptDrivers;
+
+    public RideListResponse getAll() {
         return new RideListResponse(repository.findAll().stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
 
-    public RideResponse getById(UUID id)
-    {
+    public RideResponse getById(UUID id) {
         return mapper.entityToResponse(repository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(String.format(
                         ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,
                         id))));
     }
 
-    public RideListResponse getAllPassengerRidesById(Long passengerId)
-    {
+    public RideListResponse getAllPassengerRidesById(Long passengerId) {
         return new RideListResponse(repository.findAllByPassenger(passengerId)
                 .stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
 
-    public RideListResponse getAllDriverRidesById(Long driverId)
-    {
+    public RideListResponse getAllDriverRidesById(Long driverId) {
         return new RideListResponse(repository.findAllByDriverId(driverId)
                 .stream()
                 .map(mapper::entityToResponse)
@@ -85,27 +84,27 @@ public class RideServiceImpl implements RideService {
         }
 
         driverFeignClient.changeIsInRideStatus(driverId);
-        PassengerMailService.sendAcceptRideMessage("alexey_tsurkan@mail.ru",driverResponse);
+        PassengerMailService.sendAcceptRideMessage("alexey_tsurkan@mail.ru", driverResponse);
         return mapper.entityToResponse(repository.save(ride.setDriverId(driverId)));
     }
 
-    public RideResponse cancelRide(UUID rideId, Long driverId)
-    {
+    public RideResponse cancelRide(UUID rideId, Long driverId) {
         driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
-        if (Objects.equals(ride.getWaitingForDriverId(), driverId)) {
+        if (!Objects.equals(ride.getWaitingForDriverId(), driverId)) {
             throw new RideWaitingAnotherDriverException(ExceptionMessages.RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION);
         }
+        notAcceptDrivers.addNotAcceptDriverToRide(rideId, driverId);
         rideProducer.sendMessage(
                 FindDriverRequest.builder()
                         .rideId(rideId)
+                        .notAcceptedDrivers(notAcceptDrivers.getNotAcceptedDriversForRide(rideId))
                         .build()
         );
         return mapper.entityToResponse(ride);
     }
 
-    public RideResponse startRide(UUID rideId, Long driverId)
-    {
+    public RideResponse startRide(UUID rideId, Long driverId) {
         driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
         checkRideToStart(ride, driverId);
@@ -117,11 +116,9 @@ public class RideServiceImpl implements RideService {
     }
 
 
-    private static void checkRideToStart(Ride ride, Long driverId)
-    {
+    private static void checkRideToStart(Ride ride, Long driverId) {
         checkRideToEnd(ride, driverId);
-        if (Objects.nonNull(ride.getIsActive()) && ride.getIsActive())
-        {
+        if (Objects.nonNull(ride.getIsActive()) && ride.getIsActive()) {
             throw new RideAlreadyActiveException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_ACTIVE_EXCEPTION,
                     ride.getId())
@@ -129,50 +126,43 @@ public class RideServiceImpl implements RideService {
         }
     }
 
-    private static void checkRideToEnd(Ride ride, Long driverId)
-    {
-        if (Objects.isNull(ride.getDriverId()))
-        {
+    private static void checkRideToEnd(Ride ride, Long driverId) {
+        if (Objects.isNull(ride.getDriverId())) {
             throw new RideHaveNoDriverException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION,
                     ride.getId())
             );
         }
-        if (Objects.isNull(ride.getPassenger()))
-        {
+        if (Objects.isNull(ride.getPassenger())) {
             throw new RideHaveNoPassengerException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_HAVE_NO_PASSENGER_EXCEPTION,
                     ride.getId())
             );
         }
-        if (Objects.nonNull(ride.getEndDate()))
-        {
+        if (Objects.nonNull(ride.getEndDate())) {
             throw new RideAlreadyInactiveException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_INACTIVE_EXCEPTION,
                     ride.getId())
             );
         }
-        if (!ride.getDriverId().equals(driverId))
-        {
+        if (!ride.getDriverId().equals(driverId)) {
             throw new RideAlreadyHaveDriverException(ExceptionMessages.RIDE_HAVE_ANOTHER_DRIVER_EXCEPTION);
         }
     }
 
-    public RideResponse endRide(UUID rideId, Long driverId)
-    {
+    public RideResponse endRide(UUID rideId, Long driverId) {
         driverFeignClient.getDriverById(driverId);
         driverFeignClient.changeIsInRideStatus(driverId);
         Ride ride = getOrThrow(rideId);
         checkRideToEnd(ride, driverId);
         ride
-            .setIsActive(false)
-            .setEndDate(LocalDateTime.now());
+                .setIsActive(false)
+                .setEndDate(LocalDateTime.now());
         repository.save(ride);
         return mapper.entityToResponse(ride);
     }
 
-    public RideResponse findRide(RideRequest rideRequest)
-    {
+    public RideResponse findRide(RideRequest rideRequest) {
         Ride ride = mapper.requestToEntity(rideRequest);
         passengerFeignClient.getPassengerById(ride.getPassenger());
         ride.setFindDate(LocalDateTime.now());
@@ -184,8 +174,7 @@ public class RideServiceImpl implements RideService {
         return mapper.entityToResponse(repository.save(ride));
     }
 
-    private Ride getOrThrow(UUID id)
-    {
+    private Ride getOrThrow(UUID id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(
                         String.format(

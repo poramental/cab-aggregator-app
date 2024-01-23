@@ -13,9 +13,10 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 @Service
 @EnableAsync
-public class PassengerMailService  {
+public class PassengerMailService {
 
     private final JavaMailSender emailSender;
+
     @Async
     public void sendAcceptRideMessage(
             String to, DriverResponse driver) {
@@ -43,6 +44,17 @@ public class PassengerMailService  {
         message.setTo(to);
         message.setSubject("Поездка началась!");
         message.setText("Водитель начал поездку.");
+        emailSender.send(message);
+    }
+
+    @Async
+    public void sendNoAvailableDriversExceptionMessage(
+            String to) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setFrom("modsen-taxi123@mail.ru");
+        message.setTo(to);
+        message.setSubject("Нет доступных водителей!");
+        message.setText("Нет доступных водителей, попробуйте позже :(");
         emailSender.send(message);
     }
 }

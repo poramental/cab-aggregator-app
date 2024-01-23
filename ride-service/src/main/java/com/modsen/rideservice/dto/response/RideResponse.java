@@ -29,4 +29,5 @@ public class RideResponse {
 
     private boolean isActive;
 
+    private Long waitingForDriverId;
 }

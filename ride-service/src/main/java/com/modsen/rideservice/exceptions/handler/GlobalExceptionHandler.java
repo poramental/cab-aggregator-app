@@ -2,6 +2,8 @@ package com.modsen.rideservice.exceptions.handler;
 
 
 import com.modsen.rideservice.exceptions.*;
+import com.modsen.rideservice.services.PassengerMailService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -13,6 +15,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({
@@ -20,13 +23,13 @@ public class GlobalExceptionHandler {
             RideAlreadyHaveDriverException.class,
             DriverAlreadyHaveRideException.class
     })
-    public ResponseEntity<AppError> conflictException(RuntimeException e){
+    public ResponseEntity<AppError> conflictException(RuntimeException e) {
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler({RideNotFoundException.class, NotFoundException.class})
-    public ResponseEntity<AppError> notFoundException(RuntimeException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
+    public ResponseEntity<AppError> notFoundException(RuntimeException e) {
+        return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({
@@ -36,8 +39,8 @@ public class GlobalExceptionHandler {
             RideAlreadyInactiveException.class,
             RideWaitingAnotherDriverException.class
     })
-    public ResponseEntity<AppError> badRequestException(RuntimeException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
+    public ResponseEntity<AppError> badRequestException(RuntimeException e) {
+        return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -49,7 +52,7 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
 }
