@@ -18,43 +18,42 @@ public class PassengerMailService {
     private final JavaMailSender emailSender;
 
     @Async
-    public void sendAcceptRideMessage(
-            String to, DriverResponse driver) {
+    public void sendAcceptRideMessage(String to, DriverResponse driver) {
         AutoResponse autoResponse = driver.getAutos().get(0);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("modsen-taxi123@mail.ru");
         message.setTo(to);
         message.setSubject("Заказ Принят");
-        message.setText("Ваш заказ приняли!\n\n " +
-                "имя водителя: \t" + driver.getName() +
-                "\nтелефон : \t" + driver.getPhone() +
-                "\nсредний рейтинг : \t" + driver.getAverageRating() +
-                "\n модель машины : \t" + autoResponse.getModel() +
-                "\n номер машины : \t" + autoResponse.getNumber() +
-                "\n цветы машины : \t" + autoResponse.getColor());
+        message.setText("Ваш заказ приняли!\n " +
+                        "имя водителя: \t" + driver.getName() +
+                        "\n телефон : \t" + driver.getPhone() +
+                        "\n средний рейтинг : \t" + driver.getAverageRating() +
+                        "\n модель машины : \t" + autoResponse.getModel() +
+                        "\n номер машины : \t" + autoResponse.getNumber() +
+                        "\n цветы машины : \t" + autoResponse.getColor());
 
         emailSender.send(message);
     }
 
     @Async
-    public void sendStartRideMessage(
-            String to) {
+    public void sendStartRideMessage(String to) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("modsen-taxi123@mail.ru");
         message.setTo(to);
         message.setSubject("Поездка началась!");
         message.setText("Водитель начал поездку.");
+
         emailSender.send(message);
     }
 
     @Async
-    public void sendNoAvailableDriversExceptionMessage(
-            String to) {
+    public void sendNoAvailableDriversExceptionMessage(String to) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("modsen-taxi123@mail.ru");
         message.setTo(to);
         message.setSubject("Нет доступных водителей!");
         message.setText("Нет доступных водителей, попробуйте позже :(");
+
         emailSender.send(message);
     }
 }

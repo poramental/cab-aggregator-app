@@ -272,10 +272,14 @@ public class DriverServiceImpl implements DriverService {
 
     public void findDriverForRide(FindDriverRequest request) {
         List<Driver> availableDrivers = driverRepository.findAllByIsInRideIsFalse();
-        if (Objects.nonNull(request.getNotAcceptedDrivers()) &&
-                !request.getNotAcceptedDrivers().isEmpty()) {
+        if ((Objects.nonNull(request.getNotAcceptedDrivers()) && !request.getNotAcceptedDrivers().isEmpty())) {
             availableDrivers = availableDrivers.stream()
                     .filter(x -> !request.getNotAcceptedDrivers().contains(x.getId()))
+                    .toList();
+        }
+        if ((Objects.nonNull(request.getWaitingDrivers()) && !request.getWaitingDrivers().isEmpty())) {
+            availableDrivers = availableDrivers.stream()
+                    .filter(x -> !request.getWaitingDrivers().contains(x.getId()))
                     .toList();
         }
         if (availableDrivers.isEmpty()) {

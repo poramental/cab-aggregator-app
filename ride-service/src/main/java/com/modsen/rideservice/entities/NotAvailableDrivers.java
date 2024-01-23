@@ -1,20 +1,25 @@
-package com.modsen.rideservice.dto;
+package com.modsen.rideservice.entities;
 
+import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
 
 @Component
-public final class NotAcceptDrivers {
+public final class NotAvailableDrivers {
 
     private final Map<UUID, List<Long>> notAcceptedDrivers;
 
-    public NotAcceptDrivers() {
+    @Getter
+    private final List<Long> waitingDrivers;
+
+    public NotAvailableDrivers() {
         notAcceptedDrivers = new HashMap<>();
+        waitingDrivers = new ArrayList<>();
     }
 
 
-    public synchronized List<Long> getNotAcceptedDriversForRide(UUID rideId) {
+    public List<Long> getNotAcceptedDriversForRide(UUID rideId) {
         return notAcceptedDrivers.get(rideId);
     }
 
@@ -26,5 +31,13 @@ public final class NotAcceptDrivers {
         } else {
             notAcceptedDrivers.get(rideId).add(driverId);
         }
+    }
+
+    public synchronized void addWaitingDriver(Long driverId){
+        waitingDrivers.add(driverId);
+    }
+
+    public synchronized void deleteWaitingDriver(Long driverId){
+        waitingDrivers.remove(driverId);
     }
 }

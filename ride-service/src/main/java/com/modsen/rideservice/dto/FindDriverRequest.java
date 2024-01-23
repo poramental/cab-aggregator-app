@@ -15,4 +15,5 @@ import java.util.UUID;
 public class FindDriverRequest {
     private UUID rideId;
     private List<Long> notAcceptedDrivers;
+    private List<Long> waitingDrivers;
 }

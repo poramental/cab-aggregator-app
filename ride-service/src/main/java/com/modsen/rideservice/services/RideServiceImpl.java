@@ -1,7 +1,7 @@
 package com.modsen.rideservice.services;
 
 import com.modsen.rideservice.dto.FindDriverRequest;
-import com.modsen.rideservice.dto.NotAcceptDrivers;
+import com.modsen.rideservice.entities.NotAvailableDrivers;
 import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.response.DriverResponse;
 import com.modsen.rideservice.dto.response.RideResponse;
@@ -39,7 +39,7 @@ public class RideServiceImpl implements RideService {
 
     private final RideProducer rideProducer;
 
-    private final NotAcceptDrivers notAcceptDrivers;
+    private final NotAvailableDrivers notAvailableDrivers;
 
     public RideListResponse getAll() {
         return new RideListResponse(repository.findAll().stream()
@@ -70,12 +70,13 @@ public class RideServiceImpl implements RideService {
 
     public RideResponse acceptRide(UUID rideId, Long driverId) {
         DriverResponse driverResponse = driverFeignClient.getDriverById(driverId);
-        if (driverResponse.getIsInRide()) {
-            throw new DriverAlreadyHaveRideException(ExceptionMessages.DRIVER_ALREADY_HAVE_RIDE_EXCEPTION);
-        }
         Ride ride = getOrThrow(rideId);
         if (!Objects.equals(ride.getWaitingForDriverId(), driverId)) {
             throw new RideWaitingAnotherDriverException(ExceptionMessages.RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION);
+        }
+        notAvailableDrivers.deleteWaitingDriver(driverId);
+        if (driverResponse.getIsInRide()) {
+            throw new DriverAlreadyHaveRideException(ExceptionMessages.DRIVER_ALREADY_HAVE_RIDE_EXCEPTION);
         }
         if (Objects.nonNull(ride.getDriverId())) {
             throw new RideAlreadyHaveDriverException(String.format(
@@ -94,11 +95,13 @@ public class RideServiceImpl implements RideService {
         if (!Objects.equals(ride.getWaitingForDriverId(), driverId)) {
             throw new RideWaitingAnotherDriverException(ExceptionMessages.RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION);
         }
-        notAcceptDrivers.addNotAcceptDriverToRide(rideId, driverId);
+        notAvailableDrivers.deleteWaitingDriver(driverId);
+        notAvailableDrivers.addNotAcceptDriverToRide(rideId, driverId);
         rideProducer.sendMessage(
                 FindDriverRequest.builder()
                         .rideId(rideId)
-                        .notAcceptedDrivers(notAcceptDrivers.getNotAcceptedDriversForRide(rideId))
+                        .notAcceptedDrivers(notAvailableDrivers.getNotAcceptedDriversForRide(rideId))
+                        .waitingDrivers(notAvailableDrivers.getWaitingDrivers())
                         .build()
         );
         return mapper.entityToResponse(ride);
@@ -114,7 +117,6 @@ public class RideServiceImpl implements RideService {
         PassengerMailService.sendStartRideMessage("alexey_tsurkan@mail.ru");
         return mapper.entityToResponse(repository.save(ride));
     }
-
 
     private static void checkRideToStart(Ride ride, Long driverId) {
         checkRideToEnd(ride, driverId);
@@ -169,6 +171,7 @@ public class RideServiceImpl implements RideService {
         rideProducer.sendMessage(
                 FindDriverRequest.builder()
                         .rideId(ride.getId())
+                        .waitingDrivers(notAvailableDrivers.getWaitingDrivers())
                         .build()
         );
         return mapper.entityToResponse(repository.save(ride));
