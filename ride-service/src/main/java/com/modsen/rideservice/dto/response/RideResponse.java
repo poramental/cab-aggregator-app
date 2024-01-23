@@ -28,4 +28,5 @@ public class RideResponse {
     private double price;
 
     private boolean isActive;
+
 }

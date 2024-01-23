@@ -74,20 +74,17 @@ public class RideServiceImpl implements RideService {
         if (driverResponse.getIsInRide()) {
             throw new DriverAlreadyHaveRideException(ExceptionMessages.DRIVER_ALREADY_HAVE_RIDE_EXCEPTION);
         }
-
-        driverFeignClient.changeIsInRideStatus(driverId);
         Ride ride = getOrThrow(rideId);
-
-        if (Objects.equals(ride.getWaitingForDriverId(), driverId)) {
+        if (!Objects.equals(ride.getWaitingForDriverId(), driverId)) {
             throw new RideWaitingAnotherDriverException(ExceptionMessages.RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION);
         }
-
         if (Objects.nonNull(ride.getDriverId())) {
             throw new RideAlreadyHaveDriverException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_HAVE_DRIVER_EXCEPTION,
                     rideId));
         }
 
+        driverFeignClient.changeIsInRideStatus(driverId);
         PassengerMailService.sendAcceptRideMessage("alexey_tsurkan@mail.ru",driverResponse);
         return mapper.entityToResponse(repository.save(ride.setDriverId(driverId)));
     }

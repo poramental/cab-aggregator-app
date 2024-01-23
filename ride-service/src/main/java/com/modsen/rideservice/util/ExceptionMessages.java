@@ -22,5 +22,5 @@ public class ExceptionMessages {
 
     public final String NO_AVAILABLE_DRIVERS = "No available drivers yet.";
 
-    public final String RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION = "Ride is waiting another driver.";
+    public final String RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION = "Ride is waiting for another driver response.";
 }

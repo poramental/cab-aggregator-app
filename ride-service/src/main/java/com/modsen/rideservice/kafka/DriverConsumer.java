@@ -4,8 +4,12 @@ package com.modsen.rideservice.kafka;
 import com.modsen.rideservice.dto.FindDriverRequest;
 import com.modsen.rideservice.dto.response.DriverForRideRequest;
 import com.modsen.rideservice.dto.response.DriverResponse;
+import com.modsen.rideservice.dto.response.RideResponse;
+import com.modsen.rideservice.entities.Ride;
 import com.modsen.rideservice.exceptions.NotFoundException;
+import com.modsen.rideservice.exceptions.RideNotFoundException;
 import com.modsen.rideservice.feignclients.DriverFeignClient;
+import com.modsen.rideservice.repositories.RideRepository;
 import com.modsen.rideservice.services.DriverMailService;
 import com.modsen.rideservice.util.ExceptionMessages;
 import lombok.RequiredArgsConstructor;
@@ -36,6 +40,8 @@ public class DriverConsumer {
 
     private final ScheduledExecutorService scheduledExecutorService;
     @Autowired
+    private RideRepository repository;
+    @Autowired
     private RideProducer rideProducer;
 
     public DriverConsumer() {
@@ -49,12 +55,18 @@ public class DriverConsumer {
             throw new NotFoundException(ExceptionMessages.NO_AVAILABLE_DRIVERS);
         }
         DriverResponse driverResponse = driverFeignClient.getDriverById(driverForRideRequest.getDriverId());
-        processingDriver(driverResponse,driverForRideRequest.getRideId());
+        UUID rideId = driverForRideRequest.getRideId();
+        processingDriver(driverResponse,rideId);
+        Ride ride = repository.findById(rideId)
+                .orElseThrow(() -> new RideNotFoundException(String.format(ExceptionMessages
+                        .RIDE_NOT_FOUND_ID_EXCEPTION,rideId)));
+        repository.save(ride.setWaitingForDriverId(driverResponse.getId()));
     }
 
     private void processingDriver(DriverResponse driverResponse, UUID rideId) {
         driverMailService.sendRideIsFoundMessage("alexey_tsurkan@mail.ru",driverResponse,rideId);
         scheduledExecutorService.schedule(() -> handleTimeout(rideId), 3, TimeUnit.MINUTES);
+
     }
 
     private void handleTimeout(UUID rideId) {

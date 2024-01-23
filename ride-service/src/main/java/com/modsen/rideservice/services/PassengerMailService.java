@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 @Service
 @EnableAsync
 public class PassengerMailService  {
+
     private final JavaMailSender emailSender;
     @Async
     public void sendAcceptRideMessage(
