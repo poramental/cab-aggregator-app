@@ -24,7 +24,7 @@ repositories {
 ext{
     set('modelMapperVersion',  '3.2.0')
     set('validationVersion', '3.2.1')
-    set('stripeVersion', '24.11.0')
+    set('stripeVersion', '20.79.0')
     kafkaVersion = '3.1.1'
 }
 

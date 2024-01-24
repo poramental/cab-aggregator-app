@@ -1,7 +1,5 @@
 package com.modsen.rideservice.services;
 
-
-import com.modsen.rideservice.dto.response.AutoResponse;
 import com.modsen.rideservice.dto.response.DriverResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
@@ -23,7 +21,6 @@ public class DriverMailService  {
     @Async
     public void sendRideIsFoundMessage(
             String to, DriverResponse driver, UUID rideId) {
-        //AutoResponse autoResponse = driver.getAutos().get(0); //TODO if list.isEmpty ride cant be accepted without a car
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom("modsen-taxi123@mail.ru");
         message.setTo(to);

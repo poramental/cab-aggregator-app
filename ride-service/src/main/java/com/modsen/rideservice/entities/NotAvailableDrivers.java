@@ -40,4 +40,8 @@ public final class NotAvailableDrivers {
     public synchronized void deleteWaitingDriver(Long driverId){
         waitingDrivers.remove(driverId);
     }
+
+    public synchronized void deleteNotAcceptedDriversForRide(UUID rideId){
+        notAcceptedDrivers.remove(rideId);
+    }
 }

@@ -18,6 +18,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
+
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,21 +59,28 @@ public class DriverConsumer {
         scheduledExecutorService = Executors.newScheduledThreadPool(1);
     }
 
+    private boolean rideIsAccepted(UUID rideId) {
+        Ride ride = getOrThrow(rideId);
+        return Objects.nonNull(ride.getDriverId());
+    }
+
     @KafkaListener(topics = "${topic.name.driver}", groupId = "${spring.kafka.consumer.group-id.driver}")
     public void consumeMessage(DriverForRideRequest driverForRideRequest) {
+        UUID rideId = driverForRideRequest.getRideId();
+        if (rideIsAccepted(rideId)) {
+            notAvailableDrivers.deleteNotAcceptedDriversForRide(rideId);
+            executorService.shutdownNow();
+            return;
+        }
         if (driverForRideRequest.getDriverId() == 0L) {
             repository.deleteById(driverForRideRequest.getRideId());
             executorService.shutdownNow();
-
+            notAvailableDrivers.deleteNotAcceptedDriversForRide(rideId);
             passengerMailService.sendNoAvailableDriversExceptionMessage("alexey_tsurkan@mail.ru");
         } else {
             DriverResponse driverResponse = driverFeignClient.getDriverById(driverForRideRequest.getDriverId());
-            UUID rideId = driverForRideRequest.getRideId();
             processingDriver(driverResponse, rideId);
-            Ride ride = repository.findById(rideId)
-                    .orElseThrow(() -> new RideNotFoundException(
-                            String.format(ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION, rideId))
-                    );
+            Ride ride = getOrThrow(rideId);
             notAvailableDrivers.addWaitingDriver(driverForRideRequest.getDriverId());
             repository.save(ride.setWaitingForDriverId(driverResponse.getId()));
         }
@@ -79,7 +88,7 @@ public class DriverConsumer {
 
     private void processingDriver(DriverResponse driverResponse, UUID rideId) {
         driverMailService.sendRideIsFoundMessage("alexey_tsurkan@mail.ru", driverResponse, rideId);
-        scheduledExecutorService.schedule(() -> handleTimeout(rideId, driverResponse.getId()), 3, TimeUnit.MINUTES);
+        scheduledExecutorService.schedule(() -> handleTimeout(rideId, driverResponse.getId()), 40, TimeUnit.SECONDS);
     }
 
     private void handleTimeout(UUID rideId, Long driverId) {
@@ -92,5 +101,12 @@ public class DriverConsumer {
                 .waitingDrivers(notAvailableDrivers.getWaitingDrivers())
                 .build()
         );
+    }
+
+    private Ride getOrThrow(UUID rideId) {
+        return repository.findById(rideId)
+                .orElseThrow(() -> new RideNotFoundException(
+                        String.format(ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION, rideId))
+                );
     }
 }

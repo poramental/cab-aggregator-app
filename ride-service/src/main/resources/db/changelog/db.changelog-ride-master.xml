@@ -10,7 +10,7 @@ http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
         <tagDatabase tag="db_init" />
     </changeSet>
 
-    <include file="v1/db.changelog-v1.xml" relativeToChangelogFile="true"/>
+    <include file="v1/db.changelog-ride-v1.xml" relativeToChangelogFile="true"/>
 
 
 </databaseChangeLog>

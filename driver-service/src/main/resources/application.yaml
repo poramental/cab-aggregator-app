@@ -19,7 +19,6 @@ spring:
     consumer:
       group-id:
         ride: ride-creation-group
-        status: edit-status-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
     producer:
@@ -30,7 +29,6 @@ topic:
   name:
     ride: create.ride
     driver: available.driver
-    status: change.driver.status
 kafka:
   bootstrap-servers: localhost:9092
   partitions:

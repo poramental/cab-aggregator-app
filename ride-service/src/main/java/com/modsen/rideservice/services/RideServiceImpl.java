@@ -1,5 +1,6 @@
 package com.modsen.rideservice.services;
 
+import com.modsen.rideservice.dto.CustomerChargeRequest;
 import com.modsen.rideservice.dto.FindDriverRequest;
 import com.modsen.rideservice.entities.NotAvailableDrivers;
 import com.modsen.rideservice.dto.RideRequest;
@@ -10,6 +11,7 @@ import com.modsen.rideservice.entities.Ride;
 import com.modsen.rideservice.exceptions.*;
 import com.modsen.rideservice.feignclients.DriverFeignClient;
 import com.modsen.rideservice.feignclients.PassengerFeignClient;
+import com.modsen.rideservice.feignclients.PaymentFeignClient;
 import com.modsen.rideservice.kafka.RideProducer;
 import com.modsen.rideservice.mappers.RideMapper;
 import com.modsen.rideservice.repositories.RideRepository;
@@ -40,6 +42,8 @@ public class RideServiceImpl implements RideService {
     private final RideProducer rideProducer;
 
     private final NotAvailableDrivers notAvailableDrivers;
+
+    private final PaymentFeignClient paymentFeignClient;
 
     public RideListResponse getAll() {
         return new RideListResponse(repository.findAll().stream()
@@ -160,8 +164,11 @@ public class RideServiceImpl implements RideService {
         ride
                 .setIsActive(false)
                 .setEndDate(LocalDateTime.now());
+        paymentFeignClient.chargeFromCustomer( new CustomerChargeRequest()
+                .setAmount(20).setPassengerId(ride.getPassenger()).setCurrency("USD"));
         repository.save(ride);
         return mapper.entityToResponse(ride);
+
     }
 
     public RideResponse findRide(RideRequest rideRequest) {
