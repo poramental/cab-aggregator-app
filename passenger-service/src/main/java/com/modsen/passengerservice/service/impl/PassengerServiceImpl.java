@@ -1,4 +1,4 @@
-package com.modsen.passengerservice.service;
+package com.modsen.passengerservice.service.impl;
 
 
 import com.modsen.passengerservice.dto.*;
@@ -7,7 +7,7 @@ import com.modsen.passengerservice.exception.*;
 import com.modsen.passengerservice.feignclient.RideFeignClient;
 import com.modsen.passengerservice.mapper.PassengerMapper;
 import com.modsen.passengerservice.repository.PassengerRepository;
-import com.modsen.passengerservice.service.interfaces.PassengerService;
+import com.modsen.passengerservice.service.PassengerService;
 import com.modsen.passengerservice.util.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,4 @@
-package com.modsen.passengerservice.service.interfaces;
+package com.modsen.passengerservice.service;
 
 import com.modsen.passengerservice.dto.PassengerPageResponse;
 import com.modsen.passengerservice.dto.PassengerRequest;

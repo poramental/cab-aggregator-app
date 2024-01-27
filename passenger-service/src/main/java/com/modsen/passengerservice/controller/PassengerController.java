@@ -5,7 +5,7 @@ import com.modsen.passengerservice.dto.PassengerPageResponse;
 import com.modsen.passengerservice.dto.PassengerRequest;
 import com.modsen.passengerservice.dto.PassengerResponse;
 import com.modsen.passengerservice.dto.ListPassengerResponse;
-import com.modsen.passengerservice.service.PassengerServiceImpl;
+import com.modsen.passengerservice.service.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -20,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class PassengerController {
 
-    private final PassengerServiceImpl passengerService;
+    private final PassengerService passengerService;
 
     @GetMapping
     public ResponseEntity<ListPassengerResponse> getAll(){
