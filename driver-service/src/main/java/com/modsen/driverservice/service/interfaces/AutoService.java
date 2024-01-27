@@ -2,10 +2,10 @@ package com.modsen.driverservice.service.interfaces;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.dto.AutoResponseList;
+import com.modsen.driverservice.dto.ListAutoResponse;
 
 public interface AutoService {
-    AutoResponseList getAll();
+    ListAutoResponse getAll();
 
     AutoDto getByNumber(String number);
 

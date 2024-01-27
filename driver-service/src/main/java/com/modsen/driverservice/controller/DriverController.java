@@ -19,7 +19,7 @@ public class DriverController {
 
 
     @GetMapping
-    public ResponseEntity<DriverResponseList> getAll(){
+    public ResponseEntity<ListDriverResponse> getAll(){
         return ResponseEntity.ok(driverService.getAll());
     }
 

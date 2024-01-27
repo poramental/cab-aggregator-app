@@ -2,7 +2,7 @@ package com.modsen.driverservice.service;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.dto.AutoResponseList;
+import com.modsen.driverservice.dto.ListAutoResponse;
 import com.modsen.driverservice.entity.Auto;
 import com.modsen.driverservice.exception.*;
 import com.modsen.driverservice.mapper.AutoMapper;
@@ -26,9 +26,9 @@ public class AutoServiceImpl implements AutoService {
 
     private final PaginationService paginationService;
 
-    public AutoResponseList getAll()
+    public ListAutoResponse getAll()
     {
-        return new AutoResponseList(autoRepository.findAll().stream()
+        return new ListAutoResponse(autoRepository.findAll().stream()
                 .map(autoMapper::entityToDto).collect(Collectors.toList()));
     }
 

@@ -2,7 +2,7 @@ package com.modsen.driverservice.controller;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.dto.AutoResponseList;
+import com.modsen.driverservice.dto.ListAutoResponse;
 import com.modsen.driverservice.service.interfaces.AutoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ public class AutoController {
 
 
     @GetMapping
-    public ResponseEntity<AutoResponseList> getAll()
+    public ResponseEntity<ListAutoResponse> getAll()
     {
         return ResponseEntity.ok(autoService.getAll());
     }

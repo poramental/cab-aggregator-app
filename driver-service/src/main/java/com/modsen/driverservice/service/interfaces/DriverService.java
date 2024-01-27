@@ -3,7 +3,7 @@ package com.modsen.driverservice.service.interfaces;
 import com.modsen.driverservice.dto.*;
 
 public interface DriverService {
-    DriverResponseList getAll();
+    ListDriverResponse getAll();
     DriverResponse add(DriverRequest driverDto);
 
     DriverResponse deleteById(Long id);

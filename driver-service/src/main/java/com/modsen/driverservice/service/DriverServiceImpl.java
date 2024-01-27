@@ -33,8 +33,8 @@ public class DriverServiceImpl implements DriverService {
     private final PaginationService paginationService;
 
 
-    public DriverResponseList getAll(){
-        return new DriverResponseList(driverRepository.findAll().stream()
+    public ListDriverResponse getAll(){
+        return new ListDriverResponse(driverRepository.findAll().stream()
                 .map(driverMapper::entityToRespDto)
                 .collect(Collectors.toList()));
     }
