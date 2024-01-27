@@ -57,7 +57,7 @@ public class DriverServiceImpl implements DriverService {
     private void checkDriverEmailExist(String email) {
         checkDriverParamExist(
                 email,
-                driverRepository::findByEmail,
+                driverRepository::existsByEmail,
                 String.format(ExceptionMessage.DRIVER_EMAIL_ALREADY_EXIST_EXCEPTION, email)
         );
     }
@@ -111,7 +111,7 @@ public class DriverServiceImpl implements DriverService {
     private void checkDriverPhoneExist(String phone) {
         checkDriverParamExist(
                 phone,
-                driverRepository::findByPhone,
+                driverRepository::existsByPhone,
                 String.format(ExceptionMessage.DRIVER_PHONE_ALREADY_EXIST_EXCEPTION, phone)
         );
     }
@@ -122,9 +122,11 @@ public class DriverServiceImpl implements DriverService {
     }
 
     private <T> void checkDriverParamExist(T param,
-                                           Function<T, Optional<Driver>> repositoryFunc,
+                                           Function<T, Boolean> repositoryFunc,
                                            String exMessage) {
-        repositoryFunc.apply(param).orElseThrow(() -> new DriverAlreadyExistException(exMessage));
+        if(repositoryFunc.apply(param)) {
+            throw new DriverAlreadyExistException(exMessage);
+        }
 
     }
 
@@ -142,12 +144,12 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverResponse setAutoById(Long driver_id, AutoDto autoDto) {
+    public DriverResponse setAutoById(Long driverId, AutoDto autoDto) {
         return setAuto(
-                driver_id,
+                driverId,
                 autoDto,
                 driverRepository::findById,
-                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driver_id)
+                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driverId)
         );
     }
 
@@ -162,10 +164,10 @@ public class DriverServiceImpl implements DriverService {
         );
         if (!driver.getAutos().isEmpty())
             throw new DriverAlreadyHaveAutoException(ExceptionMessage.DRIVER_ALREADY_HAVE_AUTO_EXCEPTION);
-        else {
-            driver.getAutos().add(autoMapper.dtoToEntity(autoDto));
-            return driverMapper.entityToRespDto(driverRepository.save(driver));
-        }
+
+        driver.getAutos().add(autoMapper.dtoToEntity(autoDto));
+        return driverMapper.entityToRespDto(driverRepository.save(driver));
+
     }
     @Override
     public DriverResponse replaceAutoById(Long driver_id, AutoDto autoDto) {
