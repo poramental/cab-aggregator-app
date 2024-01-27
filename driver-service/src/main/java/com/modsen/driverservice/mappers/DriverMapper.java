@@ -3,6 +3,7 @@ package com.modsen.driverservice.mappers;
 import com.modsen.driverservice.dto.DriverRequest;
 import com.modsen.driverservice.dto.DriverResponse;
 import com.modsen.driverservice.entities.Driver;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -10,15 +11,11 @@ import java.util.stream.Collectors;
 
 
 @Component
+@RequiredArgsConstructor
 public class DriverMapper {
 
     private final ModelMapper mapper;
     private final AutoMapper autoMapper;
-
-    public DriverMapper(){
-        this.mapper = new ModelMapper();
-        this.autoMapper = new AutoMapper();
-    }
 
     public DriverResponse entityToResp(Driver driver){
         DriverResponse driverDto = mapper.map(driver, DriverResponse.class);
