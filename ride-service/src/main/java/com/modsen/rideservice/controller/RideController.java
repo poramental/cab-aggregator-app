@@ -40,7 +40,7 @@ public class RideController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<RideResponse> getById(@PathVariable(name = "id") UUID id) {
+    public ResponseEntity<RideResponse> getById(@PathVariable UUID id) {
         return ResponseEntity.ok(rideService.getById(id));
     }
 
