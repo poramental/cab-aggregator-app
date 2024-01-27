@@ -38,12 +38,12 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler()
+    @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<AppError> ratingExceptionHandler(RatingException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler
+    @ExceptionHandler(PaginationFormatException.class)
     public ResponseEntity<AppError> sortTypeExceptionHandler(PaginationFormatException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
     }
