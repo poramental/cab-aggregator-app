@@ -1,4 +1,4 @@
-package com.modsen.driverservice.service.interfaces;
+package com.modsen.driverservice.service;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
