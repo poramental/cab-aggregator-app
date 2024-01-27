@@ -8,5 +8,5 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 public class ListDriverResponse {
-    public List<DriverResponse> driverResponseList;
+    private List<DriverResponse> driverResponseList;
 }
