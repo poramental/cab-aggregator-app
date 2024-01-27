@@ -25,19 +25,19 @@ public class AutoController {
     }
 
     @GetMapping("/by-number")
-    public ResponseEntity<AutoResponse> getByNumber(@RequestParam(name = "number") String number)
+    public ResponseEntity<AutoResponse> getByNumber(@RequestParam String number)
     {
         return ResponseEntity.ok(autoService.getByNumber(number));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AutoResponse> getById(@PathVariable(name = "id") Long id)
+    public ResponseEntity<AutoResponse> getById(@PathVariable Long id)
     {
         return ResponseEntity.ok(autoService.getById(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<AutoResponse> deleteById(@PathVariable(name = "id") Long id)
+    public ResponseEntity<AutoResponse> deleteById(@PathVariable Long id)
     {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
