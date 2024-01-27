@@ -158,8 +158,8 @@ public class DriverServiceImpl implements DriverService {
                                        Function<T, Optional<Driver>> repositoryFunc,
                                        String exceptionMessage) {
         Driver driver = repositoryFunc.apply(param).orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
-        autoRepository.findByNumber(autoDto.getNumber()).orElseThrow(() -> new AutoAlreadyExistException(String.format(
-                ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION,
+        autoRepository.findByNumber(autoDto.getNumber()).orElseThrow(() -> new AutoNotFoundException(String.format(
+                ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION,
                 autoDto.getNumber()))
         );
         if (!driver.getAutos().isEmpty())
