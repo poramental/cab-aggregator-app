@@ -70,8 +70,8 @@ public class AutoServiceImpl implements AutoService {
     }
 
     public Auto getOrThrowById(Long id) {
-        return autoRepository.findById(id).orElseThrow(() -> new AutoNotFoundException(String
-                .format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, id)));
+        return autoRepository.findById(id)
+                .orElseThrow(() -> new AutoNotFoundException(String.format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, id)));
     }
 
     public Auto getOrThrowByNumber(String number) {
