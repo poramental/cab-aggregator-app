@@ -7,6 +7,6 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class RideListResponse {
+public class ListRideResponse {
     private List<RideResponse> rideResponseList;
 }

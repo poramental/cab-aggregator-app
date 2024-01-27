@@ -1,7 +1,7 @@
 package com.modsen.driverservice.controller;
 
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.dto.AutoListResponse;
+import com.modsen.driverservice.dto.ListAutoResponse;
 import com.modsen.driverservice.dto.AutoResponse;
 import com.modsen.driverservice.service.AutoServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ public class AutoController {
 
 
     @GetMapping
-    public ResponseEntity<AutoListResponse> getAll()
+    public ResponseEntity<ListAutoResponse> getAll()
     {
         return ResponseEntity.ok(autoService.getAll());
     }

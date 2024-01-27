@@ -6,7 +6,7 @@ import com.modsen.rideservice.entity.NotAvailableDrivers;
 import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.response.DriverResponse;
 import com.modsen.rideservice.dto.response.RideResponse;
-import com.modsen.rideservice.dto.response.RideListResponse;
+import com.modsen.rideservice.dto.response.ListRideResponse;
 import com.modsen.rideservice.entity.Ride;
 import com.modsen.rideservice.exception.*;
 import com.modsen.rideservice.feignclient.DriverFeignClient;
@@ -45,8 +45,8 @@ public class RideServiceImpl implements RideService {
 
     private final PaymentFeignClient paymentFeignClient;
 
-    public RideListResponse getAll() {
-        return new RideListResponse(repository.findAll().stream()
+    public ListRideResponse getAll() {
+        return new ListRideResponse(repository.findAll().stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
@@ -58,15 +58,15 @@ public class RideServiceImpl implements RideService {
                         id))));
     }
 
-    public RideListResponse getAllPassengerRidesById(Long passengerId) {
-        return new RideListResponse(repository.findAllByPassenger(passengerId)
+    public ListRideResponse getAllPassengerRidesById(Long passengerId) {
+        return new ListRideResponse(repository.findAllByPassenger(passengerId)
                 .stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
 
-    public RideListResponse getAllDriverRidesById(Long driverId) {
-        return new RideListResponse(repository.findAllByDriverId(driverId)
+    public ListRideResponse getAllDriverRidesById(Long driverId) {
+        return new ListRideResponse(repository.findAllByDriverId(driverId)
                 .stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));

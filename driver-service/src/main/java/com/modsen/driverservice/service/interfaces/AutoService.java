@@ -1,11 +1,11 @@
 package com.modsen.driverservice.service.interfaces;
 
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.dto.AutoListResponse;
+import com.modsen.driverservice.dto.ListAutoResponse;
 import com.modsen.driverservice.dto.AutoResponse;
 
 public interface AutoService {
-    AutoListResponse getAll();
+    ListAutoResponse getAll();
 
     AutoResponse getByNumber(String number);
 

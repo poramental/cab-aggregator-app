@@ -29,8 +29,8 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerMapper passengerMapper;
     private final RideFeignClient rideFeignClient;
 
-    public PassengerListResponse getAll(){
-        return new PassengerListResponse(passengerRepository.findAll().stream()
+    public ListPassengerResponse getAll(){
+        return new ListPassengerResponse(passengerRepository.findAll().stream()
                 .map(passengerMapper::entityToResponse)
                 .collect(Collectors.toList()));
     }

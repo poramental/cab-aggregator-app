@@ -44,8 +44,8 @@ public class DriverServiceImpl implements DriverService {
 
     private final DriverProducer driverProducer;
 
-    public DriverListResponse getAll() {
-        return new DriverListResponse(driverRepository.findAll().stream()
+    public ListDriverResponse getAll() {
+        return new ListDriverResponse(driverRepository.findAll().stream()
                 .map(driverMapper::entityToResp)
                 .collect(Collectors.toList()));
     }
