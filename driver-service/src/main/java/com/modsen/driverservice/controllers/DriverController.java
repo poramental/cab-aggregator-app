@@ -2,7 +2,7 @@ package com.modsen.driverservice.controllers;
 
 
 import com.modsen.driverservice.dto.*;
-import com.modsen.driverservice.services.DriverServiceImpl;
+import com.modsen.driverservice.services.interfaces.DriverService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class DriverController {
 
 
-    private final DriverServiceImpl driverService;
+    private final DriverService driverService;
 
 
     @GetMapping

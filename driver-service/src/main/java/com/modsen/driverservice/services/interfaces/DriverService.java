@@ -18,4 +18,6 @@ public interface DriverService {
 
     DriverPageResponse getDriversPage(int page, int size, String orderBy);
 
+    DriverResponse getById(Long id);
+
 }
