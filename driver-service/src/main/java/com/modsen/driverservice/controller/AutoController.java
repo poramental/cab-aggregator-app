@@ -3,7 +3,7 @@ package com.modsen.driverservice.controller;
 import com.modsen.driverservice.dto.AutoPageResponse;
 import com.modsen.driverservice.dto.ListAutoResponse;
 import com.modsen.driverservice.dto.AutoResponse;
-import com.modsen.driverservice.service.AutoServiceImpl;
+import com.modsen.driverservice.service.impl.AutoServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

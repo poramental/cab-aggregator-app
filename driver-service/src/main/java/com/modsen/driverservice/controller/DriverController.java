@@ -2,7 +2,7 @@ package com.modsen.driverservice.controller;
 
 
 import com.modsen.driverservice.dto.*;
-import com.modsen.driverservice.service.DriverServiceImpl;
+import com.modsen.driverservice.service.impl.DriverServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;

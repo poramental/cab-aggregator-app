@@ -1,7 +1,7 @@
 package com.modsen.driverservice.kafka;
 
 import com.modsen.driverservice.dto.FindDriverRequest;
-import com.modsen.driverservice.service.interfaces.DriverService;
+import com.modsen.driverservice.service.DriverService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
