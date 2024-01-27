@@ -45,12 +45,14 @@ public class RideServiceImpl implements RideService {
 
     private final PaymentFeignClient paymentFeignClient;
 
+    @Override
     public ListRideResponse getAll() {
         return new ListRideResponse(repository.findAll().stream()
                 .map(mapper::entityToResponse)
-                .collect(Collectors.toList()));
+                .toList());
     }
 
+    @Override
     public RideResponse getById(UUID id) {
         return mapper.entityToResponse(repository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(String.format(
@@ -58,6 +60,7 @@ public class RideServiceImpl implements RideService {
                         id))));
     }
 
+    @Override
     public ListRideResponse getAllPassengerRidesById(Long passengerId) {
         return new ListRideResponse(repository.findAllByPassenger(passengerId)
                 .stream()
@@ -65,6 +68,7 @@ public class RideServiceImpl implements RideService {
                 .collect(Collectors.toList()));
     }
 
+    @Override
     public ListRideResponse getAllDriverRidesById(Long driverId) {
         return new ListRideResponse(repository.findAllByDriverId(driverId)
                 .stream()
@@ -72,6 +76,7 @@ public class RideServiceImpl implements RideService {
                 .collect(Collectors.toList()));
     }
 
+    @Override
     public RideResponse acceptRide(UUID rideId, Long driverId) {
         DriverResponse driverResponse = driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
@@ -93,6 +98,7 @@ public class RideServiceImpl implements RideService {
         return mapper.entityToResponse(repository.save(ride.setDriverId(driverId)));
     }
 
+    @Override
     public RideResponse cancelRide(UUID rideId, Long driverId) {
         driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
@@ -111,6 +117,7 @@ public class RideServiceImpl implements RideService {
         return mapper.entityToResponse(ride);
     }
 
+    @Override
     public RideResponse startRide(UUID rideId, Long driverId) {
         driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
@@ -156,6 +163,7 @@ public class RideServiceImpl implements RideService {
         }
     }
 
+    @Override
     public RideResponse endRide(UUID rideId, Long driverId) {
         driverFeignClient.getDriverById(driverId);
         driverFeignClient.changeIsInRideStatus(driverId);
@@ -171,6 +179,7 @@ public class RideServiceImpl implements RideService {
 
     }
 
+    @Override
     public RideResponse findRide(RideRequest rideRequest) {
         Ride ride = mapper.requestToEntity(rideRequest);
         passengerFeignClient.getPassengerById(ride.getPassenger());
