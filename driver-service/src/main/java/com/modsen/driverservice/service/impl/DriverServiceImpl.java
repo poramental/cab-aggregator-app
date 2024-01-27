@@ -13,6 +13,7 @@ import com.modsen.driverservice.util.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
@@ -32,7 +33,7 @@ public class DriverServiceImpl implements DriverService {
     private final AutoMapper autoMapper;
 
 
-    public ListDriverResponse getAll(){
+    public ListDriverResponse getAll() {
         return new ListDriverResponse(driverRepository.findAll().stream()
                 .map(driverMapper::entityToRespDto)
                 .collect(Collectors.toList()));
@@ -40,34 +41,33 @@ public class DriverServiceImpl implements DriverService {
 
 
     public DriverResponse add(DriverRequest driverDto) {
-        checkDriverParamsExist(driverDto.getEmail(),driverDto.getPhone());
+        checkDriverParamsExist(driverDto.getEmail(), driverDto.getPhone());
         return driverMapper
                 .entityToRespDto(driverRepository.save(driverMapper.reqDtoToEntity(driverDto)));
     }
 
 
-    public DriverResponse deleteById(Long id){
+    public DriverResponse deleteById(Long id) {
         Driver driver = getDriverOrThrow(id);
         driverRepository.delete(driver);
         return driverMapper.entityToRespDto(driver);
 
     }
 
-    private void checkDriverEmailExist(String email){
+    private void checkDriverEmailExist(String email) {
         checkDriverParamExist(
                 email,
                 driverRepository::findByEmail,
-                String.format(ExceptionMessage.DRIVER_EMAIL_ALREADY_EXIST_EXCEPTION,email)
+                String.format(ExceptionMessage.DRIVER_EMAIL_ALREADY_EXIST_EXCEPTION, email)
         );
     }
 
-    private void checkDriverParamsExist(String email, String phone)
-    {
+    private void checkDriverParamsExist(String email, String phone) {
         checkDriverEmailExist(email);
         checkDriverPhoneExist(phone);
     }
 
-    public DriverResponse getById(Long id){
+    public DriverResponse getById(Long id) {
         return driverMapper.entityToRespDto(driverRepository.findById(id)
                 .orElseThrow(() -> new DriverNotFoundException(String.format(
                         ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,
@@ -75,19 +75,17 @@ public class DriverServiceImpl implements DriverService {
     }
 
 
-    public DriverResponse update(Long id, DriverRequest driverDto)
-    {
+    public DriverResponse update(Long id, DriverRequest driverDto) {
         preUpdateAllParamsCheck(driverDto, id);
         Driver driver = driverMapper.reqDtoToEntity(driverDto);
         return driverMapper.entityToRespDto(driverRepository.save(driver));
     }
 
-    public DriverResponse addRatingById(Long id, int rating)
-    {
+    public DriverResponse addRatingById(Long id, int rating) {
         return addRating(
                 rating,
                 id,
-                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,id),
+                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, id),
                 driverRepository::findById
         );
     }
@@ -95,8 +93,7 @@ public class DriverServiceImpl implements DriverService {
     private <T> DriverResponse addRating(int rating,
                                          T param,
                                          String exMessage,
-                                         Function<T,Optional<Driver>> repositoryFunc)
-    {
+                                         Function<T, Optional<Driver>> repositoryFunc) {
         if (rating > 5 || rating < 0) {
             throw new RatingException(ExceptionMessage.RATING_EXCEPTION);
         }
@@ -105,51 +102,46 @@ public class DriverServiceImpl implements DriverService {
         float ratingSum = driver.getAverageRating() * driver.getRatingsCount();
         int newRatingsCount = driver.getRatingsCount() + 1;
         return driverMapper.entityToRespDto(driverRepository.save(
-                    driver.setAverageRating((ratingSum + rating) / newRatingsCount)
-                    .setRatingsCount(newRatingsCount)
-            ));
+                driver.setAverageRating((ratingSum + rating) / newRatingsCount)
+                        .setRatingsCount(newRatingsCount)
+        ));
     }
 
-    private void checkDriverPhoneExist(String phone)
-    {
+    private void checkDriverPhoneExist(String phone) {
         checkDriverParamExist(
                 phone,
                 driverRepository::findByPhone,
-                String.format(ExceptionMessage.DRIVER_PHONE_ALREADY_EXIST_EXCEPTION,phone)
+                String.format(ExceptionMessage.DRIVER_PHONE_ALREADY_EXIST_EXCEPTION, phone)
         );
     }
 
-    private void preUpdateAllParamsCheck(DriverRequest driverDto, Long id)
-    {
+    private void preUpdateAllParamsCheck(DriverRequest driverDto, Long id) {
         preUpdateEmailCheck(id, driverDto);
         preUpdatePhoneCheck(id, driverDto);
     }
 
     private <T> void checkDriverParamExist(T param,
-                                          Function<T, Optional<Driver>> repositoryFunc,
-                                          String exMessage)
-            throws DriverAlreadyExistException{
+                                           Function<T, Optional<Driver>> repositoryFunc,
+                                           String exMessage)
+            throws DriverAlreadyExistException {
         repositoryFunc.apply(param).orElseThrow(() -> new DriverAlreadyExistException(exMessage));
 
     }
 
-    private void preUpdateEmailCheck(Long id, DriverRequest driverDto)
-    {
+    private void preUpdateEmailCheck(Long id, DriverRequest driverDto) {
         Driver driver = getDriverOrThrow(id);
         if (!driver.getEmail().equals(driverDto.getEmail()))
             checkDriverEmailExist(driverDto.getEmail());
 
     }
 
-    private void preUpdatePhoneCheck(Long id, DriverRequest driverDto)
-    {
+    private void preUpdatePhoneCheck(Long id, DriverRequest driverDto) {
         Driver driver = getDriverOrThrow(id);
         if (!driver.getPhone().equals(driverDto.getPhone()))
             checkDriverPhoneExist(driverDto.getPhone());
     }
 
-    public DriverResponse setAutoById(Long driver_id, AutoDto autoDto)
-    {
+    public DriverResponse setAutoById(Long driver_id, AutoDto autoDto) {
         return setAuto(
                 driver_id,
                 autoDto,
@@ -160,9 +152,8 @@ public class DriverServiceImpl implements DriverService {
 
     private <T> DriverResponse setAuto(T param,
                                        AutoDto autoDto,
-                                       Function<T, Optional<Driver>>repositoryFunc,
-                                       String exceptionMessage)
-    {
+                                       Function<T, Optional<Driver>> repositoryFunc,
+                                       String exceptionMessage) {
         Driver driver = repositoryFunc.apply(param).orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
         autoRepository.findByNumber(autoDto.getNumber()).orElseThrow(() -> new AutoAlreadyExistException(String.format(
                 ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION,
@@ -176,39 +167,36 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
-    public DriverResponse replaceAutoById(Long driver_id, AutoDto autoDto)
-    {
+    public DriverResponse replaceAutoById(Long driver_id, AutoDto autoDto) {
         return replaceAuto(
                 driver_id,
                 autoDto,
                 driverRepository::findById,
-                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,driver_id)
+                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driver_id)
         );
     }
 
     private <T> DriverResponse replaceAuto(
             T param,
             AutoDto autoDto,
-            Function<T,Optional<Driver>> driverRepositoryFunc,
-            String exceptionMessage)
-    {
+            Function<T, Optional<Driver>> driverRepositoryFunc,
+            String exceptionMessage) {
         Driver driver = driverRepositoryFunc.apply(param)
                 .orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
         autoRepository.findByNumber(autoDto.getNumber())
                 .orElseThrow(() -> new AutoAlreadyExistException(String
                         .format(ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION, autoDto.getNumber())));
-        driver.getAutos().set(0,autoMapper.dtoToEntity(autoDto));
+        driver.getAutos().set(0, autoMapper.dtoToEntity(autoDto));
         return driverMapper.entityToRespDto(driverRepository.save(driver));
     }
 
-    public DriverPageResponse getDriversPage(int page, int size, String orderBy)
-    {
-      Page<Driver> driversPage = PaginationService.getPage(
-              page,
-              size,
-              orderBy,
-              driverRepository::findAll
-      );
+    public DriverPageResponse getDriversPage(int page, int size, String orderBy) {
+        Page<Driver> driversPage = PaginationService.getPage(
+                page,
+                size,
+                orderBy,
+                driverRepository::findAll
+        );
         List<Driver> retrievedDrivers = driversPage.getContent();
         long total = driversPage.getTotalElements();
         List<DriverResponse> drivers = retrievedDrivers.stream()
@@ -221,9 +209,9 @@ public class DriverServiceImpl implements DriverService {
                 .build();
     }
 
-    private Driver getDriverOrThrow(Long id){
+    private Driver getDriverOrThrow(Long id) {
         return driverRepository.findById(id).orElseThrow(() -> new DriverNotFoundException(String
-                .format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,id)));
+                .format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, id)));
     }
 
 }

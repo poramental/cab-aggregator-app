@@ -16,14 +16,14 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({AutoAlreadyExistException.class,DriverAlreadyExistException.class,DriverAlreadyHaveAutoException.class})
-    public ResponseEntity<AppError> autoAlreadyExistExceptionHandler(RuntimeException e){
+    @ExceptionHandler({AutoAlreadyExistException.class, DriverAlreadyExistException.class, DriverAlreadyHaveAutoException.class})
+    public ResponseEntity<AppError> autoAlreadyExistExceptionHandler(RuntimeException e) {
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler({AutoNotFoundException.class,DriverNotFoundException.class })
-    public ResponseEntity<AppError> notFoundException(RuntimeException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
+    @ExceptionHandler({AutoNotFoundException.class, DriverNotFoundException.class})
+    public ResponseEntity<AppError> notFoundException(RuntimeException e) {
+        return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -35,17 +35,17 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<AppError> ratingExceptionHandler(RatingException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
+    public ResponseEntity<AppError> ratingExceptionHandler(RatingException e) {
+        return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(PaginationFormatException.class)
-    public ResponseEntity<AppError> sortTypeExceptionHandler(PaginationFormatException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
+    public ResponseEntity<AppError> sortTypeExceptionHandler(PaginationFormatException e) {
+        return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
 }

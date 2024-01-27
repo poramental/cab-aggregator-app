@@ -8,7 +8,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
 
-
 @Component
 @RequiredArgsConstructor
 public class DriverMapper {
@@ -16,15 +15,15 @@ public class DriverMapper {
     private final ModelMapper mapper;
     private final AutoMapper autoMapper;
 
-    public DriverResponse entityToRespDto(Driver driver){
+    public DriverResponse entityToRespDto(Driver driver) {
         DriverResponse driverDto = mapper.map(driver, DriverResponse.class);
         return driverDto.getAutos().isEmpty() ? driverDto :
                 driverDto.setAutos(driver.getAutos().stream()
                         .map(autoMapper::entityToDto).toList());
     }
 
-    public Driver reqDtoToEntity(DriverRequest driverDto){
-        return mapper.map(driverDto,Driver.class);
+    public Driver reqDtoToEntity(DriverRequest driverDto) {
+        return mapper.map(driverDto, Driver.class);
 
     }
 

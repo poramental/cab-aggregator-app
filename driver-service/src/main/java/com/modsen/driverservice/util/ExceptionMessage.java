@@ -3,7 +3,7 @@ package com.modsen.driverservice.util;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class ExceptionMessage{
+public class ExceptionMessage {
 
     public static final String AUTO_NUMBER_ALREADY_EXIST_EXCEPTION = "Auto with number: '%s' is present.";
     public static final String AUTO_NOT_FOUND_EXCEPTION = "Auto with id: '%s' not found.";

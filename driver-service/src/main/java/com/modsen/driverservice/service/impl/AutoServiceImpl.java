@@ -15,7 +15,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,40 +24,36 @@ public class AutoServiceImpl implements AutoService {
 
     private final AutoMapper autoMapper;
 
-    public ListAutoResponse getAll()
-    {
+    public ListAutoResponse getAll() {
         return new ListAutoResponse(autoRepository.findAll().stream()
-                .map(autoMapper::entityToDto).collect(Collectors.toList()));
+                .map(autoMapper::entityToDto)
+                .toList());
     }
 
-    public AutoDto getByNumber(String number)
-    {
+    public AutoDto getByNumber(String number) {
         Auto auto = getOrThrowByNumber(number);
         return autoMapper.entityToDto(auto);
     }
 
-    public AutoDto getById(Long id)
-    {
+    public AutoDto getById(Long id) {
         Auto auto = getOrThrowById(id);
         return autoMapper.entityToDto(auto);
     }
 
-    public AutoDto deleteById(Long id)
-    {
+    public AutoDto deleteById(Long id) {
         Auto auto = getOrThrowById(id);
         autoRepository.delete(auto);
         return autoMapper.entityToDto(auto);
     }
 
-    public AutoPageResponse getAutosPage(int page, int size, String orderBy)
-    {
-       Page<Auto> autosPage = PaginationService.getPage(
-               page,
-               size,
-               orderBy,
-               autoRepository::findAll
+    public AutoPageResponse getAutosPage(int page, int size, String orderBy) {
+        Page<Auto> autosPage = PaginationService.getPage(
+                page,
+                size,
+                orderBy,
+                autoRepository::findAll
 
-       );
+        );
 
         List<Auto> retrievedDrivers = autosPage.getContent();
         long total = autosPage.getTotalElements();
@@ -74,14 +69,12 @@ public class AutoServiceImpl implements AutoService {
                 .build();
     }
 
-    public Auto getOrThrowById(Long id)
-    {
+    public Auto getOrThrowById(Long id) {
         return autoRepository.findById(id).orElseThrow(() -> new AutoNotFoundException(String
                 .format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, id)));
     }
 
-    public Auto getOrThrowByNumber(String number)
-    {
+    public Auto getOrThrowByNumber(String number) {
         return autoRepository.findByNumber(number)
                 .orElseThrow(() -> new AutoNotFoundException(String.format(
                         ExceptionMessage.AUTO_NUMBER_NOT_FOUND_EXCEPTION,
