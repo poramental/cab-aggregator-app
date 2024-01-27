@@ -31,6 +31,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private final UserRepository userRepository;
 
+    @Override
     public CustomerResponse createCustomer(CustomerRequest customerRequest){
         checkCustomerAlreadyExist(customerRequest.getPassengerId());
         Customer customer = createStripeCustomer(customerRequest);
@@ -46,6 +47,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .build();
     }
 
+    @Override
     public TokenDto generateTokenByCard(CardRequest cardRequest) {
         try {
             Stripe.apiKey = PUBLIC_KEY;
@@ -125,6 +127,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     }
 
+    @Override
     public CustomerResponse retrieve(long id) {
         Stripe.apiKey = SECRET_KEY;
         String customerId = getOrThrow(id).getCustomerId();
@@ -163,6 +166,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Override
     public MessageResponse charge(ChargeRequest chargeRequest) {
         Stripe.apiKey = SECRET_KEY;
         Charge charge = checkChargeData(chargeRequest);
@@ -179,6 +183,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Override
     public BalanceResponse balance() {
         Stripe.apiKey = SECRET_KEY;
         Balance balance = retrieveBalance();
@@ -241,6 +246,7 @@ public class PaymentServiceImpl implements PaymentService {
         }
     }
 
+    @Override
     public ChargeResponse chargeFromCustomer(CustomerChargeRequest customerChargeRequest) {
         Stripe.apiKey = SECRET_KEY;
         Long passengerId = customerChargeRequest.getPassengerId();
