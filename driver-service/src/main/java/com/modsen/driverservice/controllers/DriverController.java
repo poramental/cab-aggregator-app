@@ -69,7 +69,7 @@ public class DriverController {
 
     @PatchMapping("/{driverId}/rating")
     public ResponseEntity<DriverResponse> addRating(@PathVariable Long driverId,
-                                                    @RequestParam("rating") int rating)
+                                                    @RequestParam int rating)
     {
         return ResponseEntity.ok(driverService.addRatingById(driverId,rating));
     }
