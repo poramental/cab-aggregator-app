@@ -1,7 +1,7 @@
 package com.modsen.paymentservice.controller;
 
 import com.modsen.paymentservice.dto.*;
-import com.modsen.paymentservice.service.PaymentServiceImpl;
+import com.modsen.paymentservice.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentServiceImpl paymentService;
+    private final PaymentService paymentService;
+
     @PostMapping("/customers")
-    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody @Valid CustomerRequest customerRequest){
+    public ResponseEntity<CustomerResponse> createCustomer(@RequestBody @Valid CustomerRequest customerRequest) {
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(paymentService.createCustomer(customerRequest));
     }

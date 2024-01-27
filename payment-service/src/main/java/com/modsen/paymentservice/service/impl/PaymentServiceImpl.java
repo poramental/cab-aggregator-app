@@ -1,11 +1,11 @@
-package com.modsen.paymentservice.service;
+package com.modsen.paymentservice.service.impl;
 
 import com.modsen.paymentservice.dto.*;
 import com.modsen.paymentservice.exception.*;
 import com.modsen.paymentservice.model.User;
 import com.modsen.paymentservice.enums.PaymentMethodEnum;
 import com.modsen.paymentservice.repository.UserRepository;
-import com.modsen.paymentservice.service.interfaces.PaymentService;
+import com.modsen.paymentservice.service.PaymentService;
 import com.modsen.paymentservice.util.ExceptionMessage;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;

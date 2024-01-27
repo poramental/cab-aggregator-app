@@ -1,4 +1,4 @@
-package com.modsen.rideservice.service;
+package com.modsen.rideservice.service.impl;
 
 import com.modsen.rideservice.dto.CustomerChargeRequest;
 import com.modsen.rideservice.dto.FindDriverRequest;
@@ -15,7 +15,7 @@ import com.modsen.rideservice.feignclient.PaymentFeignClient;
 import com.modsen.rideservice.kafka.RideProducer;
 import com.modsen.rideservice.mapper.RideMapper;
 import com.modsen.rideservice.repository.RideRepository;
-import com.modsen.rideservice.service.interfaces.RideService;
+import com.modsen.rideservice.service.RideService;
 import com.modsen.rideservice.util.ExceptionMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -37,7 +37,7 @@ public class RideServiceImpl implements RideService {
 
     private final DriverFeignClient driverFeignClient;
 
-    private final PassengerMailService PassengerMailService;
+    private final com.modsen.rideservice.service.PassengerMailService PassengerMailService;
 
     private final RideProducer rideProducer;
 

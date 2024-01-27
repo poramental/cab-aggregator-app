@@ -1,9 +1,9 @@
 package com.modsen.rideservice.controller;
 
 import com.modsen.rideservice.dto.RideRequest;
-import com.modsen.rideservice.dto.response.RideResponse;
 import com.modsen.rideservice.dto.response.ListRideResponse;
-import com.modsen.rideservice.service.RideServiceImpl;
+import com.modsen.rideservice.dto.response.RideResponse;
+import com.modsen.rideservice.service.RideService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class RideController {
 
-    private final RideServiceImpl rideService;
+    private final RideService rideService;
 
     @PatchMapping("/accept-ride-driver")
     public ResponseEntity<RideResponse> acceptRideByDriver(

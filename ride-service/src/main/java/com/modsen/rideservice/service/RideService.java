@@ -1,4 +1,4 @@
-package com.modsen.rideservice.service.interfaces;
+package com.modsen.rideservice.service;
 
 import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.response.RideResponse;
