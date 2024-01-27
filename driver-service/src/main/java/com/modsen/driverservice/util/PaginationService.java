@@ -36,8 +36,7 @@ public class PaginationService {
     public static <T> Page<T> getPage(int page,
                                int size,
                                String orderBy,
-                               Function<PageRequest,Page<T>> repositoryFindAll)
-            throws PaginationFormatException {
+                               Function<PageRequest,Page<T>> repositoryFindAll) {
         PageRequest pageRequest = getPageRequest(page, size, orderBy);
         return repositoryFindAll.apply(pageRequest);
     }
