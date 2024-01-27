@@ -29,18 +29,21 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerMapper passengerMapper;
     private final RideFeignClient rideFeignClient;
 
+    @Override
     public ListPassengerResponse getAll(){
         return new ListPassengerResponse(passengerRepository.findAll().stream()
                 .map(passengerMapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
 
+    @Override
     public PassengerResponse addPassenger(PassengerRequest passengerReqDto){
         checkPassengerParamsExists(passengerReqDto);
         return passengerMapper.entityToResponse(passengerRepository
                 .save(passengerMapper.requestToEntity(passengerReqDto)));
     }
 
+    @Override
     public PassengerResponse deletePassengerById(Long passengerId) {
         return delete(
                 passengerId,
@@ -49,6 +52,7 @@ public class PassengerServiceImpl implements PassengerService {
         );
     }
 
+    @Override
     public PassengerResponse getById(Long id) {
         return passengerMapper.entityToResponse(getOrThrow(id));
     }
@@ -128,6 +132,7 @@ public class PassengerServiceImpl implements PassengerService {
         checkUsernameExist(passengerDto);
     }
 
+    @Override
     public PassengerResponse addRatingById(int rating, UUID rideId, Long id) {
         return addRating(
                 rating,
@@ -172,6 +177,7 @@ public class PassengerServiceImpl implements PassengerService {
         ));
     }
 
+    @Override
     public PageRequest getPageRequest(int page, int size, String orderBy) {
         if (page < 1 || size < 1) {
             throw new PaginationFormatException(ExceptionMessage.PAGINATION_FORMAT_EXCEPTION);
@@ -195,6 +201,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     }
 
+    @Override
     public PassengerPageResponse getPassengerPage(int page, int size, String orderBy) {
         PageRequest pageRequest = getPageRequest(page, size, orderBy);
         Page<Passenger> passengersPage = passengerRepository.findAll(pageRequest);
