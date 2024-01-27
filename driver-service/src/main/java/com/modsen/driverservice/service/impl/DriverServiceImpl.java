@@ -44,20 +44,21 @@ public class DriverServiceImpl implements DriverService {
 
     private final DriverProducer driverProducer;
 
+    @Override
     public ListDriverResponse getAll() {
         return new ListDriverResponse(driverRepository.findAll().stream()
                 .map(driverMapper::entityToResp)
                 .collect(Collectors.toList()));
     }
 
-
+    @Override
     public DriverResponse add(DriverRequest driverDto) {
         checkDriverParamsExist(driverDto.getEmail(), driverDto.getPhone());
         return driverMapper
                 .entityToResp(driverRepository.save(driverMapper.reqToEntity(driverDto).setIsInRide(false)));
     }
 
-
+    @Override
     public DriverResponse deleteById(Long id) {
         Driver driver = getDriverOrThrow(id);
         driverRepository.delete(driver);
@@ -78,6 +79,7 @@ public class DriverServiceImpl implements DriverService {
         checkDriverPhoneExist(phone);
     }
 
+    @Override
     public DriverResponse getById(Long id) {
         return driverMapper.entityToResp(driverRepository.findById(id)
                 .orElseThrow(() -> new DriverNotFoundException(String.format(
@@ -85,7 +87,7 @@ public class DriverServiceImpl implements DriverService {
                         id))));
     }
 
-
+    @Override
     public DriverResponse update(Long id, DriverRequest driverDto) {
         Driver oldDriver = getDriverOrThrow(id);
         preUpdateAllParamsCheck(driverDto, id);
@@ -95,6 +97,7 @@ public class DriverServiceImpl implements DriverService {
                 .save(newDriver.setAutos(oldDriver.getAutos())));
     }
 
+    @Override
     public DriverResponse addRatingById(Long id, UUID rideId, int rating) {
         return addRating(
                 rating,
@@ -173,6 +176,7 @@ public class DriverServiceImpl implements DriverService {
             checkDriverPhoneExist(driverDto.getPhone());
     }
 
+    @Override
     public DriverResponse setAutoById(Long driver_id, AutoRequest autoDto) {
         return setAuto(
                 driver_id,
@@ -203,6 +207,7 @@ public class DriverServiceImpl implements DriverService {
         }
     }
 
+    @Override
     public DriverResponse replaceAutoById(Long driver_id, AutoRequest autoDto) {
         return replaceAuto(
                 driver_id,
@@ -235,6 +240,7 @@ public class DriverServiceImpl implements DriverService {
         return driverMapper.entityToResp(driverRepository.save(driver));
     }
 
+    @Override
     public DriverPageResponse getDriversPage(int page, int size, String orderBy) {
         Page<Driver> driversPage = PaginationService.getPage(
                 page,
@@ -259,16 +265,19 @@ public class DriverServiceImpl implements DriverService {
                 .format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, id)));
     }
 
+    @Override
     public DriverResponse changeIsInRideStatus(Long driverId) {
         Driver driver = getDriverOrThrow(driverId);
         return driverMapper.entityToResp(driverRepository.save(driver.setIsInRide(!driver.getIsInRide())));
     }
 
+    @Override
     public List<DriverResponse> getAvailableDrivers() {
         return driverRepository.findAllByIsInRideIsFalse().stream()
                 .map(driverMapper::entityToResp).toList();
     }
 
+    @Override
     public void findDriverForRide(FindDriverRequest request) {
         List<Driver> availableDrivers = driverRepository.findAllByIsInRideIsFalse();
         if ((Objects.nonNull(request.getNotAcceptedDrivers()) && !request.getNotAcceptedDrivers().isEmpty())) {
