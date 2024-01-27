@@ -32,21 +32,21 @@ public class DriverServiceImpl implements DriverService {
 
     private final AutoMapper autoMapper;
 
-
+    @Override
     public ListDriverResponse getAll() {
         return new ListDriverResponse(driverRepository.findAll().stream()
                 .map(driverMapper::entityToRespDto)
                 .collect(Collectors.toList()));
     }
 
-
+    @Override
     public DriverResponse add(DriverRequest driverDto) {
         checkDriverParamsExist(driverDto.getEmail(), driverDto.getPhone());
         return driverMapper
                 .entityToRespDto(driverRepository.save(driverMapper.reqDtoToEntity(driverDto)));
     }
 
-
+    @Override
     public DriverResponse deleteById(Long id) {
         Driver driver = getDriverOrThrow(id);
         driverRepository.delete(driver);
@@ -66,7 +66,7 @@ public class DriverServiceImpl implements DriverService {
         checkDriverEmailExist(email);
         checkDriverPhoneExist(phone);
     }
-
+    @Override
     public DriverResponse getById(Long id) {
         return driverMapper.entityToRespDto(driverRepository.findById(id)
                 .orElseThrow(() -> new DriverNotFoundException(String.format(
@@ -74,13 +74,14 @@ public class DriverServiceImpl implements DriverService {
                         id))));
     }
 
-
+    @Override
     public DriverResponse update(Long id, DriverRequest driverDto) {
         preUpdateAllParamsCheck(driverDto, id);
         Driver driver = driverMapper.reqDtoToEntity(driverDto);
         return driverMapper.entityToRespDto(driverRepository.save(driver));
     }
 
+    @Override
     public DriverResponse addRatingById(Long id, int rating) {
         return addRating(
                 rating,
@@ -141,6 +142,7 @@ public class DriverServiceImpl implements DriverService {
             checkDriverPhoneExist(driverDto.getPhone());
     }
 
+    @Override
     public DriverResponse setAutoById(Long driver_id, AutoDto autoDto) {
         return setAuto(
                 driver_id,
@@ -166,7 +168,7 @@ public class DriverServiceImpl implements DriverService {
             return driverMapper.entityToRespDto(driverRepository.save(driver));
         }
     }
-
+    @Override
     public DriverResponse replaceAutoById(Long driver_id, AutoDto autoDto) {
         return replaceAuto(
                 driver_id,
@@ -190,6 +192,7 @@ public class DriverServiceImpl implements DriverService {
         return driverMapper.entityToRespDto(driverRepository.save(driver));
     }
 
+    @Override
     public DriverPageResponse getDriversPage(int page, int size, String orderBy) {
         Page<Driver> driversPage = PaginationService.getPage(
                 page,
