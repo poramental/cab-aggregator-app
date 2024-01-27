@@ -24,4 +24,8 @@ public interface DriverService {
     List<DriverResponse> getAvailableDrivers();
 
     void findDriverForRide(FindDriverRequest message);
+
+    DriverResponse changeIsInRideStatus(Long driverId);
+
+    DriverResponse getById(Long id);
 }

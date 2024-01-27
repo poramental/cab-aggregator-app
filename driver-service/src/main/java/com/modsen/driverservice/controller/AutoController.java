@@ -1,9 +1,9 @@
 package com.modsen.driverservice.controller;
 
 import com.modsen.driverservice.dto.AutoPageResponse;
-import com.modsen.driverservice.dto.ListAutoResponse;
 import com.modsen.driverservice.dto.AutoResponse;
-import com.modsen.driverservice.service.impl.AutoServiceImpl;
+import com.modsen.driverservice.dto.ListAutoResponse;
+import com.modsen.driverservice.service.AutoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class AutoController {
 
 
-    private final AutoServiceImpl autoService;
+    private final AutoService autoService;
 
 
     @GetMapping
