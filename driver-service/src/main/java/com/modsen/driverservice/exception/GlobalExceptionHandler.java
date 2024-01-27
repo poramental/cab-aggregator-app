@@ -17,7 +17,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({AutoAlreadyExistException.class,DriverAlreadyExistException.class,DriverAlreadyHaveAutoException.class})
-    public ResponseEntity<AppError> autoAlreadyExistExceptionHandler(AutoAlreadyExistException e){
+    public ResponseEntity<AppError> autoAlreadyExistExceptionHandler(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }
 
@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
