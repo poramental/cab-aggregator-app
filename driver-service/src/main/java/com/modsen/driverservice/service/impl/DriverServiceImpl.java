@@ -165,17 +165,16 @@ public class DriverServiceImpl implements DriverService {
         if (!driver.getAutos().isEmpty())
             throw new DriverAlreadyHaveAutoException(ExceptionMessage.DRIVER_ALREADY_HAVE_AUTO_EXCEPTION);
 
-        driver.getAutos().add(autoMapper.dtoToEntity(autoDto));
-        return driverMapper.entityToRespDto(driverRepository.save(driver));
+        return driverMapper.entityToRespDto(driverRepository.save(driver), autoDto);
 
     }
     @Override
-    public DriverResponse replaceAutoById(Long driver_id, AutoDto autoDto) {
+    public DriverResponse replaceAutoById(Long driverId, AutoDto autoDto) {
         return replaceAuto(
-                driver_id,
+                driverId,
                 autoDto,
                 driverRepository::findById,
-                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driver_id)
+                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driverId)
         );
     }
 
@@ -187,10 +186,10 @@ public class DriverServiceImpl implements DriverService {
         Driver driver = driverRepositoryFunc.apply(param)
                 .orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
         autoRepository.findByNumber(autoDto.getNumber())
-                .orElseThrow(() -> new AutoAlreadyExistException(String
-                        .format(ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION, autoDto.getNumber())));
+                .orElseThrow(() -> new AutoNotFoundException(String
+                        .format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, autoDto.getNumber())));
         driver.getAutos().set(0, autoMapper.dtoToEntity(autoDto));
-        return driverMapper.entityToRespDto(driverRepository.save(driver));
+        return driverMapper.entityToRespDto(driverRepository.save(driver), autoDto);
     }
 
     @Override
