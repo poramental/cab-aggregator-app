@@ -1,7 +1,7 @@
-package com.modsen.driverservice.mappers;
+package com.modsen.driverservice.mapper;
 
 import com.modsen.driverservice.dto.AutoDto;
-import com.modsen.driverservice.entities.Auto;
+import com.modsen.driverservice.entity.Auto;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 

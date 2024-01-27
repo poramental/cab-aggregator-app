@@ -1,4 +1,4 @@
-package com.modsen.driverservice.entities;
+package com.modsen.driverservice.entity;
 
 
 

@@ -1,13 +1,13 @@
-package com.modsen.driverservice.services;
+package com.modsen.driverservice.service;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
 import com.modsen.driverservice.dto.AutoResponseList;
-import com.modsen.driverservice.entities.Auto;
-import com.modsen.driverservice.exceptions.*;
-import com.modsen.driverservice.mappers.AutoMapper;
-import com.modsen.driverservice.repositories.AutoRepository;
-import com.modsen.driverservice.services.interfaces.AutoService;
+import com.modsen.driverservice.entity.Auto;
+import com.modsen.driverservice.exception.*;
+import com.modsen.driverservice.mapper.AutoMapper;
+import com.modsen.driverservice.repository.AutoRepository;
+import com.modsen.driverservice.service.interfaces.AutoService;
 import com.modsen.driverservice.util.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

@@ -1,4 +1,4 @@
-package com.modsen.driverservice.exceptions;
+package com.modsen.driverservice.exception;
 
 
 import org.springframework.http.HttpStatus;

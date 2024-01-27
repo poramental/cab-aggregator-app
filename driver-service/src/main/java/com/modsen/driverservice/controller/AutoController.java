@@ -1,9 +1,9 @@
-package com.modsen.driverservice.controllers;
+package com.modsen.driverservice.controller;
 
 import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
 import com.modsen.driverservice.dto.AutoResponseList;
-import com.modsen.driverservice.services.interfaces.AutoService;
+import com.modsen.driverservice.service.interfaces.AutoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

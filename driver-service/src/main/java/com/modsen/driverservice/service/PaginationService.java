@@ -1,7 +1,7 @@
-package com.modsen.driverservice.services;
+package com.modsen.driverservice.service;
 
 import com.modsen.driverservice.dto.DriverResponse;
-import com.modsen.driverservice.exceptions.PaginationFormatException;
+import com.modsen.driverservice.exception.PaginationFormatException;
 import com.modsen.driverservice.util.ExceptionMessage;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

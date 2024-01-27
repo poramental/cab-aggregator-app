@@ -1,6 +1,6 @@
-package com.modsen.driverservice.repositories;
+package com.modsen.driverservice.repository;
 
-import com.modsen.driverservice.entities.Driver;
+import com.modsen.driverservice.entity.Driver;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.modsen.driverservice.exceptions;
+package com.modsen.driverservice.exception;
 
 public class AutoNotFoundException extends RuntimeException{
     public AutoNotFoundException(String m){

@@ -1,4 +1,4 @@
-package com.modsen.driverservice.services.interfaces;
+package com.modsen.driverservice.service.interfaces;
 
 import com.modsen.driverservice.dto.*;
 
