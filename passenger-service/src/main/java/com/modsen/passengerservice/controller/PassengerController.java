@@ -35,21 +35,21 @@ public class PassengerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<PassengerResponse> deletePassenger(@PathVariable(name = "id") Long passengerId)
+    public ResponseEntity<PassengerResponse> deletePassenger(@PathVariable Long id)
     {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
-                .body(passengerService.deletePassengerById(passengerId));
+                .body(passengerService.deletePassengerById(id));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PassengerResponse> getById(@PathVariable(name = "id") Long id)
+    public ResponseEntity<PassengerResponse> getById(@PathVariable Long id)
     {
         return ResponseEntity.ok(passengerService.getById(id));
     }
 
    @PutMapping("/{id}")
-   public ResponseEntity<PassengerResponse> updateById(@PathVariable(name = "id") Long id,
+   public ResponseEntity<PassengerResponse> updateById(@PathVariable Long id,
                                                        @RequestBody PassengerRequest passengerDto)
    {
         return ResponseEntity.ok(passengerService.updateById(id, passengerDto));
@@ -67,7 +67,7 @@ public class PassengerController {
     @PatchMapping("/{passengerId}/rating")
     public ResponseEntity<PassengerResponse> addRating(@RequestParam("rating") int rating,
                                                        @RequestParam("ride_id") UUID rideId,
-                                                       @PathVariable(name = "passengerId") Long passengerId)
+                                                       @PathVariable Long passengerId)
     {
         return ResponseEntity.ok(passengerService.addRatingById(rating, rideId, passengerId));
     }
