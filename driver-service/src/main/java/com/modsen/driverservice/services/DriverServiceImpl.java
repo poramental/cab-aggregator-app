@@ -12,6 +12,7 @@ import com.modsen.driverservice.repositories.AutoRepository;
 import com.modsen.driverservice.repositories.DriverRepository;
 import com.modsen.driverservice.services.interfaces.DriverService;
 import com.modsen.driverservice.util.ExceptionMessage;
+import com.modsen.driverservice.util.PaginationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -38,8 +39,6 @@ public class DriverServiceImpl implements DriverService {
     private final AutoRepository autoRepository;
 
     private final AutoMapper autoMapper;
-
-    private final PaginationService paginationService;
 
     private final RideFeignClient rideFeignClient;
 
@@ -237,7 +236,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     public DriverPageResponse getDriversPage(int page, int size, String orderBy) {
-        Page<Driver> driversPage = paginationService.getPage(
+        Page<Driver> driversPage = PaginationService.getPage(
                 page,
                 size,
                 orderBy,

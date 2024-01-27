@@ -1,6 +1,5 @@
 package com.modsen.driverservice.services;
 
-import com.modsen.driverservice.dto.AutoRequest;
 import com.modsen.driverservice.dto.AutoPageResponse;
 import com.modsen.driverservice.dto.AutoListResponse;
 import com.modsen.driverservice.dto.AutoResponse;
@@ -10,6 +9,7 @@ import com.modsen.driverservice.mappers.AutoMapper;
 import com.modsen.driverservice.repositories.AutoRepository;
 import com.modsen.driverservice.services.interfaces.AutoService;
 import com.modsen.driverservice.util.ExceptionMessage;
+import com.modsen.driverservice.util.PaginationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -25,7 +25,6 @@ public class AutoServiceImpl implements AutoService {
 
     private final AutoMapper autoMapper;
 
-    private final PaginationService paginationService;
 
     public AutoListResponse getAll()
     {
@@ -54,7 +53,7 @@ public class AutoServiceImpl implements AutoService {
 
     public AutoPageResponse getAutosPage(int page, int size, String orderBy)
     {
-       Page<Auto> autosPage = paginationService.getPage(
+       Page<Auto> autosPage = PaginationService.getPage(
                page,
                size,
                orderBy,
