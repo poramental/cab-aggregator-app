@@ -1,6 +1,6 @@
 package com.modsen.passengerservice.config;
 
-import com.modsen.passengerservice.exceptions.NotFoundException;
+import com.modsen.passengerservice.exception.NotFoundException;
 import feign.FeignException;
 import feign.Response;
 import feign.RetryableException;

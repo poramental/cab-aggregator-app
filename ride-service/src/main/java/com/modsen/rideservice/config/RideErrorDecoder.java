@@ -1,6 +1,6 @@
 package com.modsen.rideservice.config;
 
-import com.modsen.rideservice.exceptions.NotFoundException;
+import com.modsen.rideservice.exception.NotFoundException;
 import feign.FeignException;
 import feign.Response;
 import feign.RetryableException;

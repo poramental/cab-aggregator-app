@@ -1,6 +1,6 @@
 package com.modsen.driverservice.config;
 
-import com.modsen.driverservice.exceptions.NotFoundException;
+import com.modsen.driverservice.exception.NotFoundException;
 import feign.FeignException;
 import feign.Response;
 import feign.RetryableException;

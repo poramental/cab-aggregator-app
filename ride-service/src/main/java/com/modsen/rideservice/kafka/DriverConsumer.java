@@ -2,15 +2,15 @@ package com.modsen.rideservice.kafka;
 
 
 import com.modsen.rideservice.dto.FindDriverRequest;
-import com.modsen.rideservice.entities.NotAvailableDrivers;
+import com.modsen.rideservice.entity.NotAvailableDrivers;
 import com.modsen.rideservice.dto.response.DriverForRideRequest;
 import com.modsen.rideservice.dto.response.DriverResponse;
-import com.modsen.rideservice.entities.Ride;
-import com.modsen.rideservice.exceptions.RideNotFoundException;
-import com.modsen.rideservice.feignclients.DriverFeignClient;
-import com.modsen.rideservice.repositories.RideRepository;
-import com.modsen.rideservice.services.DriverMailService;
-import com.modsen.rideservice.services.PassengerMailService;
+import com.modsen.rideservice.entity.Ride;
+import com.modsen.rideservice.exception.RideNotFoundException;
+import com.modsen.rideservice.feignclient.DriverFeignClient;
+import com.modsen.rideservice.repository.RideRepository;
+import com.modsen.rideservice.service.DriverMailService;
+import com.modsen.rideservice.service.PassengerMailService;
 import com.modsen.rideservice.util.ExceptionMessages;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
