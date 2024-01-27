@@ -7,7 +7,7 @@ import com.modsen.driverservice.entity.Auto;
 import com.modsen.driverservice.exception.*;
 import com.modsen.driverservice.mapper.AutoMapper;
 import com.modsen.driverservice.repository.AutoRepository;
-import com.modsen.driverservice.service.PaginationService;
+import com.modsen.driverservice.util.PaginationService;
 import com.modsen.driverservice.service.AutoService;
 import com.modsen.driverservice.util.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +24,6 @@ public class AutoServiceImpl implements AutoService {
     private final AutoRepository autoRepository;
 
     private final AutoMapper autoMapper;
-
-    private final PaginationService paginationService;
 
     public ListAutoResponse getAll()
     {
@@ -54,7 +52,7 @@ public class AutoServiceImpl implements AutoService {
 
     public AutoPageResponse getAutosPage(int page, int size, String orderBy)
     {
-       Page<Auto> autosPage = paginationService.getPage(
+       Page<Auto> autosPage = PaginationService.getPage(
                page,
                size,
                orderBy,

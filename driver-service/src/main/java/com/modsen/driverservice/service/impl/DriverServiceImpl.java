@@ -7,7 +7,7 @@ import com.modsen.driverservice.mapper.AutoMapper;
 import com.modsen.driverservice.mapper.DriverMapper;
 import com.modsen.driverservice.repository.AutoRepository;
 import com.modsen.driverservice.repository.DriverRepository;
-import com.modsen.driverservice.service.PaginationService;
+import com.modsen.driverservice.util.PaginationService;
 import com.modsen.driverservice.service.DriverService;
 import com.modsen.driverservice.util.ExceptionMessage;
 import lombok.RequiredArgsConstructor;
@@ -30,8 +30,6 @@ public class DriverServiceImpl implements DriverService {
     private final AutoRepository autoRepository;
 
     private final AutoMapper autoMapper;
-
-    private final PaginationService paginationService;
 
 
     public ListDriverResponse getAll(){
@@ -205,7 +203,7 @@ public class DriverServiceImpl implements DriverService {
 
     public DriverPageResponse getDriversPage(int page, int size, String orderBy)
     {
-      Page<Driver> driversPage = paginationService.getPage(
+      Page<Driver> driversPage = PaginationService.getPage(
               page,
               size,
               orderBy,
