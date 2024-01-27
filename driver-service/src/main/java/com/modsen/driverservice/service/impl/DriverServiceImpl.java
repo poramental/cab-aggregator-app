@@ -123,8 +123,7 @@ public class DriverServiceImpl implements DriverService {
 
     private <T> void checkDriverParamExist(T param,
                                            Function<T, Optional<Driver>> repositoryFunc,
-                                           String exMessage)
-            throws DriverAlreadyExistException {
+                                           String exMessage) {
         repositoryFunc.apply(param).orElseThrow(() -> new DriverAlreadyExistException(exMessage));
 
     }
