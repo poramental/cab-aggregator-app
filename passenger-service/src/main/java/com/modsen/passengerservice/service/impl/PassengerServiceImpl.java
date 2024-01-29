@@ -98,7 +98,7 @@ public class PassengerServiceImpl implements PassengerService {
         Passenger passenger = repositoryFunc.apply(param)
         .orElseThrow( () -> new PassengerNotFoundException(exceptionMessage));
         passengerRepository.delete(passenger);
-        return passengerMapper.entityToResponse(passenger);
+            return passengerMapper.entityToResponse(passenger);
     }
 
     private void checkPhoneExist(PassengerRequest passengerDto) {

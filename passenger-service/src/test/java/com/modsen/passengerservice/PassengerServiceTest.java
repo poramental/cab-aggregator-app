@@ -1,5 +1,6 @@
 package com.modsen.passengerservice;
 
+import com.modsen.passengerservice.dto.PassengerResponse;
 import com.modsen.passengerservice.exception.PassengerNotFoundException;
 import com.modsen.passengerservice.mapper.PassengerMapper;
 import com.modsen.passengerservice.repository.PassengerRepository;
@@ -32,10 +33,19 @@ class PassengerServiceTest {
     void getAll() {
         var listPassenger = PassengerTestUtil.getListPassenger();
         var exceptList = PassengerTestUtil.getListPassengerResponse();
-        doReturn(listPassenger).when(passengerRepository).findAll();
-        doReturn(exceptList.getPassengerList().get(0)).when(mapper).entityToResponse(listPassenger.get(0));
-        doReturn(exceptList.getPassengerList().get(1)).when(mapper).entityToResponse(listPassenger.get(1));
+
+        doReturn(listPassenger)
+                .when(passengerRepository)
+                .findAll();
+        doReturn(exceptList.getPassengerList().get(0))
+                .when(mapper)
+                .entityToResponse(listPassenger.get(0));
+        doReturn(exceptList.getPassengerList().get(1))
+                .when(mapper)
+                .entityToResponse(listPassenger.get(1));
+
         var responseList = passengerService.getAll();
+
         assertThat(responseList.getPassengerList(), not(empty()));
         verify(passengerRepository).findAll();
         verify(mapper).entityToResponse(listPassenger.get(0));
@@ -48,9 +58,16 @@ class PassengerServiceTest {
     void getByIdWhenPassengerExist(){
         var passenger = PassengerTestUtil.getPassenger();
         var passengerResponse = PassengerTestUtil.getPassengerResponse();
-        doReturn(Optional.of(passenger)).when(passengerRepository).findById(PassengerTestUtil.defaultPassengerId);
-        doReturn(passengerResponse).when(mapper).entityToResponse(passenger);
+
+        doReturn(Optional.of(passenger))
+                .when(passengerRepository)
+                .findById(PassengerTestUtil.defaultPassengerId);
+        doReturn(passengerResponse)
+                .when(mapper)
+                .entityToResponse(passenger);
+
         var passengerResult = passengerService.getById(PassengerTestUtil.defaultPassengerId);
+
         assertEquals(passengerResponse,passengerResult);
         verify(passengerRepository).findById(PassengerTestUtil.defaultPassengerId);
         verify(mapper).entityToResponse(passenger);
@@ -58,10 +75,37 @@ class PassengerServiceTest {
 
     @Test
     void getByIdWhenPassengerNotExist(){
-        doReturn(Optional.empty()).when(passengerRepository).findById(PassengerTestUtil.defaultPassengerId);
+        doReturn(Optional.empty())
+                .when(passengerRepository)
+                .findById(PassengerTestUtil.defaultPassengerId);
         assertThrows(
                 PassengerNotFoundException.class,
                 () -> passengerService.getById(PassengerTestUtil.defaultPassengerId)
+        );
+        verify(passengerRepository).findById(PassengerTestUtil.defaultPassengerId);
+    }
+
+    @Test
+    void deleteByIdWhenPassengerExist(){
+        var passenger = PassengerTestUtil.getPassenger();
+        var passengerResponse = PassengerTestUtil.getPassengerResponse();
+        doReturn(Optional.of(passenger))
+                .when(passengerRepository).findById(PassengerTestUtil.defaultPassengerId);
+        doReturn(passengerResponse).when(mapper).entityToResponse(passenger);
+        PassengerResponse passengerResult = passengerService.deletePassengerById(PassengerTestUtil.defaultPassengerId);
+        assertEquals(passengerResponse,passengerResult);
+        verify(passengerRepository).delete(passenger);
+        verify(passengerRepository).findById(PassengerTestUtil.defaultPassengerId);
+        verify(mapper).entityToResponse(passenger);
+    }
+
+
+    @Test
+    void deleteByIdWhenPassengerNotExist(){
+        doReturn(Optional.empty()).when(passengerRepository).findById(PassengerTestUtil.defaultPassengerId);
+        assertThrows(
+                PassengerNotFoundException.class,
+                () -> passengerService.deletePassengerById(PassengerTestUtil.defaultPassengerId)
         );
         verify(passengerRepository).findById(PassengerTestUtil.defaultPassengerId);
     }
