@@ -1,6 +1,7 @@
 package com.modsen.passengerservice;
 
 import com.modsen.passengerservice.dto.PassengerResponse;
+import com.modsen.passengerservice.entity.Passenger;
 import com.modsen.passengerservice.exception.PassengerAlreadyExistException;
 import com.modsen.passengerservice.exception.PassengerNotFoundException;
 import com.modsen.passengerservice.mapper.PassengerMapper;
@@ -123,19 +124,19 @@ class PassengerServiceTest {
 
     @Test
     void addPassengerWhenEmailExist() {
-        addPassengerWhenParamExist(passengerRepository::existsByEmail, DEFAULT_PASSENGER_EMAIL);
+        tryAddWhenParamExist(passengerRepository::existsByEmail, DEFAULT_PASSENGER_EMAIL);
         verify(passengerRepository).existsByEmail(DEFAULT_PASSENGER_EMAIL);
     }
 
     @Test
     void addPassengerWhenPhoneExist() {
-        addPassengerWhenParamExist(passengerRepository::existsByPhone, DEFAULT_PASSENGER_PHONE);
+        tryAddWhenParamExist(passengerRepository::existsByPhone, DEFAULT_PASSENGER_PHONE);
         verify(passengerRepository).existsByPhone(DEFAULT_PASSENGER_PHONE);
     }
 
     @Test
     void addPassengerWhenUsernameExist() {
-        addPassengerWhenParamExist(passengerRepository::existsByUsername, DEFAULT_PASSENGER_USERNAME);
+        tryAddWhenParamExist(passengerRepository::existsByUsername, DEFAULT_PASSENGER_USERNAME);
         verify(passengerRepository).existsByUsername(DEFAULT_PASSENGER_USERNAME);
     }
 
@@ -163,7 +164,66 @@ class PassengerServiceTest {
         assertEquals(passengerResponse,passengerResult);
     }
 
-    private void addPassengerWhenParamExist(Predicate<String> existParam, String param) {
+
+    @Test
+    void updatePassengerWhenPassengerNotExist() {
+        var passengerRequest = getPassengerRequest();
+        var passengerResponse = getPassengerResponse();
+        var passenger = getPassenger();
+
+        when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
+        when(mapper.requestToEntity(passengerRequest)).thenReturn(passenger);
+        when(mapper.entityToResponse(passenger)).thenReturn(passengerResponse);
+        when(passengerRepository.save(passenger)).thenReturn(passenger);
+
+        var passengerResult = passengerService.updateById(DEFAULT_PASSENGER_ID,passengerRequest);
+
+        verify(passengerRepository).save(passenger);
+        verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
+        verify(mapper).requestToEntity(passengerRequest);
+        verify(mapper).entityToResponse(passenger);
+        assertEquals(passengerResponse,passengerResult);
+    }
+
+    @Test
+    void tryUpdateWhenEmailExist() {
+        var passenger = getPassenger().setEmail("not equals email");
+        tryUpdateWhenParamExist(passenger,passengerRepository::existsByEmail, DEFAULT_PASSENGER_EMAIL);
+        verify(passengerRepository).existsByEmail(DEFAULT_PASSENGER_EMAIL);
+    }
+
+    @Test
+    void tryUpdateWhenPhoneExist() {
+        var passenger = getPassenger().setPhone("not equals phone");
+        tryUpdateWhenParamExist(passenger,passengerRepository::existsByPhone, DEFAULT_PASSENGER_PHONE);
+        verify(passengerRepository).existsByPhone(DEFAULT_PASSENGER_PHONE);
+    }
+
+    @Test
+    void tryUpdateWhenUsernameExist() {
+        var passenger = getPassenger().setUsername("not equals username");
+        tryUpdateWhenParamExist(passenger,passengerRepository::existsByUsername, DEFAULT_PASSENGER_USERNAME);
+        verify(passengerRepository).existsByUsername(DEFAULT_PASSENGER_USERNAME);
+    }
+
+
+
+    void tryUpdateWhenParamExist(Passenger passenger, Predicate<String> existParam, String param) {
+        var passengerRequest = getPassengerRequest();
+
+        when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
+        when(existParam.test(param)).thenReturn(true);
+
+        assertThrows(
+                PassengerAlreadyExistException.class,
+                () -> passengerService.updateById(DEFAULT_PASSENGER_ID,passengerRequest)
+        );
+
+
+    }
+
+
+    private void tryAddWhenParamExist(Predicate<String> existParam, String param) {
         var passengerRequest = getPassengerRequest();
 
         when(existParam.test(param)).thenReturn(true);
@@ -171,7 +231,6 @@ class PassengerServiceTest {
                 PassengerAlreadyExistException.class,
                 () -> passengerService.addPassenger(passengerRequest)
         );
-
     }
 
 }
