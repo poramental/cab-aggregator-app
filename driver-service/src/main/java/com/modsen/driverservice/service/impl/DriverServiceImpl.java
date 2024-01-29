@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 @Service
@@ -122,9 +123,9 @@ public class DriverServiceImpl implements DriverService {
     }
 
     private <T> void checkDriverParamExist(T param,
-                                           Function<T, Boolean> repositoryFunc,
+                                           Predicate<T> repositoryPredicate,
                                            String exMessage) {
-        if(repositoryFunc.apply(param)) {
+        if(repositoryPredicate.test(param)) {
             throw new DriverAlreadyExistException(exMessage);
         }
 
