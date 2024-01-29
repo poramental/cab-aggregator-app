@@ -3,9 +3,11 @@ package com.modsen.passengerservice;
 import com.modsen.passengerservice.dto.ListPassengerResponse;
 import com.modsen.passengerservice.dto.PassengerRequest;
 import com.modsen.passengerservice.dto.PassengerResponse;
+import com.modsen.passengerservice.dto.RideResponse;
 import com.modsen.passengerservice.entity.Passenger;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,6 +22,8 @@ public class PassengerTestUtil {
     public static final String DEFAULT_PASSENGER_USERNAME = "username";
 
     public static final String DEFAULT_PASSENGER_PHONE = "1111111111111";
+
+    public static final UUID DEFAULT_RIDE_ID = UUID.fromString("f5807e3c-37ce-4fff-97b4-dd56d6585e15");
 
     public static PassengerResponse getPassengerResponse() {
         return PassengerResponse.builder()
@@ -53,6 +57,13 @@ public class PassengerTestUtil {
                         .build()
 
         ));
+    }
+
+    public static RideResponse getRideResponse() {
+        return new RideResponse()
+                .setId(DEFAULT_RIDE_ID)
+                .setPassenger(DEFAULT_PASSENGER_ID)
+                .setEndDate(LocalDateTime.now());
     }
 
     public static Passenger getPassenger() {

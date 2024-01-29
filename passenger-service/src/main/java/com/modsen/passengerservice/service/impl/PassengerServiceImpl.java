@@ -133,7 +133,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerResponse addRatingById(int rating, UUID rideId, Long id) {
+        public PassengerResponse addRatingById(int rating, UUID rideId, Long id) {
         return addRating(
                 rating,
                 id,
@@ -156,7 +156,11 @@ public class PassengerServiceImpl implements PassengerService {
         RideResponse rideResponse = rideFeignClient.getRideById(rideId);
         LocalDateTime rideResponseEndDate = rideResponse.getEndDate();
 
-        if (rideResponseEndDate.isAfter(LocalDateTime.now().minusMinutes(3))) {
+        if(Objects.isNull(rideResponseEndDate)){
+            throw new RideIsNotInactiveException(ExceptionMessage.RIDE_IS_NOT_INACTIVE_EXCEPTION);
+        }
+
+        if (!rideResponseEndDate.isAfter(LocalDateTime.now().minusMinutes(3))) {
             throw new RatingException(ExceptionMessage.RATING_EXPIRED_EXCEPTION);
         }
 
@@ -164,9 +168,6 @@ public class PassengerServiceImpl implements PassengerService {
             throw new RideHaveAnotherPassengerException(ExceptionMessage.RIDE_HAVE_ANOTHER_PASSENGER);
         }
 
-        if(Objects.isNull(rideResponse.getEndDate())){
-            throw new RideIsNotInactiveException(ExceptionMessage.RIDE_IS_NOT_INACTIVE_EXCEPTION);
-        }
         
         int newRatingsCount =  passenger.getRatingsCount() + 1;
         float ratingSum  = passenger.getAverageRating() * passenger.getRatingsCount();
