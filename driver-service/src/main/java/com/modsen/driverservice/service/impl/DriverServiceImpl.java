@@ -9,7 +9,7 @@ import com.modsen.driverservice.repository.AutoRepository;
 import com.modsen.driverservice.repository.DriverRepository;
 import com.modsen.driverservice.service.DriverService;
 import com.modsen.driverservice.util.ExceptionMessage;
-import com.modsen.driverservice.util.PaginationService;
+import com.modsen.driverservice.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -194,7 +194,7 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public DriverPageResponse getDriversPage(int page, int size, String orderBy) {
-        Page<Driver> driversPage = PaginationService.getPage(
+        Page<Driver> driversPage = PaginationUtil.getPage(
                 page,
                 size,
                 orderBy,
