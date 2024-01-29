@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(RatingException.class)
     public ResponseEntity<AppError> ratingExceptionHandler(RatingException e) {
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
