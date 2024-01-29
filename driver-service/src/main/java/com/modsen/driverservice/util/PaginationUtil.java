@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.function.Function;
 
 @UtilityClass
-public class PaginationService {
+public class PaginationUtil {
     private static PageRequest getPageRequest(int page, int size, String orderBy) {
         if (page < 1 || size < 1) {
             throw new PaginationFormatException(ExceptionMessage.PAGINATION_FORMAT_EXCEPTION);

@@ -9,13 +9,12 @@ import com.modsen.driverservice.mapper.AutoMapper;
 import com.modsen.driverservice.repository.AutoRepository;
 import com.modsen.driverservice.service.AutoService;
 import com.modsen.driverservice.util.ExceptionMessage;
-import com.modsen.driverservice.util.PaginationService;
+import com.modsen.driverservice.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +52,7 @@ public class AutoServiceImpl implements AutoService {
 
     @Override
     public AutoPageResponse getAutosPage(int page, int size, String orderBy) {
-        Page<Auto> autosPage = PaginationService.getPage(
+        Page<Auto> autosPage = PaginationUtil.getPage(
                 page,
                 size,
                 orderBy,
