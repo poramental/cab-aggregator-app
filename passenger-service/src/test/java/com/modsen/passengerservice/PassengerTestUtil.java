@@ -1,6 +1,7 @@
 package com.modsen.passengerservice;
 
 import com.modsen.passengerservice.dto.ListPassengerResponse;
+import com.modsen.passengerservice.dto.PassengerRequest;
 import com.modsen.passengerservice.dto.PassengerResponse;
 import com.modsen.passengerservice.entity.Passenger;
 import org.springframework.stereotype.Component;
@@ -11,14 +12,20 @@ import java.util.List;
 @Component
 public class PassengerTestUtil {
 
-    public static final Long defaultPassengerId = 1L;
+    public static final Long DEFAULT_PASSENGER_ID = 1L;
+
+    public static final String DEFAULT_PASSENGER_EMAIL = "email@email.com";
+
+    public static final String DEFAULT_PASSENGER_USERNAME = "username";
+
+    public static final String DEFAULT_PASSENGER_PHONE = "1111111111111";
 
     public static PassengerResponse getPassengerResponse() {
         return PassengerResponse.builder()
                 .id(1L)
                 .phone("1111111111111")
                 .averageRating(3.4F)
-                .email("email@rmail.com")
+                .email("email@email.com")
                 .username("username")
                 .ratingsCount(21)
                 .build();
@@ -76,5 +83,13 @@ public class PassengerTestUtil {
                         .setRatingsCount(51)
 
         );
+    }
+
+    public static PassengerRequest getPassengerRequest(){
+        return PassengerRequest.builder()
+                .phone("1111111111111")
+                .email("email@email.com")
+                .username("username")
+                .build();
     }
 }
