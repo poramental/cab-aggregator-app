@@ -27,6 +27,7 @@ ext {
     feignClientVersion = '4.1.0'
     springMailVersion = '3.2.2'
     kafkaVersion = '3.1.1'
+    mockitoVersion = "1.10.19"
 }
 
 dependencies {
@@ -42,6 +43,7 @@ dependencies {
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version:feignClientVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version:springMailVersion
     implementation group: 'org.springframework.kafka', name: 'spring-kafka', version:kafkaVersion
+    testImplementation "org.mockito:mockito-all:${mockitoVersion}"
 
 }
 

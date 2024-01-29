@@ -28,6 +28,7 @@ ext {
     validationVersion = '3.2.1'
     liquibaseVersion = '4.25.1'
     feignClientVersion = '4.1.0'
+    mockitoVersion = "1.10.19"
 }
 
 dependencies {
@@ -41,6 +42,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version:feignClientVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
+    testImplementation "org.mockito:mockito-all:${mockitoVersion}"
 }
 
 dependencyManagement {
