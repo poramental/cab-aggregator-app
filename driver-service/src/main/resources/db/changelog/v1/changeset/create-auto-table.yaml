@@ -1,0 +1,44 @@
+databaseChangeLog:
+  - changeSet:
+      id: create-auto
+      author: Alexey
+      preConditions:
+        - onFail: MARK_RAN
+          or:
+            - not:
+          tableExists:
+          tableName: autos
+      changes:
+        - createTable:
+            tableName: autos
+            columns:
+              - column:
+                  name: auto_id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: model
+                  type: varchar(150)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: color
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: number
+                  type: varchar(45)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: driver_id
+                  type: bigint
+                  constraints:
+                    nullable: true
+      rollback:
+        - dropTable:
+            tableName: passengers
