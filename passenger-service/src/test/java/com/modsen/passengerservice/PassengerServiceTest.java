@@ -12,8 +12,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -272,7 +270,7 @@ class PassengerServiceTest {
         when(mapper.entityToResponse(passenger)).thenReturn(passengerResponse);
         when(passengerRepository.save(passenger)).thenReturn(passenger);
 
-        passengerService.addRatingById(4,DEFAULT_RIDE_ID,DEFAULT_PASSENGER_ID);
+        passengerService.addRatingById(4, DEFAULT_RIDE_ID, DEFAULT_PASSENGER_ID);
 
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
         verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
@@ -311,16 +309,6 @@ class PassengerServiceTest {
         verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
     }
 
-    private PageRequest getPageReq(int page, int size, String orderBy ){
-        PageRequest pageRequest;
-        if (orderBy == null) {
-            pageRequest = PageRequest.of(page - 1, size);
-        } else {
-            pageRequest = PageRequest.of(page - 1, size, Sort.by(orderBy));
-        }
-        return pageRequest;
-    }
-
     private void tryUpdateWhenParamExist(Passenger passenger, Predicate<String> existParam, String param) {
         var passengerRequest = getPassengerRequest();
 
@@ -332,7 +320,6 @@ class PassengerServiceTest {
                 () -> passengerService.updateById(DEFAULT_PASSENGER_ID, passengerRequest)
         );
     }
-
 
     private void tryAddWhenParamExist(Predicate<String> existParam, String param) {
         var passengerRequest = getPassengerRequest();

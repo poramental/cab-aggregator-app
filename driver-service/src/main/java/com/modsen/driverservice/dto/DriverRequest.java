@@ -4,12 +4,12 @@ import com.modsen.driverservice.util.ValidationFormat;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
+import lombok.Builder;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 
 @Data
-@Accessors(chain = true)
+@Builder
 public class DriverRequest {
 
 

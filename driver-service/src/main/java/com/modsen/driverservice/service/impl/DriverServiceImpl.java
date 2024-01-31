@@ -24,7 +24,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -48,7 +47,7 @@ public class DriverServiceImpl implements DriverService {
     public ListDriverResponse getAll() {
         return new ListDriverResponse(driverRepository.findAll().stream()
                 .map(driverMapper::entityToResp)
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @Override
@@ -92,7 +91,7 @@ public class DriverServiceImpl implements DriverService {
         Driver oldDriver = getDriverOrThrow(id);
         preUpdateAllParamsCheck(driverDto, id);
         Driver newDriver = driverMapper.reqToEntity(driverDto);
-        newDriver.setId(oldDriver.getId());
+        newDriver.setId(id);
         return driverMapper.entityToResp(driverRepository
                 .save(newDriver.setAutos(oldDriver.getAutos())));
     }
@@ -177,16 +176,16 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverResponse setAutoById(Long driver_id, AutoRequest autoDto) {
+    public DriverResponse setAutoById(Long driverId, AutoRequest autoDto) {
         return setAuto(
-                driver_id,
+                driverId,
                 autoDto,
                 driverRepository::findById,
-                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driver_id)
+                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driverId)
         );
     }
 
-    //метод ставит машину водителю если машина и водитель свободны
+    //метод ставит машину водителю если машина и водитель свободный
     private <T> DriverResponse setAuto(T param,
                                        AutoRequest autoDto,
                                        Function<T, Optional<Driver>> repositoryFunc,
@@ -274,7 +273,8 @@ public class DriverServiceImpl implements DriverService {
     @Override
     public List<DriverResponse> getAvailableDrivers() {
         return driverRepository.findAllByIsInRideIsFalse().stream()
-                .map(driverMapper::entityToResp).toList();
+                .map(driverMapper::entityToResp)
+                .toList();
     }
 
     @Override

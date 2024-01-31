@@ -15,7 +15,6 @@ public class RideMapper {
 
     private final ModelMapper mapper;
 
-
     public RideResponse entityToResponse(Ride ride)
     {
         return mapper.map(ride, RideResponse.class);

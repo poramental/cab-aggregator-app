@@ -1,11 +1,13 @@
 package com.modsen.driverservice.dto;
 
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 import java.util.List;
 
 @Data
+@Builder
 @Accessors(chain = true)
 public class DriverResponse {
 

@@ -7,8 +7,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
-import java.util.stream.Collectors;
-
 
 @Component
 @RequiredArgsConstructor
@@ -17,15 +15,15 @@ public class DriverMapper {
     private final ModelMapper mapper;
     private final AutoMapper autoMapper;
 
-    public DriverResponse entityToResp(Driver driver){
+    public DriverResponse entityToResp(Driver driver) {
         DriverResponse driverDto = mapper.map(driver, DriverResponse.class);
         return driverDto.getAutos().isEmpty() ? driverDto :
                 driverDto.setAutos(driver.getAutos().stream()
-                        .map(autoMapper::entityToDto).collect(Collectors.toList()));
+                        .map(autoMapper::entityToDto).toList());
     }
 
-    public Driver reqToEntity(DriverRequest driverDto){
-        return mapper.map(driverDto,Driver.class);
+    public Driver reqToEntity(DriverRequest driverDto) {
+        return mapper.map(driverDto, Driver.class);
 
     }
 
