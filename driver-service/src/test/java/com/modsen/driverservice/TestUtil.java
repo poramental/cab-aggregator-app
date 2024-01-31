@@ -1,23 +1,23 @@
 package com.modsen.driverservice;
 
-import com.modsen.driverservice.dto.DriverRequest;
-import com.modsen.driverservice.dto.DriverResponse;
-import com.modsen.driverservice.dto.ListDriverResponse;
-import com.modsen.driverservice.dto.RideResponse;
+import com.modsen.driverservice.dto.*;
+import com.modsen.driverservice.entity.Auto;
 import com.modsen.driverservice.entity.Driver;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-public class DriverTestUtil {
+public class TestUtil {
     public static final Long DEFAULT_DRIVER_ID = 1L;
 
     public static final String DEFAULT_DRIVER_EMAIL = "email@email.com";
 
-    public static final String DEFAULT_DRIVER_USERNAME = "username";
+    public static final String DEFAULT_AUTO_NUMBER = "1111";
 
     public static final String DEFAULT_DRIVER_PHONE = "1111111111111";
+
+    public static final Long DEFAULT_AUTO_ID = 1L;
 
     public static final UUID DEFAULT_RIDE_ID = UUID.fromString("f5807e3c-37ce-4fff-97b4-dd56d6585e15");
 
@@ -107,4 +107,33 @@ public class DriverTestUtil {
                 .surname("surname")
                 .build();
     }
+
+    public static AutoRequest getAutoRequest() {
+        return AutoRequest.builder()
+                .color("color")
+                .model("model")
+                .number(DEFAULT_AUTO_NUMBER)
+                .build();
+    }
+
+    public static AutoResponse getAutoResponse() {
+        return AutoResponse.builder()
+                .color("color")
+                .driverId(DEFAULT_DRIVER_ID)
+                .number(DEFAULT_AUTO_NUMBER)
+                .model("model")
+                .id(DEFAULT_AUTO_ID)
+                .build();
+    }
+
+    public static Auto getAuto() {
+        return new Auto()
+                .setId(DEFAULT_AUTO_ID)
+                .setDriverId(DEFAULT_DRIVER_ID)
+                .setColor("color")
+                .setModel("model")
+                .setNumber(DEFAULT_AUTO_NUMBER);
+    }
+
+
 }

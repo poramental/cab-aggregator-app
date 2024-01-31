@@ -2,11 +2,13 @@ package com.modsen.driverservice.dto;
 
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
 @Data
 @Accessors(chain = true)
+@Builder
 public class AutoRequest {
 
     @NotBlank(message = "color.not-blank")
@@ -17,7 +19,5 @@ public class AutoRequest {
 
     @NotBlank(message = "number.not-blank")
     private String number;
-
-    private Long driverId;
 
 }

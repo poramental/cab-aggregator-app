@@ -1,12 +1,12 @@
 package com.modsen.driverservice;
 
+import com.modsen.driverservice.entity.Auto;
 import com.modsen.driverservice.entity.Driver;
-import com.modsen.driverservice.exception.DriverAlreadyExistException;
-import com.modsen.driverservice.exception.DriverNotFoundException;
-import com.modsen.driverservice.exception.RatingException;
-import com.modsen.driverservice.exception.RideHaveAnotherDriverException;
+import com.modsen.driverservice.exception.*;
 import com.modsen.driverservice.feignclient.RideFeignClient;
+import com.modsen.driverservice.mapper.AutoMapper;
 import com.modsen.driverservice.mapper.DriverMapper;
+import com.modsen.driverservice.repository.AutoRepository;
 import com.modsen.driverservice.repository.DriverRepository;
 import com.modsen.driverservice.service.impl.DriverServiceImpl;
 import org.junit.jupiter.api.Test;
@@ -16,15 +16,15 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.modsen.driverservice.DriverTestUtil.*;
+import static com.modsen.driverservice.TestUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,6 +41,12 @@ public class DriverServiceTest {
 
     @Mock
     private DriverRepository driverRepository;
+
+    @Mock
+    private AutoRepository autoRepository;
+
+    @Mock
+    private AutoMapper autoMapper;
 
 
     @Test
@@ -261,6 +267,56 @@ public class DriverServiceTest {
         verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
         verify(driverRepository).save(driver);
         verify(driverMapper).entityToResp(driver);
+    }
+
+    @Test
+    void trySetAutoWhenAutoExist() {
+        var autoRequest = getAutoRequest();
+        var driver = getDriver();
+        when(autoRepository.existsByNumber(DEFAULT_AUTO_NUMBER)).thenReturn(true);
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.of(driver));
+
+        assertThrows(
+                AutoAlreadyExistException.class,
+                () -> driverService.setAutoById(DEFAULT_DRIVER_ID, autoRequest)
+        );
+    }
+
+    @Test
+    void trySetAutoWhenDriverAlreadyHAveAuto() {
+        var autoRequest = getAutoRequest();
+        var driver = getDriver();
+        when(autoRepository.existsByNumber(DEFAULT_AUTO_NUMBER)).thenReturn(false);
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.of(driver.setAutos(List.of(new Auto()))));
+
+        assertThrows(
+                DriverAlreadyHaveAutoException.class,
+                () -> driverService.setAutoById(DEFAULT_DRIVER_ID, autoRequest)
+        );
+    }
+
+    @Test
+    void setAuto() {
+        var autoRequest = getAutoRequest();
+        var driver = getDriver();
+        var auto = getAuto();
+        var driverResponse = getDriverResponse();
+        when(autoRepository.existsByNumber(DEFAULT_AUTO_NUMBER)).thenReturn(false);
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.of(driver));
+        doReturn(driver).when(driverRepository).save(any(Driver.class));
+        when(autoMapper.dtoToEntity(autoRequest)).thenReturn(auto);
+        doReturn(driverResponse).when(driverMapper).entityToResp(any(Driver.class));
+
+        var driverResult = driverService.setAutoById(DEFAULT_DRIVER_ID, autoRequest);
+
+        verify(autoRepository).existsByNumber(DEFAULT_AUTO_NUMBER);
+        verify(driverRepository).findById(DEFAULT_DRIVER_ID);
+        assertNotNull(driverResult);
+        verify(driverRepository).save(any(Driver.class));
+        verify(autoMapper).dtoToEntity(autoRequest);
+        verify(driverMapper).entityToResp(any(Driver.class));
+
+
     }
 
     private void tryAddWhenParamExist(Predicate<String> existParam, String param) {

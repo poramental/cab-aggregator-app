@@ -201,7 +201,7 @@ public class DriverServiceImpl implements DriverService {
         if (!driver.getAutos().isEmpty())
             throw new DriverAlreadyHaveAutoException(ExceptionMessage.DRIVER_ALREADY_HAVE_AUTO_EXCEPTION);
         else {
-            driver.getAutos().add(autoMapper.dtoToEntity(autoDto));
+            driver.getAutos().add(autoMapper.dtoToEntity(autoDto).setDriverId(driver.getId()));
             return driverMapper.entityToResp(driverRepository.save(driver));
         }
     }
