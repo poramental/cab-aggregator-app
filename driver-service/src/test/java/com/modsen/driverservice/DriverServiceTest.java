@@ -355,6 +355,22 @@ public class DriverServiceTest {
         );
     }
 
+    @Test
+    void changeIsInRideStatusTest() {
+        var driver = getDriver().setIsInRide(false);
+        var driverResponse = getDriverResponse();
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.of(driver));
+        doReturn(driverResponse).when(driverMapper).entityToResp(any(Driver.class));
+        doReturn(driver).when(driverRepository).save(any(Driver.class));
+
+        var driverResult = driverService.changeIsInRideStatus(DEFAULT_DRIVER_ID);
+
+        assertNotNull(driverResult);
+        verify(driverRepository).save(any(Driver.class));
+        verify(driverRepository).findById(DEFAULT_DRIVER_ID);
+        verify(driverMapper).entityToResp(any(Driver.class));
+    }
+
     private void tryAddWhenParamExist(Predicate<String> existParam, String param) {
         var passengerRequest = getDriverRequest();
 
