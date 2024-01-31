@@ -371,6 +371,22 @@ public class DriverServiceTest {
         verify(driverMapper).entityToResp(any(Driver.class));
     }
 
+    @Test
+    void getAvailableDrivers() {
+        var driverList = getListDriver();
+        var driverListResponse = getListDriverResponse();
+        when(driverRepository.findAllByIsInRideIsFalse()).thenReturn(driverList);
+        when(driverMapper.entityToResp(driverList.get(0))).thenReturn(driverListResponse.getDriverResponseList().get(0));
+        when(driverMapper.entityToResp(driverList.get(1))).thenReturn(driverListResponse.getDriverResponseList().get(1));
+
+        var driverListResult = driverService.getAvailableDrivers();
+
+        verify(driverRepository).findAllByIsInRideIsFalse();
+        verify(driverMapper).entityToResp(driverList.get(0));
+        verify(driverMapper).entityToResp(driverList.get(1));
+        assertNotNull(driverListResult);
+    }
+
     private void tryAddWhenParamExist(Predicate<String> existParam, String param) {
         var passengerRequest = getDriverRequest();
 
