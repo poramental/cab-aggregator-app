@@ -226,7 +226,7 @@ public class DriverServiceImpl implements DriverService {
 
         Driver driver = driverRepositoryFunc.apply(param)
                 .orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
-        driver.getAutos().get(0).setDriverId(null);
+
         driver.getAutos().clear();
         if (autoOpt.isPresent()) {
             Auto oldAuto = autoOpt.get();

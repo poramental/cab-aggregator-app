@@ -5,6 +5,7 @@ import com.modsen.driverservice.entity.Auto;
 import com.modsen.driverservice.entity.Driver;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -72,6 +73,7 @@ public class TestUtil {
                 .setPhone("1111111111111")
                 .setAverageRating(3.4F)
                 .setName("name")
+                .setAutos(new ArrayList<>())
                 .setSurname("surname")
                 .setRatingsCount(21);
     }

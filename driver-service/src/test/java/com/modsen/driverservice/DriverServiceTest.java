@@ -315,8 +315,28 @@ public class DriverServiceTest {
         verify(driverRepository).save(any(Driver.class));
         verify(autoMapper).dtoToEntity(autoRequest);
         verify(driverMapper).entityToResp(any(Driver.class));
+    }
 
+    @Test
+    void replaceAuto() {
+        var autoRequest = getAutoRequest();
+        var driver = getDriver();
+        var auto = getAuto();
+        var driverResponse = getDriverResponse();
+        when(autoRepository.findByNumber(DEFAULT_AUTO_NUMBER)).thenReturn(Optional.of(auto));
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.of(driver));
+        doReturn(driver).when(driverRepository).save(any(Driver.class));
+        when(autoMapper.dtoToEntity(autoRequest)).thenReturn(auto);
+        doReturn(driverResponse).when(driverMapper).entityToResp(any(Driver.class));
 
+        var driverResult = driverService.replaceAutoById(DEFAULT_DRIVER_ID, autoRequest);
+
+        verify(autoRepository).findByNumber(DEFAULT_AUTO_NUMBER);
+        verify(driverRepository).findById(DEFAULT_DRIVER_ID);
+        assertNotNull(driverResult);
+        verify(driverRepository).save(any(Driver.class));
+        verify(autoMapper).dtoToEntity(autoRequest);
+        verify(driverMapper).entityToResp(any(Driver.class));
     }
 
     @Test
