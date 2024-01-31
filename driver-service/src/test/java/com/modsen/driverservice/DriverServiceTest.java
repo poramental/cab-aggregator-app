@@ -126,6 +126,50 @@ public class DriverServiceTest {
         verify(driverRepository).findById(DEFAULT_DRIVER_ID);
     }
 
+    @Test
+    void addDriverWhenEmailExist() {
+        tryAddWhenParamExist(driverRepository::existsByEmail, DEFAULT_DRIVER_EMAIL);
+        verify(driverRepository).existsByEmail(DEFAULT_DRIVER_EMAIL);
+    }
 
+    @Test
+    void addDriverWhenPhoneExist() {
+        tryAddWhenParamExist(driverRepository::existsByPhone, DEFAULT_DRIVER_PHONE);
+        verify(driverRepository).existsByPhone(DEFAULT_DRIVER_PHONE);
+    }
+
+    @Test
+    void addWhenDriverNotExist() {
+        var driverRequest = getDriverRequest();
+        var driverResponse = getDriverResponse();
+        var driver = getDriver();
+
+        when(driverRepository.existsByPhone(DEFAULT_DRIVER_PHONE)).thenReturn(false);
+        when(driverRepository.existsByEmail(DEFAULT_DRIVER_EMAIL)).thenReturn(false);
+        when(driverMapper.reqToEntity(driverRequest)).thenReturn(driver);
+        when(driverMapper.entityToResp(driver)).thenReturn(driverResponse);
+        when(driverRepository.save(driver)).thenReturn(driver);
+
+        var driverResult = driverService.add(driverRequest);
+
+        verify(driverRepository).existsByEmail(DEFAULT_DRIVER_EMAIL);
+        verify(driverRepository).existsByPhone(DEFAULT_DRIVER_PHONE);
+        verify(driverRepository).save(driver);
+        verify(driverMapper).reqToEntity(driverRequest);
+        verify(driverMapper).entityToResp(driver);
+        assertEquals(driverResponse, driverResult);
+    }
+
+
+
+    private void tryAddWhenParamExist(Predicate<String> existParam, String param) {
+        var passengerRequest = getDriverRequest();
+
+        when(existParam.test(param)).thenReturn(true);
+        assertThrows(
+                DriverAlreadyExistException.class,
+                () -> driverService.add(passengerRequest)
+        );
+    }
 
 }
