@@ -319,6 +319,22 @@ public class DriverServiceTest {
 
     }
 
+    @Test
+    void getPageWhenPaginationParamsIsInvalid() {
+        assertThrows(
+                PaginationFormatException.class,
+                () -> driverService.getDriversPage(-1, -1, "order")
+        );
+    }
+
+    @Test
+    void getPageWhenOrderByIsInvalid() {
+        assertThrows(
+                PaginationFormatException.class,
+                () -> driverService.getDriversPage(1, 1, "order")
+        );
+    }
+
     private void tryAddWhenParamExist(Predicate<String> existParam, String param) {
         var passengerRequest = getDriverRequest();
 

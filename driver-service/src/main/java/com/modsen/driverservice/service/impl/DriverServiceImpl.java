@@ -207,12 +207,12 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverResponse replaceAutoById(Long driver_id, AutoRequest autoDto) {
+    public DriverResponse replaceAutoById(Long driverId, AutoRequest autoDto) {
         return replaceAuto(
-                driver_id,
+                driverId,
                 autoDto,
                 driverRepository::findById,
-                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driver_id)
+                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driverId)
         );
     }
 
