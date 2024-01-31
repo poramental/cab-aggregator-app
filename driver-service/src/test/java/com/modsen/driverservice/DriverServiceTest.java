@@ -1,5 +1,6 @@
 package com.modsen.driverservice;
 
+import com.modsen.driverservice.exception.DriverAlreadyExistException;
 import com.modsen.driverservice.exception.DriverNotFoundException;
 import com.modsen.driverservice.feignclient.RideFeignClient;
 import com.modsen.driverservice.mapper.DriverMapper;
@@ -12,6 +13,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
+import java.util.function.Predicate;
 
 import static com.modsen.driverservice.DriverTestUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -19,8 +21,7 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class DriverServiceTest {
@@ -92,6 +93,39 @@ public class DriverServiceTest {
         );
         verify(driverRepository).findById(DEFAULT_DRIVER_ID);
     }
+
+    @Test
+    void deleteByIdWhenDriverExist() {
+        var driver = getDriver();
+        var driverResponse = getDriverResponse();
+
+        doReturn(Optional.of(driver))
+                .when(driverRepository)
+                .findById(DEFAULT_DRIVER_ID);
+        doReturn(driverResponse)
+                .when(driverMapper)
+                .entityToResp(driver);
+
+        var driverResult = driverService.deleteById(DEFAULT_DRIVER_ID);
+
+        assertEquals(driverResponse, driverResult);
+        verify(driverRepository).delete(driver);
+        verify(driverRepository).findById(DEFAULT_DRIVER_ID);
+        verify(driverMapper).entityToResp(driver);
+    }
+
+    @Test
+    void deleteByIdWhenDriverNotExist() {
+        doReturn(Optional.empty())
+                .when(driverRepository)
+                .findById(DEFAULT_DRIVER_ID);
+        assertThrows(
+                DriverNotFoundException.class,
+                () -> driverService.deleteById(DEFAULT_DRIVER_ID)
+        );
+        verify(driverRepository).findById(DEFAULT_DRIVER_ID);
+    }
+
 
 
 }
