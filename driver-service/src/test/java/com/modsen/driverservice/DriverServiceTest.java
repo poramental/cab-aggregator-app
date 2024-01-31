@@ -1,5 +1,6 @@
 package com.modsen.driverservice;
 
+import com.modsen.driverservice.entity.Driver;
 import com.modsen.driverservice.exception.DriverAlreadyExistException;
 import com.modsen.driverservice.exception.DriverNotFoundException;
 import com.modsen.driverservice.feignclient.RideFeignClient;
@@ -160,7 +161,39 @@ public class DriverServiceTest {
         assertEquals(driverResponse, driverResult);
     }
 
+    @Test
+    void updateWhenDriverNotExist() {
+        var driverRequest = getDriverRequest();
+        var driverResponse = getDriverResponse();
+        var driver = getDriver();
 
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.of(driver));
+        when(driverMapper.reqToEntity(driverRequest)).thenReturn(driver);
+        when(driverMapper.entityToResp(driver)).thenReturn(driverResponse);
+        when(driverRepository.save(driver)).thenReturn(driver);
+
+        var driverResult = driverService.update(DEFAULT_DRIVER_ID, driverRequest);
+
+        verify(driverRepository).save(driver);
+
+        verify(driverMapper).reqToEntity(driverRequest);
+        verify(driverMapper).entityToResp(driver);
+        assertEquals(driverResponse, driverResult);
+    }
+
+    @Test
+    void tryUpdateWhenEmailExist() {
+        var driver = getDriver().setEmail("not equals email");
+        tryUpdateWhenParamExist(driver, driverRepository::existsByEmail, DEFAULT_DRIVER_EMAIL);
+        verify(driverRepository).existsByEmail(DEFAULT_DRIVER_EMAIL);
+    }
+
+    @Test
+    void tryUpdateWhenPhoneExist() {
+        var driver = getDriver().setPhone("not equals phone");
+        tryUpdateWhenParamExist(driver, driverRepository::existsByPhone, DEFAULT_DRIVER_PHONE);
+        verify(driverRepository).existsByPhone(DEFAULT_DRIVER_PHONE);
+    }
 
     private void tryAddWhenParamExist(Predicate<String> existParam, String param) {
         var passengerRequest = getDriverRequest();
@@ -169,6 +202,18 @@ public class DriverServiceTest {
         assertThrows(
                 DriverAlreadyExistException.class,
                 () -> driverService.add(passengerRequest)
+        );
+    }
+
+    private void tryUpdateWhenParamExist(Driver driver, Predicate<String> existParam, String param) {
+        var passengerRequest = getDriverRequest();
+
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.of(driver));
+        when(existParam.test(param)).thenReturn(true);
+
+        assertThrows(
+                DriverAlreadyExistException.class,
+                () -> driverService.update(DEFAULT_DRIVER_ID, passengerRequest)
         );
     }
 
