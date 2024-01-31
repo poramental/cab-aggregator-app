@@ -12,6 +12,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -279,6 +281,21 @@ class PassengerServiceTest {
     }
 
 
+    @Test
+    void getPageWhenPaginationParamsIsInvalid() {
+        assertThrows(
+                PaginationFormatException.class,
+                () -> passengerService.getPassengerPage(-1, -1, "order")
+        );
+    }
+
+    @Test
+    void getPageWhenOrderByIsInvalid() {
+        assertThrows(
+                SortTypeException.class,
+                () -> passengerService.getPassengerPage(1, 1, "order")
+        );
+    }
 
     @Test
     void addRatingWhenRideIsNotInactive() {
@@ -294,8 +311,17 @@ class PassengerServiceTest {
         verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
     }
 
+    private PageRequest getPageReq(int page, int size, String orderBy ){
+        PageRequest pageRequest;
+        if (orderBy == null) {
+            pageRequest = PageRequest.of(page - 1, size);
+        } else {
+            pageRequest = PageRequest.of(page - 1, size, Sort.by(orderBy));
+        }
+        return pageRequest;
+    }
 
-    void tryUpdateWhenParamExist(Passenger passenger, Predicate<String> existParam, String param) {
+    private void tryUpdateWhenParamExist(Passenger passenger, Predicate<String> existParam, String param) {
         var passengerRequest = getPassengerRequest();
 
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
