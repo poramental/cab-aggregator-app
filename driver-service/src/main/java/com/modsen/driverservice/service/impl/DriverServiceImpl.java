@@ -121,7 +121,7 @@ public class DriverServiceImpl implements DriverService {
         RideResponse rideResponse = rideFeignClient.getRideById(rideId);
         LocalDateTime rideResponseEndDate = rideResponse.getEndDate();
 
-        if (rideResponseEndDate.isAfter(LocalDateTime.now().minusMinutes(3))) {
+        if (!rideResponseEndDate.isAfter(LocalDateTime.now().minusMinutes(3))) {
             throw new RatingException(ExceptionMessage.RATING_EXPIRED_EXCEPTION);
         }
 
@@ -185,7 +185,7 @@ public class DriverServiceImpl implements DriverService {
         );
     }
 
-    //метод ставит машину водителю если машина и водитель свободный
+    //метод ставит машину водителю если машина и водитель свободны
     private <T> DriverResponse setAuto(T param,
                                        AutoRequest autoDto,
                                        Function<T, Optional<Driver>> repositoryFunc,

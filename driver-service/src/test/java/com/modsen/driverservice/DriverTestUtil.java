@@ -61,7 +61,7 @@ public class DriverTestUtil {
     public static RideResponse getRideResponse() {
         return new RideResponse()
                 .setId(DEFAULT_RIDE_ID)
-                .setPassenger(DEFAULT_DRIVER_ID)
+                .setDriverId(DEFAULT_DRIVER_ID)
                 .setEndDate(LocalDateTime.now());
     }
 

@@ -3,6 +3,8 @@ package com.modsen.driverservice;
 import com.modsen.driverservice.entity.Driver;
 import com.modsen.driverservice.exception.DriverAlreadyExistException;
 import com.modsen.driverservice.exception.DriverNotFoundException;
+import com.modsen.driverservice.exception.RatingException;
+import com.modsen.driverservice.exception.RideHaveAnotherDriverException;
 import com.modsen.driverservice.feignclient.RideFeignClient;
 import com.modsen.driverservice.mapper.DriverMapper;
 import com.modsen.driverservice.repository.DriverRepository;
@@ -13,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.Predicate;
 
@@ -195,6 +198,71 @@ public class DriverServiceTest {
         verify(driverRepository).existsByPhone(DEFAULT_DRIVER_PHONE);
     }
 
+    @Test
+    void addRatingWhenRatingIsInvalid() {
+        assertThrows(
+                RuntimeException.class,
+                () -> driverService.addRatingById(DEFAULT_DRIVER_ID, DEFAULT_RIDE_ID, 10)
+        );
+    }
+
+    @Test
+    void addRatingWhenDriverNotExist() {
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.empty());
+        assertThrows(
+                DriverNotFoundException.class,
+                () -> driverService.addRatingById(DEFAULT_DRIVER_ID, DEFAULT_RIDE_ID, 4)
+        );
+    }
+
+    @Test
+    void addRatingWhenRideHaveAnotherDriver() {
+        var driver = getDriver();
+        var rideResponse = getRideResponse();
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.of(driver));
+        when(rideFeignClient.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setDriverId(43L)); // not equal passenger id
+
+        assertThrows(
+                RideHaveAnotherDriverException.class,
+                () -> driverService.addRatingById(DEFAULT_DRIVER_ID, DEFAULT_RIDE_ID, 4)
+        );
+        verify(driverRepository).findById(DEFAULT_DRIVER_ID);
+        verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
+
+    }
+
+    @Test
+    void addRatingWhenRideIsExpired() {
+        var driver = getDriver();
+        var rideResponse = getRideResponse();
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.of(driver));
+        when(rideFeignClient.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setEndDate(LocalDateTime.now().minusMinutes(5)));
+        assertThrows(
+                RatingException.class,
+                () -> driverService.addRatingById(DEFAULT_DRIVER_ID, DEFAULT_RIDE_ID, 4)
+        );
+        verify(driverRepository).findById(DEFAULT_DRIVER_ID);
+        verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
+    }
+
+    @Test
+    void addRating() {
+        var driver = getDriver();
+        var rideResponse = getRideResponse();
+        var driverResponse = getDriverResponse();
+        when(driverRepository.findById(DEFAULT_DRIVER_ID)).thenReturn(Optional.of(driver));
+        when(rideFeignClient.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setEndDate(LocalDateTime.now()));
+        when(driverMapper.entityToResp(driver)).thenReturn(driverResponse);
+        when(driverRepository.save(driver)).thenReturn(driver);
+
+        driverService.addRatingById(DEFAULT_DRIVER_ID, DEFAULT_RIDE_ID, 4);
+
+        verify(driverRepository).findById(DEFAULT_DRIVER_ID);
+        verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
+        verify(driverRepository).save(driver);
+        verify(driverMapper).entityToResp(driver);
+    }
+
     private void tryAddWhenParamExist(Predicate<String> existParam, String param) {
         var passengerRequest = getDriverRequest();
 
@@ -216,5 +284,6 @@ public class DriverServiceTest {
                 () -> driverService.update(DEFAULT_DRIVER_ID, passengerRequest)
         );
     }
+
 
 }
