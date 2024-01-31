@@ -1,5 +1,6 @@
 package com.modsen.driverservice;
 
+import com.modsen.driverservice.exception.DriverNotFoundException;
 import com.modsen.driverservice.feignclient.RideFeignClient;
 import com.modsen.driverservice.mapper.DriverMapper;
 import com.modsen.driverservice.repository.DriverRepository;
@@ -10,12 +11,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static com.modsen.driverservice.DriverTestUtil.getListDriver;
-import static com.modsen.driverservice.DriverTestUtil.getListDriverResponse;
+import java.util.Optional;
+
+import static com.modsen.driverservice.DriverTestUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.verify;
 
@@ -57,6 +60,37 @@ public class DriverServiceTest {
         verify(driverMapper).entityToResp(listDriver.get(0));
         verify(driverMapper).entityToResp(listDriver.get(1));
         assertEquals(exceptList.getDriverResponseList(), responseList.getDriverResponseList());
+    }
+
+    @Test
+    void getByIdWhenDriverExist() {
+        var driver = getDriver();
+        var driverResponse = getDriverResponse();
+
+        doReturn(Optional.of(driver))
+                .when(driverRepository)
+                .findById(DEFAULT_DRIVER_ID);
+        doReturn(driverResponse)
+                .when(driverMapper)
+                .entityToResp(driver);
+
+        var driverResult = driverService.getById(DEFAULT_DRIVER_ID);
+
+        assertEquals(driverResponse, driverResult);
+        verify(driverRepository).findById(DEFAULT_DRIVER_ID);
+        verify(driverMapper).entityToResp(driver);
+    }
+
+    @Test
+    void getByIdWhenDriverNotExist() {
+        doReturn(Optional.empty())
+                .when(driverRepository)
+                .findById(DEFAULT_DRIVER_ID);
+        assertThrows(
+                DriverNotFoundException.class,
+                () -> driverService.getById(DEFAULT_DRIVER_ID)
+        );
+        verify(driverRepository).findById(DEFAULT_DRIVER_ID);
     }
 
 
