@@ -261,6 +261,26 @@ class PassengerServiceTest {
     }
 
     @Test
+    void addRating() {
+        var passenger = getPassenger();
+        var rideResponse = getRideResponse();
+        var passengerResponse = getPassengerResponse();
+        when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
+        when(rideFeignClient.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setEndDate(LocalDateTime.now()));
+        when(mapper.entityToResponse(passenger)).thenReturn(passengerResponse);
+        when(passengerRepository.save(passenger)).thenReturn(passenger);
+
+        passengerService.addRatingById(4,DEFAULT_RIDE_ID,DEFAULT_PASSENGER_ID);
+
+        verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
+        verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
+        verify(passengerRepository).save(passenger);
+        verify(mapper).entityToResponse(passenger);
+    }
+
+
+
+    @Test
     void addRatingWhenRideIsNotInactive() {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
