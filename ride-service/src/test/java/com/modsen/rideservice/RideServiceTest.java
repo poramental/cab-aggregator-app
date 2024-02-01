@@ -1,12 +1,14 @@
 package com.modsen.rideservice;
 
 
+import com.modsen.rideservice.dto.CustomerChargeRequest;
 import com.modsen.rideservice.dto.FindDriverRequest;
 import com.modsen.rideservice.dto.response.DriverResponse;
 import com.modsen.rideservice.entity.NotAvailableDrivers;
 import com.modsen.rideservice.entity.Ride;
 import com.modsen.rideservice.exception.RideNotFoundException;
 import com.modsen.rideservice.feignclient.DriverFeignClient;
+import com.modsen.rideservice.feignclient.PaymentFeignClient;
 import com.modsen.rideservice.kafka.RideProducer;
 import com.modsen.rideservice.mapper.RideMapper;
 import com.modsen.rideservice.repository.RideRepository;
@@ -48,6 +50,9 @@ public class RideServiceTest {
 
     @Mock
     private RideProducer rideProducer;
+
+    @Mock
+    private PaymentFeignClient paymentFeignClient;
 
     @Test
     void getAll() {
@@ -214,4 +219,31 @@ public class RideServiceTest {
         verify(rideMapper).entityToResponse(ride);
         verify(passengerMailService).sendStartRideMessage(any(String.class));
     }
+
+    @Test
+    void endRide() {
+        var ride = getRide()
+                .setWaitingForDriverId(DEFAULT_DRIVER_ID)
+                .setDriverId(DEFAULT_DRIVER_ID)
+                .setPassenger(1L);
+        var rideResponse = getRideResponse();
+
+        when(rideRepository.findById(DEFAULT_RIDE_ID)).thenReturn(Optional.of(ride));
+        doReturn(ride).when(rideRepository).save(any(Ride.class));
+        doReturn(rideResponse).when(rideMapper).entityToResponse(ride);
+
+
+        var rideResult = rideService.endRide(DEFAULT_RIDE_ID, DEFAULT_DRIVER_ID);
+
+        assertEquals(rideResult,rideResponse);
+        verify(driverFeignClient).getDriverById(DEFAULT_DRIVER_ID);
+        verify(rideRepository).findById(DEFAULT_RIDE_ID);
+        verify(rideRepository).save(any(Ride.class));
+        verify(rideMapper).entityToResponse(ride);
+        verify(driverFeignClient).changeIsInRideStatus(DEFAULT_DRIVER_ID);
+        verify(paymentFeignClient).chargeFromCustomer(any(CustomerChargeRequest.class));
+
+    }
+
+
 }
