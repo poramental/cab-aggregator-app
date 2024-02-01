@@ -3,11 +3,13 @@ package com.modsen.rideservice;
 
 import com.modsen.rideservice.dto.CustomerChargeRequest;
 import com.modsen.rideservice.dto.FindDriverRequest;
+import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.response.DriverResponse;
 import com.modsen.rideservice.entity.NotAvailableDrivers;
 import com.modsen.rideservice.entity.Ride;
 import com.modsen.rideservice.exception.RideNotFoundException;
 import com.modsen.rideservice.feignclient.DriverFeignClient;
+import com.modsen.rideservice.feignclient.PassengerFeignClient;
 import com.modsen.rideservice.feignclient.PaymentFeignClient;
 import com.modsen.rideservice.kafka.RideProducer;
 import com.modsen.rideservice.mapper.RideMapper;
@@ -53,6 +55,9 @@ public class RideServiceTest {
 
     @Mock
     private PaymentFeignClient paymentFeignClient;
+
+    @Mock
+    private PassengerFeignClient passengerFeignClient;
 
     @Test
     void getAll() {
@@ -245,5 +250,26 @@ public class RideServiceTest {
 
     }
 
+    @Test
+    void findRide() {
+        var ride = getRide()
+                .setWaitingForDriverId(DEFAULT_DRIVER_ID)
+                .setDriverId(DEFAULT_DRIVER_ID)
+                .setPassenger(1L);
+        var rideResponse = getRideResponse();
+        var rideRequest = getRideRequest().setPassenger(DEFAULT_PASSENGER_ID);
+        doReturn(ride).when(rideRepository).save(any(Ride.class));
+        doReturn(rideResponse).when(rideMapper).entityToResponse(ride);
+        when(rideMapper.requestToEntity(any(RideRequest.class))).thenReturn(ride);
+
+        var rideResult = rideService.findRide(rideRequest);
+
+        assertEquals(rideResult,rideResponse);
+        verify(passengerFeignClient).getPassengerById(DEFAULT_DRIVER_ID);
+        verify(rideRepository).save(any(Ride.class));
+        verify(rideMapper).entityToResponse(ride);
+        verify(rideProducer).sendMessage(any(FindDriverRequest.class));
+
+    }
 
 }

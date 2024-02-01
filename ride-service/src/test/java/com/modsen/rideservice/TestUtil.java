@@ -1,5 +1,6 @@
 package com.modsen.rideservice;
 
+import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.response.DriverResponse;
 import com.modsen.rideservice.dto.response.ListRideResponse;
 import com.modsen.rideservice.dto.response.RideResponse;
@@ -58,5 +59,9 @@ public class TestUtil {
                 .surname("surname")
                 .ratingsCount(21)
                 .build();
+    }
+
+    public static RideRequest getRideRequest() {
+        return new RideRequest();
     }
 }
