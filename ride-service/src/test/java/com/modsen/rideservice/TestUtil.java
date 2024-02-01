@@ -1,5 +1,6 @@
 package com.modsen.rideservice;
 
+import com.modsen.rideservice.dto.response.DriverResponse;
 import com.modsen.rideservice.dto.response.ListRideResponse;
 import com.modsen.rideservice.dto.response.RideResponse;
 import com.modsen.rideservice.entity.Ride;
@@ -45,5 +46,17 @@ public class TestUtil {
                 new Ride()
                         .setId(DEFAULT_RIDE_ID2)
         );
+    }
+
+    public static DriverResponse getDriverResponse() {
+        return DriverResponse.builder()
+                .id(DEFAULT_DRIVER_ID)
+                .phone("1111111111111")
+                .averageRating(3.4F)
+                .email("email@email.com")
+                .name("name")
+                .surname("surname")
+                .ratingsCount(21)
+                .build();
     }
 }

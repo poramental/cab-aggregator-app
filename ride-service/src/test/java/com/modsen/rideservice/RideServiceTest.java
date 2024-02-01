@@ -1,9 +1,13 @@
 package com.modsen.rideservice;
 
 
+import com.modsen.rideservice.entity.NotAvailableDrivers;
+import com.modsen.rideservice.entity.Ride;
 import com.modsen.rideservice.exception.RideNotFoundException;
+import com.modsen.rideservice.feignclient.DriverFeignClient;
 import com.modsen.rideservice.mapper.RideMapper;
 import com.modsen.rideservice.repository.RideRepository;
+import com.modsen.rideservice.service.PassengerMailService;
 import com.modsen.rideservice.service.impl.RideServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +33,15 @@ public class RideServiceTest {
 
     @Mock
     private RideMapper rideMapper;
+
+    @Mock
+    private DriverFeignClient driverFeignClient;
+
+    @Mock
+    private PassengerMailService passengerMailService;
+
+    @Mock
+    private NotAvailableDrivers notAvailableDrivers;
 
     @Test
     void getAll() {
@@ -123,5 +136,29 @@ public class RideServiceTest {
         assertNotNull(rideListResult);
         verify(rideRepository).findAllByDriverId(DEFAULT_DRIVER_ID);
     }
+
+    @Test
+    void acceptRide() {
+        var ride = getRide().setWaitingForDriverId(DEFAULT_DRIVER_ID).setDriverId(null);
+        var rideResponse = getRideResponse();
+        var driverResponse = getDriverResponse().setIsInRide(false);
+
+        when(driverFeignClient.getDriverById(DEFAULT_DRIVER_ID)).thenReturn(driverResponse);
+        when(rideRepository.findById(DEFAULT_RIDE_ID)).thenReturn(Optional.of(ride));
+        doReturn(ride).when(rideRepository).save(any(Ride.class));
+        doReturn(rideResponse).when(rideMapper).entityToResponse(ride);
+
+
+        var rideResult = rideService.acceptRide(DEFAULT_RIDE_ID, DEFAULT_DRIVER_ID);
+
+        assertEquals(rideResult,rideResponse);
+        verify(driverFeignClient).getDriverById(DEFAULT_DRIVER_ID);
+        verify(rideRepository).findById(DEFAULT_RIDE_ID);
+        verify(rideRepository).save(any(Ride.class));
+        verify(rideMapper).entityToResponse(ride);
+
+    }
+
+
 
 }
