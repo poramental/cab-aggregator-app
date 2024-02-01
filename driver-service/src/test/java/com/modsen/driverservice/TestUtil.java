@@ -59,6 +59,44 @@ public class TestUtil {
         ));
     }
 
+    public static ListAutoResponse getListAutoResponse() {
+        return new ListAutoResponse(List.of(
+                AutoResponse.builder()
+                        .model("model")
+                        .number(DEFAULT_AUTO_NUMBER)
+                        .color("color")
+                        .driverId(DEFAULT_DRIVER_ID)
+                        .id(DEFAULT_AUTO_ID)
+                        .build(),
+                AutoResponse.builder()
+                        .number("22222")
+                        .id(2L)
+                        .driverId(2L)
+                        .color("color")
+                        .model("model")
+                        .build()
+        ));
+    }
+
+    public static List<Auto> getListAuto() {
+        return List.of(
+
+             new Auto()
+                .setId(DEFAULT_AUTO_ID)
+                .setDriverId(DEFAULT_DRIVER_ID)
+                .setColor("color")
+                .setModel("model")
+                .setNumber(DEFAULT_AUTO_NUMBER),
+             new Auto()
+                .setId(2L)
+                .setDriverId(2L)
+                .setColor("color")
+                .setModel("model")
+                .setNumber("22222")
+
+        );
+    }
+
     public static RideResponse getRideResponse() {
         return new RideResponse()
                 .setId(DEFAULT_RIDE_ID)
