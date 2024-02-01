@@ -65,7 +65,7 @@ public class RideServiceImpl implements RideService {
         return new ListRideResponse(repository.findAllByPassenger(passengerId)
                 .stream()
                 .map(mapper::entityToResponse)
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @Override
@@ -73,7 +73,7 @@ public class RideServiceImpl implements RideService {
         return new ListRideResponse(repository.findAllByDriverId(driverId)
                 .stream()
                 .map(mapper::entityToResponse)
-                .collect(Collectors.toList()));
+                .toList());
     }
 
     @Override
@@ -172,7 +172,7 @@ public class RideServiceImpl implements RideService {
         ride
                 .setIsActive(false)
                 .setEndDate(LocalDateTime.now());
-        paymentFeignClient.chargeFromCustomer( new CustomerChargeRequest()
+        paymentFeignClient.chargeFromCustomer(new CustomerChargeRequest()
                 .setAmount(20).setPassengerId(ride.getPassenger()).setCurrency("USD"));
         repository.save(ride);
         return mapper.entityToResponse(ride);

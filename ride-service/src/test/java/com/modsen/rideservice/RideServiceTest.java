@@ -80,4 +80,48 @@ public class RideServiceTest {
         );
     }
 
+    @Test
+    void getPassengerRidesById() {
+        var rides = getListRide();
+        var listRideResponse = getListRideResponse();
+
+        when(rideRepository.findAllByPassenger(DEFAULT_PASSENGER_ID)).thenReturn(rides);
+
+        doReturn(listRideResponse.getRideResponseList().get(0))
+                .when(rideMapper)
+                .entityToResponse(rides.get(0));
+        doReturn(listRideResponse.getRideResponseList().get(1))
+                .when(rideMapper)
+                .entityToResponse(rides.get(1));
+
+        var rideListResult = rideService.getAllPassengerRidesById(DEFAULT_PASSENGER_ID);
+
+        verify(rideMapper).entityToResponse(rides.get(0));
+        verify(rideMapper).entityToResponse(rides.get(1));
+        assertNotNull(rideListResult);
+        verify(rideRepository).findAllByPassenger(DEFAULT_PASSENGER_ID);
+    }
+
+    @Test
+    void getDriverRidesById() {
+        var rides = getListRide();
+        var listRideResponse = getListRideResponse();
+
+        when(rideRepository.findAllByDriverId(DEFAULT_DRIVER_ID)).thenReturn(rides);
+
+        doReturn(listRideResponse.getRideResponseList().get(0))
+                .when(rideMapper)
+                .entityToResponse(rides.get(0));
+        doReturn(listRideResponse.getRideResponseList().get(1))
+                .when(rideMapper)
+                .entityToResponse(rides.get(1));
+
+        var rideListResult = rideService.getAllDriverRidesById(DEFAULT_DRIVER_ID);
+
+        verify(rideMapper).entityToResponse(rides.get(0));
+        verify(rideMapper).entityToResponse(rides.get(1));
+        assertNotNull(rideListResult);
+        verify(rideRepository).findAllByDriverId(DEFAULT_DRIVER_ID);
+    }
+
 }

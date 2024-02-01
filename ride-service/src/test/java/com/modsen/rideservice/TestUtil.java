@@ -15,6 +15,8 @@ public class TestUtil {
 
     public static final Long DEFAULT_PASSENGER_ID = 1L;
 
+    public static final Long DEFAULT_DRIVER_ID = 1L;
+
     public static RideResponse getRideResponse() {
         return new RideResponse()
                 .setId(DEFAULT_RIDE_ID);
