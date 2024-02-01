@@ -164,7 +164,7 @@ public class RideServiceTest {
         verify(rideMapper).entityToResponse(ride);
         verify(notAvailableDrivers).deleteWaitingDriver(DEFAULT_DRIVER_ID);
         verify(passengerMailService).sendAcceptRideMessage(any(String.class),any(DriverResponse.class));
-
+        verify(driverFeignClient).changeIsInRideStatus(DEFAULT_DRIVER_ID);
     }
 
 
@@ -192,5 +192,26 @@ public class RideServiceTest {
     }
 
 
+    @Test
+    void startRide() {
+        var ride = getRide()
+                .setWaitingForDriverId(DEFAULT_DRIVER_ID)
+                .setDriverId(DEFAULT_DRIVER_ID)
+                .setPassenger(1L);
+        var rideResponse = getRideResponse();
 
+        when(rideRepository.findById(DEFAULT_RIDE_ID)).thenReturn(Optional.of(ride));
+        doReturn(ride).when(rideRepository).save(any(Ride.class));
+        doReturn(rideResponse).when(rideMapper).entityToResponse(ride);
+
+
+        var rideResult = rideService.startRide(DEFAULT_RIDE_ID, DEFAULT_DRIVER_ID);
+
+        assertEquals(rideResult,rideResponse);
+        verify(driverFeignClient).getDriverById(DEFAULT_DRIVER_ID);
+        verify(rideRepository).findById(DEFAULT_RIDE_ID);
+        verify(rideRepository).save(any(Ride.class));
+        verify(rideMapper).entityToResponse(ride);
+        verify(passengerMailService).sendStartRideMessage(any(String.class));
+    }
 }
