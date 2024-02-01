@@ -1,6 +1,7 @@
 package com.modsen.rideservice;
 
 
+import com.modsen.rideservice.exception.RideNotFoundException;
 import com.modsen.rideservice.mapper.RideMapper;
 import com.modsen.rideservice.repository.RideRepository;
 import com.modsen.rideservice.service.impl.RideServiceImpl;
@@ -13,8 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static com.modsen.rideservice.TestUtil.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 
@@ -53,5 +53,31 @@ public class RideServiceTest {
         verify(rideRepository).findAll();
     }
 
+
+    @Test
+    void getByIdWhenRideIsExist() {
+        var ride = getRide();
+        var rideResponse = getRideResponse();
+
+        when(rideRepository.findById(DEFAULT_RIDE_ID)).thenReturn(Optional.of(ride));
+        when(rideMapper.entityToResponse(ride)).thenReturn(rideResponse);
+
+        var rideResult = rideService.getById(DEFAULT_RIDE_ID);
+
+        verify(rideRepository).findById(DEFAULT_RIDE_ID);
+        verify(rideMapper).entityToResponse(ride);
+        assertNotNull(rideResult);
+        assertEquals(rideResult,rideResponse);
+    }
+
+    @Test
+    void getByIdWhenRideNotExist() {
+        when(rideRepository.findById(DEFAULT_RIDE_ID)).thenReturn(Optional.empty());
+
+        assertThrows(
+                RideNotFoundException.class,
+                () -> rideService.getById(DEFAULT_RIDE_ID)
+        );
+    }
 
 }
