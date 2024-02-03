@@ -16,7 +16,7 @@ public class RideController {
 
     private final RideServiceImpl rideService;
 
-    @PatchMapping("/accept-ride-driver")
+    @PatchMapping("/accept")
     public ResponseEntity<RideResponse> acceptRideByDriver(
             @RequestParam(name = "driver_id") Long driverId,
             @RequestParam(name = "ride_id") Long rideId
@@ -24,7 +24,7 @@ public class RideController {
         return ResponseEntity.ok(rideService.acceptRide(rideId,driverId));
     }
 
-    @PatchMapping("/cancel-ride-driver")
+    @PatchMapping("/cancel")
     public ResponseEntity<RideResponse> cancelRideByDriver(
             @RequestParam(name = "driver_id") Long driverId,
             @RequestParam(name = "ride_id") Long rideId
