@@ -1,14 +1,16 @@
 package com.modsen.driverservice.exception;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+
 @Getter
 @Setter
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
+@ToString
+@EqualsAndHashCode
 public class AppError  {
 
     private String message;
 
-    public AppError(String message){
-        this.message = message;
-    }
 }

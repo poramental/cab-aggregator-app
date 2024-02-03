@@ -1,4 +1,4 @@
-package com.modsen.driverservice;
+package com.modsen.driverservice.unit;
 
 import com.modsen.driverservice.entity.Auto;
 import com.modsen.driverservice.entity.Driver;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.modsen.driverservice.TestUtil.*;
+import static com.modsen.driverservice.util.UnitTestUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
