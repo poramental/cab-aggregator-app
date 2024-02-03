@@ -1,4 +1,4 @@
-package com.modsen.driverservice;
+package com.modsen.driverservice.util;
 
 import com.modsen.driverservice.dto.*;
 import com.modsen.driverservice.entity.Auto;
@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class TestUtil {
+public class UnitTestUtil {
     public static final Long DEFAULT_DRIVER_ID = 1L;
 
     public static final String DEFAULT_DRIVER_EMAIL = "email@email.com";

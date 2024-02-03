@@ -1,12 +1,17 @@
 package com.modsen.driverservice.dto;
 
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.Accessors;
 
-@Data
+
 @Accessors(chain = true)
+@Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 @Builder
 public class AutoResponse {
     private Long id;

@@ -1,4 +1,4 @@
-package com.modsen.driverservice;
+package com.modsen.driverservice.unit;
 
 
 import com.modsen.driverservice.exception.AutoNotFoundException;
@@ -12,9 +12,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+
 import java.util.Optional;
 
-import static com.modsen.driverservice.TestUtil.*;
+import static com.modsen.driverservice.util.UnitTestUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;

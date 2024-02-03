@@ -91,7 +91,11 @@ public class DriverServiceImpl implements DriverService {
         Driver oldDriver = getDriverOrThrow(id);
         preUpdateAllParamsCheck(driverDto, id);
         Driver newDriver = driverMapper.reqToEntity(driverDto);
-        newDriver.setId(id);
+        newDriver
+                .setId(id)
+                .setIsInRide(oldDriver.getIsInRide())
+                .setAverageRating(oldDriver.getAverageRating())
+                .setRatingsCount(oldDriver.getRatingsCount());
         return driverMapper.entityToResp(driverRepository
                 .save(newDriver.setAutos(oldDriver.getAutos())));
     }

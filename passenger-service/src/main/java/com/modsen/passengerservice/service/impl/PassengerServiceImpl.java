@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -30,14 +31,14 @@ public class PassengerServiceImpl implements PassengerService {
     private final RideFeignClient rideFeignClient;
 
     @Override
-    public ListPassengerResponse getAll(){
+    public ListPassengerResponse getAll() {
         return new ListPassengerResponse(passengerRepository.findAll().stream()
                 .map(passengerMapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
 
     @Override
-    public PassengerResponse addPassenger(PassengerRequest passengerReqDto){
+    public PassengerResponse addPassenger(PassengerRequest passengerReqDto) {
         checkPassengerParamsExists(passengerReqDto);
         return passengerMapper.entityToResponse(passengerRepository
                 .save(passengerMapper.requestToEntity(passengerReqDto)));
@@ -58,7 +59,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     public PassengerResponse updateById(Long id, PassengerRequest passengerDto) {
-        preUpdateCheckAllParams(id,passengerDto);
+        preUpdateCheckAllParams(id, passengerDto);
         Passenger passenger = passengerMapper.requestToEntity(passengerDto);
         passenger.setId(id);
         return passengerMapper.entityToResponse(passengerRepository.save(passenger));
@@ -96,9 +97,9 @@ public class PassengerServiceImpl implements PassengerService {
                                          String exceptionMessage,
                                          Function<T, Optional<Passenger>> repositoryFunc) {
         Passenger passenger = repositoryFunc.apply(param)
-        .orElseThrow( () -> new PassengerNotFoundException(exceptionMessage));
+                .orElseThrow(() -> new PassengerNotFoundException(exceptionMessage));
         passengerRepository.delete(passenger);
-            return passengerMapper.entityToResponse(passenger);
+        return passengerMapper.entityToResponse(passenger);
     }
 
     private void checkPhoneExist(PassengerRequest passengerDto) {
@@ -133,7 +134,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-        public PassengerResponse addRatingById(int rating, UUID rideId, Long id) {
+    public PassengerResponse addRatingById(int rating, UUID rideId, Long id) {
         return addRating(
                 rating,
                 id,
@@ -147,7 +148,7 @@ public class PassengerServiceImpl implements PassengerService {
                                             T param,
                                             UUID rideId,
                                             String exMessage,
-                                            Function<T,Optional<Passenger>> repositoryFunc) {
+                                            Function<T, Optional<Passenger>> repositoryFunc) {
         if (rating > 5 || rating < 0) {
             throw new RatingException(ExceptionMessage.RATING_EXCEPTION);
         }
@@ -156,7 +157,7 @@ public class PassengerServiceImpl implements PassengerService {
         RideResponse rideResponse = rideFeignClient.getRideById(rideId);
         LocalDateTime rideResponseEndDate = rideResponse.getEndDate();
 
-        if(Objects.isNull(rideResponseEndDate)){
+        if (Objects.isNull(rideResponseEndDate)) {
             throw new RideIsNotInactiveException(ExceptionMessage.RIDE_IS_NOT_INACTIVE_EXCEPTION);
         }
 
@@ -168,14 +169,14 @@ public class PassengerServiceImpl implements PassengerService {
             throw new RideHaveAnotherPassengerException(ExceptionMessage.RIDE_HAVE_ANOTHER_PASSENGER);
         }
 
-        
-        int newRatingsCount =  passenger.getRatingsCount() + 1;
-        float ratingSum  = passenger.getAverageRating() * passenger.getRatingsCount();
-        return  passengerMapper
+
+        int newRatingsCount = passenger.getRatingsCount() + 1;
+        float ratingSum = passenger.getAverageRating() * passenger.getRatingsCount();
+        return passengerMapper
                 .entityToResponse(passengerRepository
-                        .save(passenger.setAverageRating((ratingSum + rating ) / newRatingsCount)
-                .setRatingsCount(newRatingsCount)
-        ));
+                        .save(passenger.setAverageRating((ratingSum + rating) / newRatingsCount)
+                                .setRatingsCount(newRatingsCount)
+                        ));
     }
 
     @Override
@@ -194,7 +195,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     private void validateSortingParameter(String orderBy) {
-       Arrays.stream(PassengerResponse.class.getDeclaredFields())
+        Arrays.stream(PassengerResponse.class.getDeclaredFields())
                 .map(Field::getName)
                 .filter(orderBy::equals)
                 .findFirst()
@@ -218,9 +219,9 @@ public class PassengerServiceImpl implements PassengerService {
                 .build();
     }
 
-    private Passenger getOrThrow(Long id){
+    private Passenger getOrThrow(Long id) {
         return passengerRepository.findById(id)
-                .orElseThrow(()-> new PassengerNotFoundException(String.format(
+                .orElseThrow(() -> new PassengerNotFoundException(String.format(
                         ExceptionMessage.PASSENGER_NOT_FOUND_EXCEPTION,
                         id)));
     }
