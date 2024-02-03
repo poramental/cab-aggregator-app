@@ -11,17 +11,17 @@ public class RideMapper {
 
     private final ModelMapper mapper;
 
-    public RideMapper(){
+    public RideMapper() {
         this.mapper = new ModelMapper();
     }
 
 
-    public RideResponse entityToResponse(Ride ride){
+    public RideResponse entityToResponse(Ride ride) {
         return mapper.map(ride, RideResponse.class);
     }
 
-    public Ride requestToEntity(RideRequest reqDto){
-        return mapper.map(reqDto,Ride.class);
+    public Ride requestToEntity(RideRequest reqDto) {
+        return mapper.map(reqDto, Ride.class);
     }
 
 

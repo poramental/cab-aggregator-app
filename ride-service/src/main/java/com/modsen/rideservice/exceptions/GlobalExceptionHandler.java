@@ -14,14 +14,14 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({RideIsPresentException.class,RideAlreadyHaveDriverException.class})
-    public ResponseEntity<AppError> conflictException(RuntimeException e){
+    @ExceptionHandler({RideIsPresentException.class, RideAlreadyHaveDriverException.class})
+    public ResponseEntity<AppError> conflictException(RuntimeException e) {
         return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler
-    public ResponseEntity<AppError> rideNotFoundExceptionHandler(RideNotFoundException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);
+    public ResponseEntity<AppError> rideNotFoundExceptionHandler(RideNotFoundException e) {
+        return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler({
@@ -30,8 +30,8 @@ public class GlobalExceptionHandler {
             RideAlreadyActiveException.class,
             RideAlreadyInactiveException.class
     })
-    public ResponseEntity<AppError> badRequestException(RuntimeException e){
-        return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);
+    public ResponseEntity<AppError> badRequestException(RuntimeException e) {
+        return new ResponseEntity<>(new AppError(e.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
 }

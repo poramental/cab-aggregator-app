@@ -1,8 +1,8 @@
 package com.modsen.rideservice.exceptions;
 
-public class RideAlreadyHaveDriverException extends RuntimeException{
+public class RideAlreadyHaveDriverException extends RuntimeException {
 
-    public RideAlreadyHaveDriverException(String m){
+    public RideAlreadyHaveDriverException(String m) {
         super(m);
     }
 }
