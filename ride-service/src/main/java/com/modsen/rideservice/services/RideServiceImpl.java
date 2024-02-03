@@ -24,40 +24,35 @@ public class RideServiceImpl implements RideService {
 
     private final RideMapper mapper;
 
-    public RideResponseList getAll()
-    {
+    public RideResponseList getAll() {
         return new RideResponseList(repository.findAll().stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
 
-    public RideResponse getById(Long id)
-    {
+    public RideResponse getById(Long id) {
         return mapper.entityToResponse(repository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(String.format(
                         ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,
                         id))));
     }
 
-    public RideResponseList getAllPassengerRidesById(Long passengerId)
-    {
+    public RideResponseList getAllPassengerRidesById(Long passengerId) {
         return new RideResponseList(repository.findAllByPassengerId(passengerId)
                 .stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
 
-    public RideResponseList getAllDriverRidesById(Long driverId)
-    {
+    public RideResponseList getAllDriverRidesById(Long driverId) {
         return new RideResponseList(repository.findAllByDriverId(driverId)
                 .stream()
                 .map(mapper::entityToResponse)
                 .collect(Collectors.toList()));
     }
 
-    public RideResponse acceptRide(Long rideId, Long driverId)
-    {
-        Ride ride =getOrThrow(rideId);
+    public RideResponse acceptRide(Long rideId, Long driverId) {
+        Ride ride = getOrThrow(rideId);
         if (Objects.nonNull(ride.getDriverId())) {
             throw new RideAlreadyHaveDriverException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_HAVE_DRIVER_EXCEPTION,
@@ -67,14 +62,12 @@ public class RideServiceImpl implements RideService {
 
     }
 
-    public RideResponse cancelRide(Long rideId, Long driverId)
-    {
+    public RideResponse cancelRide(Long rideId, Long driverId) {
         Ride ride = getOrThrow(rideId);
         return mapper.entityToResponse(ride);
     }
 
-    public RideResponse startRide(Long rideId)
-    {
+    public RideResponse startRide(Long rideId) {
         Ride ride = getOrThrow(rideId);
         checkRideToStart(ride);
         ride
@@ -84,9 +77,8 @@ public class RideServiceImpl implements RideService {
     }
 
 
-    private static void checkRideToStart(Ride ride)
-    {
-        if (Objects.isNull(ride.getDriverId())){
+    private static void checkRideToStart(Ride ride) {
+        if (Objects.isNull(ride.getDriverId())) {
             throw new RideHaveNoDriverException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION,
                     ride.getId())
@@ -104,7 +96,7 @@ public class RideServiceImpl implements RideService {
                     ride.getId())
             );
         }
-        if (Objects.nonNull(ride.getIsActive()) && ride.getIsActive()){
+        if (Objects.nonNull(ride.getIsActive()) && ride.getIsActive()) {
             throw new RideAlreadyActiveException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_ACTIVE_EXCEPTION,
                     ride.getId())
@@ -112,8 +104,7 @@ public class RideServiceImpl implements RideService {
         }
     }
 
-    private static void checkRideToEnd(Ride ride)
-    {
+    private static void checkRideToEnd(Ride ride) {
         if (Objects.isNull(ride.getDriverId())) {
             throw new RideHaveNoDriverException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_HAVE_NO_DRIVER_EXCEPTION,
@@ -134,26 +125,23 @@ public class RideServiceImpl implements RideService {
         }
     }
 
-    public RideResponse endRide(Long rideId)
-    {
+    public RideResponse endRide(Long rideId) {
         Ride ride = getOrThrow(rideId);
         checkRideToEnd(ride);
         ride
-            .setIsActive(false)
-            .setEndDate(LocalDate.now());
+                .setIsActive(false)
+                .setEndDate(LocalDate.now());
         repository.save(ride);
         return mapper.entityToResponse(ride);
     }
 
-    public RideResponse findRide(RideRequest rideReqDto)
-    {
+    public RideResponse findRide(RideRequest rideReqDto) {
         Ride ride = mapper.requestToEntity(rideReqDto);
         ride.setStartDate(LocalDate.now());
         return mapper.entityToResponse(repository.save(ride));
     }
 
-    private Ride getOrThrow(Long id)
-    {
+    private Ride getOrThrow(Long id) {
         return repository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(
                         String.format(
