@@ -1,4 +1,4 @@
-package com.modsen.passengerservice;
+package com.modsen.passengerservice.unit;
 
 import com.modsen.passengerservice.dto.PassengerResponse;
 import com.modsen.passengerservice.entity.Passenger;
@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.modsen.passengerservice.PassengerTestUtil.*;
+import static com.modsen.passengerservice.util.PassengerTestUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;

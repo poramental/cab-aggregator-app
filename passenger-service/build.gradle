@@ -23,11 +23,13 @@ repositories {
 }
 
 ext {
-    set('springCloudVersion', "2023.0.0")
-    set('modelMapperVersion',  "3.2.0")
+    springCloudVersion = "2023.0.0"
+    modelMapperVersion = "3.2.0"
     validationVersion = '3.2.1'
     liquibaseVersion = '4.25.1'
     feignClientVersion = '4.1.0'
+    testContainersVersion = '1.19.4'
+    restAssuredVersion = '5.4.0'
 }
 
 dependencies {
@@ -41,6 +43,9 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version:feignClientVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
+    testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation 'org.projectlombok:lombok'
 }
 
 dependencyManagement {

@@ -1,4 +1,4 @@
-package com.modsen.passengerservice;
+package com.modsen.passengerservice.util;
 
 import com.modsen.passengerservice.dto.ListPassengerResponse;
 import com.modsen.passengerservice.dto.PassengerRequest;

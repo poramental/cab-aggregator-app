@@ -1,13 +1,17 @@
 package com.modsen.passengerservice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
 
-@Data
+@Getter
+@Setter
+@ToString
 @AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@EqualsAndHashCode
 public class ListPassengerResponse {
     private List<PassengerResponse> passengerList;
 }
