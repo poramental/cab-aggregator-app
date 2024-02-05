@@ -1,4 +1,4 @@
-package com.modsen.rideservice;
+package com.modsen.rideservice.unit;
 
 
 import com.modsen.rideservice.dto.CustomerChargeRequest;
@@ -24,7 +24,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static com.modsen.rideservice.TestUtil.*;
+import static com.modsen.rideservice.util.TestUtil.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 

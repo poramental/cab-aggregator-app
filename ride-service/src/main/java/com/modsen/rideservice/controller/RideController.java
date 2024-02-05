@@ -18,18 +18,18 @@ public class RideController {
 
     private final RideService rideService;
 
-    @PatchMapping("/accept-ride-driver")
+    @PatchMapping("/accept")
     public ResponseEntity<RideResponse> acceptRideByDriver(
-            @RequestParam(name = "driver_id") Long driverId,
-            @RequestParam(name = "ride_id") UUID rideId
+            @RequestParam Long driverId,
+            @RequestParam UUID rideId
     ) {
         return ResponseEntity.ok(rideService.acceptRide(rideId, driverId));
     }
 
-    @PatchMapping("/cancel-ride-driver")
+    @PatchMapping("/cancel")
     public ResponseEntity<RideResponse> cancelRideByDriver(
-            @RequestParam(name = "driver_id") Long driverId,
-            @RequestParam(name = "ride_id") UUID rideId
+            @RequestParam Long driverId,
+            @RequestParam UUID rideId
     ) {
         return ResponseEntity.ok(rideService.cancelRide(rideId, driverId));
     }
@@ -44,23 +44,23 @@ public class RideController {
         return ResponseEntity.ok(rideService.getById(id));
     }
 
-    @GetMapping("/all-passenger-rides-by-id")
+    @GetMapping("/passenger")
     public ResponseEntity<ListRideResponse> getAllPassengerRidesById(
-            @RequestParam(name = "passenger_id") Long passengerId
+            @RequestParam Long passengerId
     ) {
         return ResponseEntity.ok(rideService.getAllPassengerRidesById(passengerId));
     }
 
-    @GetMapping("/all-driver-rides-by-id")
+    @GetMapping("/driver")
     public ResponseEntity<ListRideResponse> getAllDriverRidesById(
-            @RequestParam(name = "driver_id") Long driverId
+            @RequestParam Long driverId
     ) {
         return ResponseEntity.ok(rideService.getAllDriverRidesById(driverId));
     }
 
     @PatchMapping("/start")
-    public ResponseEntity<RideResponse> startRide(@RequestParam("ride_id") UUID rideId,
-                                                  @RequestParam("driver_id") Long driverId) {
+    public ResponseEntity<RideResponse> startRide(@RequestParam UUID rideId,
+                                                  @RequestParam Long driverId) {
         return ResponseEntity.ok(rideService.startRide(rideId, driverId));
     }
 
@@ -70,8 +70,8 @@ public class RideController {
     }
 
     @PatchMapping("/end")
-    public ResponseEntity<RideResponse> endRide(@RequestParam("ride_id") UUID rideId,
-                                                @RequestParam("driver_id") Long driverId) {
+    public ResponseEntity<RideResponse> endRide(@RequestParam UUID rideId,
+                                                @RequestParam Long driverId) {
         return ResponseEntity.ok(rideService.endRide(rideId, driverId));
     }
 }

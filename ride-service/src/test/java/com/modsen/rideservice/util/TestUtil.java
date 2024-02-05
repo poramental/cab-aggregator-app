@@ -1,4 +1,4 @@
-package com.modsen.rideservice;
+package com.modsen.rideservice.util;
 
 import com.modsen.rideservice.dto.RideRequest;
 import com.modsen.rideservice.dto.response.DriverResponse;
