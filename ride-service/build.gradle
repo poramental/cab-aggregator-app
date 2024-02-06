@@ -15,6 +15,9 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
 }
 
 repositories {
@@ -29,6 +32,9 @@ ext {
     kafkaVersion = '3.1.1'
     testContainersVersion = '1.19.4'
     restAssuredVersion = '5.4.0'
+    cucumberVersion = '7.15.0'
+    wireMockVersion = '3.0.1'
+
 }
 
 dependencies {
@@ -47,6 +53,13 @@ dependencies {
     testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
     testImplementation 'org.projectlombok:lombok'
+    testImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
+    testImplementation "io.cucumber:cucumber-spring:${cucumberVersion}"
+    testImplementation "com.github.tomakehurst:wiremock:${wireMockVersion}"
+
+
+
 }
 
 tasks.named('test') {
