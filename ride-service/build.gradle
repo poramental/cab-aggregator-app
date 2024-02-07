@@ -32,8 +32,8 @@ ext {
     kafkaVersion = '3.1.1'
     testContainersVersion = '1.19.4'
     restAssuredVersion = '5.4.0'
-    cucumberVersion = '7.15.0'
-    wireMockVersion = '3.0.1'
+    cucumberVersion = '6.11.0'
+    wireMockVersion = '4.1.0'
 
 }
 
@@ -56,10 +56,9 @@ dependencies {
     testImplementation "io.cucumber:cucumber-java:${cucumberVersion}"
     testImplementation "io.cucumber:cucumber-junit:${cucumberVersion}"
     testImplementation "io.cucumber:cucumber-spring:${cucumberVersion}"
-    testImplementation "com.github.tomakehurst:wiremock:${wireMockVersion}"
-
-
-
+    testImplementation 'io.cucumber:gherkin:15.0.2'
+    testImplementation "org.springframework.cloud:spring-cloud-contract-wiremock:${wireMockVersion}"
+    testImplementation "org.testcontainers:junit-jupiter:1.19.4"
 }
 
 tasks.named('test') {

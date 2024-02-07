@@ -1,5 +1,6 @@
 package com.modsen.rideservice.integration;
 
+import com.modsen.rideservice.config.ContainerConfiguration;
 import com.modsen.rideservice.dto.response.ListRideResponse;
 import com.modsen.rideservice.dto.response.RideResponse;
 import com.modsen.rideservice.entity.Ride;

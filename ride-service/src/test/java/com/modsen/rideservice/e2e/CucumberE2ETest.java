@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
-        features = "classpath:feature",
+        features = "classpath:features",
         glue = "com/modsen/rideservice/e2e"
 )
 public class CucumberE2ETest {

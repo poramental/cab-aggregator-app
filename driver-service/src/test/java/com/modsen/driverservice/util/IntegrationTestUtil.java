@@ -47,10 +47,10 @@ public class IntegrationTestUtil {
                 .surname(NEW_SURNAME)
                 .email(NEW_EMAIL)
                 .phone(NEW_PHONE)
-                .averageRating(4.5F)
-                .ratingsCount(5)
+                .averageRating(3.4F)
+                .ratingsCount(2)
                 .autos(new ArrayList<>())
-                .isInRide(false)
+                .isInRide(true)
                 .build();
     }
 

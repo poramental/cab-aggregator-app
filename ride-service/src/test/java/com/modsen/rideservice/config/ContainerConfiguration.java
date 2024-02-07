@@ -1,6 +1,7 @@
-package com.modsen.rideservice.integration;
+package com.modsen.rideservice.config;
 
 
+import com.modsen.rideservice.RideServiceApplication;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,16 +10,17 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.DockerImageName;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RideServiceApplication.class)
 public class ContainerConfiguration {
 
     private static final PostgreSQLContainer<?>  postgreSQLContainer = new PostgreSQLContainer<>(DockerImageName.parse(
             "postgres:latest"
     ));
 
-    @BeforeAll
-    static void beforeAll() {
+
+    static {
         postgreSQLContainer.start();
+
     }
 
     @AfterAll

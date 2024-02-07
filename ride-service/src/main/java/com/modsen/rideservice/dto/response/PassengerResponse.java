@@ -1,10 +1,15 @@
 package com.modsen.rideservice.dto.response;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import lombok.experimental.Accessors;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
+@Accessors(chain = true)
 public class PassengerResponse {
     private Long id;
 

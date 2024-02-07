@@ -1,6 +1,7 @@
 package com.modsen.passengerservice.dto;
 
 import lombok.*;
+import lombok.experimental.Accessors;
 
 @Getter
 @Setter
@@ -9,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 @EqualsAndHashCode
+@Accessors(chain = true)
 public class PassengerResponse {
     private Long id;
 

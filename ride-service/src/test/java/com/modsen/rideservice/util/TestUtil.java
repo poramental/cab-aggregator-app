@@ -9,6 +9,9 @@ import com.modsen.rideservice.entity.Ride;
 import java.util.List;
 import java.util.UUID;
 
+import static com.modsen.rideservice.util.IntegrationTestUtil.DEFAULT_ID;
+import static java.lang.constant.ConstantDescs.DEFAULT_NAME;
+
 public class TestUtil {
 
     public static final UUID DEFAULT_RIDE_ID = UUID.fromString("f5807e3c-37ce-4fff-97b4-dd56d6585e15");
@@ -64,4 +67,5 @@ public class TestUtil {
     public static RideRequest getRideRequest() {
         return new RideRequest();
     }
+
 }

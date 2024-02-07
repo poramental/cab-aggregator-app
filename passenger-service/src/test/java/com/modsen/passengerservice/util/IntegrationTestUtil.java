@@ -12,7 +12,7 @@ public class IntegrationTestUtil {
     public static final Long DEFAULT_ID = 1L;
     public static final String PATH_ID = "api/v1/passengers/{id}";
     public static final String PATH_DEFAULT = "api/v1/passengers";
-    public static final Long DEFAULT_CREATE_ID = 4L;
+    public static final Long DEFAULT_CREATE_ID = 1L;
     public static final String USERNAME_FOR_CREATE = "forCreate";
     public static final String EMAIL_FOR_CREATE = "email@email.mail";
     public static final String PHONE_FOR_CREATE = "16344038970";

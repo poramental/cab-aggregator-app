@@ -1,15 +1,16 @@
 package com.modsen.rideservice.exception;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@Builder
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
 public class AppError  {
 
     private String message;
 
-    public AppError(String message){
-        this.message = message;
-    }
 }

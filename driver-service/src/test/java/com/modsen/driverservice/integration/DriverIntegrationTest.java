@@ -31,8 +31,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
                 "classpath:sql/driver/insert-data.sql"
         }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
 )
-
-
 public class DriverIntegrationTest extends ContainerConfiguration {
 
     @Autowired
@@ -163,7 +161,7 @@ public class DriverIntegrationTest extends ContainerConfiguration {
 
         var actual = given()
                 .port(port)
-                .pathParam(PATH_PARAM_ID, DEFAULT_ID)
+                .pathParam(PATH_PARAM_ID, 2L)
                 .contentType(ContentType.JSON)
                 .when()
                 .post(CHANGE_STATUS_URI)

@@ -107,7 +107,7 @@ public class PassengerIntegrationTest extends ContainerConfiguration {
         var actual = given()
                 .port(port)
                 .body(updateRequest)
-                .pathParam(PATH_PARAM_ID, DEFAULT_ID)
+                .pathParam(PATH_PARAM_ID, 3L)
                 .contentType(ContentType.JSON)
                 .when()
                 .put(PATH_ID)
@@ -116,7 +116,7 @@ public class PassengerIntegrationTest extends ContainerConfiguration {
                 .extract()
                 .as(PassengerResponse.class);
 
-        assertThat(actual).isEqualTo(expected);
+        assertThat(actual).isEqualTo(expected.setId(3L));
     }
 
 
@@ -146,7 +146,7 @@ public class PassengerIntegrationTest extends ContainerConfiguration {
 
         given()
                 .port(port)
-                .pathParam(PATH_PARAM_ID, DEFAULT_ID)
+                .pathParam(PATH_PARAM_ID, 4L)
                 .contentType(ContentType.JSON)
                 .when()
                 .delete(PATH_ID)
