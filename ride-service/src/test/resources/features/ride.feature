@@ -11,7 +11,7 @@ Feature: Driver accepts a ride
     And the error message in the response should be "Ride is waiting for another driver response."
 
   Scenario: Driver with isInRide=true tries to accept the ride
-    When the driver with id 2 attempts to accept the ride
+    When the driver with id 2 attempts to accept the ride, but driver already have a ride
     Then the response should have status code 409
     And the error message in the response should be "Driver already have a ride."
 

@@ -3,8 +3,7 @@ package com.modsen.rideservice.e2e;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.modsen.rideservice.RideServiceApplication;
-import com.modsen.rideservice.config.ContainerConfigJunit5;
+import com.modsen.rideservice.config.ContainerConfiguration;
 import com.modsen.rideservice.dto.response.DriverResponse;
 import com.modsen.rideservice.dto.response.RideResponse;
 import com.modsen.rideservice.exception.AppError;
@@ -12,13 +11,14 @@ import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 import io.cucumber.spring.CucumberContextConfiguration;
 import io.restassured.response.Response;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.jdbc.Sql;
 import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static com.modsen.rideservice.util.IntegrationTestUtil.*;
 import static io.restassured.RestAssured.given;
@@ -30,26 +30,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
         scripts = {
                 "classpath:sql/ride/delete-data.sql",
                 "classpath:sql/ride/insert-data.sql"
-        }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD
+        }, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_CLASS
 )
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = RideServiceApplication.class)
-public class RideE2ETest {
+public class RideE2ETest extends ContainerConfiguration {
 
-    private WireMockServer driverServer;
+    private static WireMockServer driverServer = new WireMockServer(9002);
+    ;
 
     @LocalServerPort
     private int port;
 
-    private final DriverResponse driverResponse = getDefaultDriverResponse();
+    private static final DriverResponse driverResponse = getDefaultDriverResponse();
 
     private Response response;
 
-    static {
-        ContainerConfigJunit5.run();
-    }
-
     public void setup() {
-        driverServer = new WireMockServer(9002);
+
         driverServer.start();
 
         driverServer
@@ -74,14 +70,18 @@ public class RideE2ETest {
 
     }
 
+    @AfterEach
+    public void shutdown() {
+        driverServer.stop();
+    }
+
     @When("the driver with id {int} attempts to accept the ride")
     public void driverAttemptsToAcceptRide1(int driverId) {
         setup();
         response = given()
                 .port(port)
+                .queryParam("rideId", NOT_ACCEPTED_RIDE_ID_WAITING_FOR_DRIVER_ID_1L)
                 .queryParam("driverId", driverId)
-                .and()
-                .queryParam("rideId", NOT_ACCEPTED_RIDE_ID_WAITING_FOR_DRIVER_ID_1L.toString())
                 .when()
                 .patch(RIDE_ACCEPT_PATH);
     }
@@ -92,19 +92,28 @@ public class RideE2ETest {
         response = given()
                 .port(port)
                 .queryParam("driverId", driverId)
-                .and()
+                .queryParam("rideId", NOT_ACCEPTED_RIDE_ID_WAITING_FOR_DRIVER_ID_2L)
+                .when()
+                .patch(RIDE_ACCEPT_PATH);
+    }
+
+    @When("the driver with id {int} attempts to accept the ride, but driver already have a ride")
+    public void driverAttemptsToAcceptRide3(int driverId) {
+        setup();
+        response = given()
+                .port(port)
+                .queryParam("driverId", driverId)
                 .queryParam("rideId", NOT_ACCEPTED_RIDE_ID_WAITING_FOR_DRIVER_ID_2L)
                 .when()
                 .patch(RIDE_ACCEPT_PATH);
     }
 
     @When("the driver with id {int} attempts to accept the ride that already accepted by another driver")
-    public void driverAttemptsToAcceptRide3(int driverId) {
+    public void driverAttemptsToAcceptRide4(int driverId) {
         setup();
         response = given()
                 .port(port)
                 .queryParam("driverId", driverId)
-                .and()
                 .queryParam("rideId", RIDE_ID_WAITING_FOR_DRIVER_ID_3L_AND_HAVE_ANOTHER_DRIVER)
                 .when()
                 .patch(RIDE_ACCEPT_PATH);
@@ -125,8 +134,8 @@ public class RideE2ETest {
     public void errorMessageInTheResponseShouldBe(String expectedErrorMessage) {
         AppError appError = response.as(AppError.class);
         assertEquals(expectedErrorMessage, appError.getMessage());
-    }
 
+    }
 
     public static <T> String fromObjectToString(T object) {
         ObjectMapper objectMapper = new ObjectMapper();

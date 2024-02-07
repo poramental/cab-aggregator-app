@@ -18,6 +18,7 @@ import static com.modsen.rideservice.util.IntegrationTestUtil.*;
 import static io.restassured.RestAssured.given;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
+
 @Sql(
         scripts = {
                 "classpath:sql/ride/delete-data.sql",

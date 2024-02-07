@@ -81,13 +81,16 @@ public class RideServiceImpl implements RideService {
         DriverResponse driverResponse = driverFeignClient.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
         if (!Objects.equals(ride.getWaitingForDriverId(), driverId)) {
+            System.out.println("RideWaitingAnotherDriverException");
             throw new RideWaitingAnotherDriverException(ExceptionMessages.RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION);
         }
         notAvailableDrivers.deleteWaitingDriver(driverId);
         if (driverResponse.getIsInRide()) {
+            System.out.println("DriverAlreadyHaveRideException");
             throw new DriverAlreadyHaveRideException(ExceptionMessages.DRIVER_ALREADY_HAVE_RIDE_EXCEPTION);
         }
         if (Objects.nonNull(ride.getDriverId())) {
+            System.out.println("RideAlreadyHaveDriverException");
             throw new RideAlreadyHaveDriverException(String.format(
                     ExceptionMessages.RIDE_WITH_ID_ALREADY_HAVE_DRIVER_EXCEPTION,
                     rideId));
