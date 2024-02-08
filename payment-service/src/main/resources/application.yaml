@@ -1,11 +1,8 @@
-stripe:
-  public: pk_test_51OZH3GCaEc3yJYRQrpROT6ZBZFXXMAfuOfEFy6MuHO0L0IDOtLuwSDEPzsbJotQSiqZb1wLZWVsYDP70DmYty3dE00MEUPES9e
-  secret: sk_test_51OZH3GCaEc3yJYRQFoi2ZeTXoGciOObsP3quiPkMqA7BunEaD1GB9Nva8wh31m9lBKPv4w9fD0VNRn6eKGZ9ZFZJ00Yn21tWIv
 spring:
+  profiles:
+    include: secrets
   datasource:
     url: jdbc:postgresql://localhost:5447/payment-db
-    username: admin
-    password: admin
     driver-class-name:  org.postgresql.Driver
   jpa:
     show-sql: true

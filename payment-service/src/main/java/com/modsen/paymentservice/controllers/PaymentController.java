@@ -28,23 +28,23 @@ public class PaymentController {
     }
 
     @GetMapping("/customers/{id}")
-    public CustomerResponse findCustomer(@PathVariable long id) {
-        return paymentService.retrieve(id);
+    public ResponseEntity<CustomerResponse> findCustomer(@PathVariable long id) {
+        return ResponseEntity.ok(paymentService.retrieve(id));
     }
 
     @PostMapping("/charge")
-    public MessageResponse chargeCard(@RequestBody @Valid ChargeRequest chargeRequest) {
-        return paymentService.charge(chargeRequest);
+    public ResponseEntity<MessageResponse> chargeCard(@RequestBody @Valid ChargeRequest chargeRequest) {
+        return ResponseEntity.ok(paymentService.charge(chargeRequest));
     }
 
     @GetMapping("/balance")
-    public BalanceResponse balance() {
-        return paymentService.balance();
+    public ResponseEntity<BalanceResponse> balance() {
+        return ResponseEntity.ok(paymentService.balance());
     }
 
     @PostMapping("/customers/charge")
-    public ChargeResponse chargeFromCustomer(@RequestBody @Valid CustomerChargeRequest request) {
-        return paymentService.chargeFromCustomer(request);
+    public ResponseEntity<ChargeResponse> chargeFromCustomer(@RequestBody @Valid CustomerChargeRequest request) {
+        return ResponseEntity.ok(paymentService.chargeFromCustomer(request));
     }
 
 }

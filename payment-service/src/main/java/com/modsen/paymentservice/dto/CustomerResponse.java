@@ -6,9 +6,9 @@ import lombok.Getter;
 @Builder
 @Getter
 public class CustomerResponse {
-    String id;
-    String email;
-    String phone;
-    String name;
+    private String id;
+    private String email;
+    private String phone;
+    private String name;
 }
 
