@@ -5,12 +5,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
 
-import java.math.BigDecimal;
-
 @Builder
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BalanceResponse {
-    BigDecimal amount;
+    Long amount;
     String currency;
 }

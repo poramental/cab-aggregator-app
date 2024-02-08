@@ -9,8 +9,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @AllArgsConstructor
@@ -28,5 +26,5 @@ public class CustomerRequest {
     @NotNull(message = "passenger.id.not.blank")
     private Long passengerId;
     @NotNull(message = "amount.not.blank")
-    private BigDecimal amount;
+    private Long amount;
 }

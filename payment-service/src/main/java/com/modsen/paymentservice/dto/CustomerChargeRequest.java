@@ -8,15 +8,13 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Range;
 
-import java.math.BigDecimal;
-
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CustomerChargeRequest {
     @NotNull(message = "{amount.not.empty.message}")
     @Range(min = 1, max = 10000,message = "{amount.range.message}")
-    BigDecimal amount;
+    Long amount;
     @NotBlank(message = "{currency.not.empty.message}")
     String currency;
     @NotNull(message = "{passenger.not.empty.message}")
