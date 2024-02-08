@@ -35,7 +35,7 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation group: 'org.modelmapper', name: 'modelmapper', version: modelMapperVersion
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
     implementation group: 'com.stripe', name: 'stripe-java', version:stripeVersion
 
