@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.validator.constraints.Range;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @Builder
@@ -16,7 +18,7 @@ import org.hibernate.validator.constraints.Range;
 public class ChargeRequest {
     @NotNull(message = "amount.not.empty.message")
     @Range(min = 1, max = 10000,message = "amount.range.message")
-    long amount;
+    BigDecimal amount;
     @NotBlank(message = "currency.not.empty.message")
     String currency;
     @NotBlank(message = "token.not.empty.message")
