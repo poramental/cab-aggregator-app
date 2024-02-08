@@ -1,9 +1,9 @@
 package com.modsen.paymentservice.services.impl;
 
 import com.modsen.paymentservice.dto.*;
+import com.modsen.paymentservice.enums.PaymentMethodEnum;
 import com.modsen.paymentservice.exceptions.*;
 import com.modsen.paymentservice.models.User;
-import com.modsen.paymentservice.enums.PaymentMethodEnum;
 import com.modsen.paymentservice.repositories.UserRepository;
 import com.modsen.paymentservice.services.PaymentService;
 import com.modsen.paymentservice.util.ExceptionMessage;
@@ -32,7 +32,7 @@ public class PaymentServiceImpl implements PaymentService {
     private final UserRepository userRepository;
 
     @Override
-    public CustomerResponse createCustomer(CustomerRequest customerRequest){
+    public CustomerResponse createCustomer(CustomerRequest customerRequest) {
         checkCustomerAlreadyExist(customerRequest.getPassengerId());
         Customer customer = createStripeCustomer(customerRequest);
 
@@ -66,16 +66,16 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Map<String, Object> createCardParams(CardRequest cardRequest) {
-        return  Map.of(
+        return Map.of(
                 "number", cardRequest.getCardNumber(),
                 "exp_month", cardRequest.getExpM(),
-                "exp_year" , cardRequest.getExpY(),
+                "exp_year", cardRequest.getExpY(),
                 "cvc", cardRequest.getCvc()
         );
     }
 
-    private void createPayment(String customerId)  {
-        try{
+    private void createPayment(String customerId) {
+        try {
             Stripe.apiKey = SECRET_KEY;
             Map<String, Object> paymentParams = Map.of(
                     "type", "card",
@@ -83,20 +83,20 @@ public class PaymentServiceImpl implements PaymentService {
             );
             PaymentMethod paymentMethod = PaymentMethod.create(paymentParams);
             paymentMethod.attach(Map.of("customer", customerId));
-        }catch (StripeException e){
+        } catch (StripeException e) {
             throw new PaymentException(ExceptionMessage.PAYMENT_EXCEPTION + e.getMessage());
-        }finally {
+        } finally {
             Stripe.apiKey = SECRET_KEY;
         }
     }
 
-    private void checkCustomerAlreadyExist(Long passengerId){
+    private void checkCustomerAlreadyExist(Long passengerId) {
         if (userRepository.existsByPassengerId(passengerId)) {
-            throw new CustomerAlreadyExistException(String.format(ExceptionMessage.CUSTOMER_ALREADY_EXIST_EXCEPTION,passengerId));
+            throw new CustomerAlreadyExistException(String.format(ExceptionMessage.CUSTOMER_ALREADY_EXIST_EXCEPTION, passengerId));
         }
     }
 
-    private void saveUserToDatabase(Long passengerId, String customerId){
+    private void saveUserToDatabase(Long passengerId, String customerId) {
         User user = User.builder()
                 .customerId(customerId)
                 .passengerId(passengerId)
@@ -107,8 +107,8 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     private Customer createStripeCustomer(CustomerRequest customerRequest) {
-        try{
-            Stripe.apiKey=PUBLIC_KEY;
+        try {
+            Stripe.apiKey = PUBLIC_KEY;
             CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
                     .setPhone(customerRequest.getPhone())
                     .setEmail(customerRequest.getEmail())
@@ -119,7 +119,7 @@ public class PaymentServiceImpl implements PaymentService {
             Stripe.apiKey = SECRET_KEY;
 
             return Customer.create(customerCreateParams);
-        }catch (StripeException ex) {
+        } catch (StripeException ex) {
             throw new CustomerCreatingException(ex.getMessage());
         } finally {
             Stripe.apiKey = SECRET_KEY;
@@ -139,7 +139,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .name(customer.getName()).build();
     }
 
-    private User getOrThrow(Long id){
+    private User getOrThrow(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND_EXCEPTION));
     }
