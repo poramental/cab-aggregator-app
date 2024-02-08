@@ -1,8 +1,6 @@
 package com.modsen.paymentservice.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 @Getter
@@ -11,9 +9,11 @@ import lombok.*;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "customers")
-public class User {
+@Table(name = "customers_passengers")
+public class CustomersPassengers {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private Long passengerId;
     private String customerId;
 }

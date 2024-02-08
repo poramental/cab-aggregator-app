@@ -3,8 +3,8 @@ package com.modsen.paymentservice.services.impl;
 import com.modsen.paymentservice.dto.*;
 import com.modsen.paymentservice.enums.PaymentMethodEnum;
 import com.modsen.paymentservice.exceptions.*;
-import com.modsen.paymentservice.models.User;
-import com.modsen.paymentservice.repositories.UserRepository;
+import com.modsen.paymentservice.models.CustomersPassengers;
+import com.modsen.paymentservice.repositories.CustomersPassengersRepository;
 import com.modsen.paymentservice.services.PaymentService;
 import com.modsen.paymentservice.util.ExceptionMessage;
 import com.stripe.Stripe;
@@ -29,7 +29,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Value("${stripe.public}")
     private String PUBLIC_KEY;
 
-    private final UserRepository userRepository;
+    private final CustomersPassengersRepository customersPassengersRepository;
 
     @Override
     public CustomerResponse createCustomer(CustomerRequest customerRequest) {
@@ -91,18 +91,18 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private void checkCustomerAlreadyExist(Long passengerId) {
-        if (userRepository.existsByPassengerId(passengerId)) {
+        if (customersPassengersRepository.existsByPassengerId(passengerId)) {
             throw new CustomerAlreadyExistException(String.format(ExceptionMessage.CUSTOMER_ALREADY_EXIST_EXCEPTION, passengerId));
         }
     }
 
     private void saveUserToDatabase(Long passengerId, String customerId) {
-        User user = User.builder()
+        CustomersPassengers user = CustomersPassengers.builder()
                 .customerId(customerId)
                 .passengerId(passengerId)
                 .build();
 
-        userRepository.save(user);
+        customersPassengersRepository.save(user);
     }
 
 
@@ -139,8 +139,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .name(customer.getName()).build();
     }
 
-    private User getOrThrow(Long id) {
-        return userRepository.findById(id)
+    private CustomersPassengers getOrThrow(Long id) {
+        return customersPassengersRepository.findByPassengerId(id)
                 .orElseThrow(() -> new NotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND_EXCEPTION));
     }
 
@@ -250,7 +250,7 @@ public class PaymentServiceImpl implements PaymentService {
     public ChargeResponse chargeFromCustomer(CustomerChargeRequest customerChargeRequest) {
         Stripe.apiKey = SECRET_KEY;
         Long passengerId = customerChargeRequest.getPassengerId();
-        User user = getOrThrow(passengerId);
+        CustomersPassengers user = getOrThrow(passengerId);
         String customerId = user.getCustomerId();
         checkBalance(customerId, customerChargeRequest.getAmount());
         PaymentIntent intent = confirmIntent(customerChargeRequest, customerId);
