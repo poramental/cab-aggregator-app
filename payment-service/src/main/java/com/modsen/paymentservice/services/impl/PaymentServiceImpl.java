@@ -24,10 +24,10 @@ import java.util.Map;
 public class PaymentServiceImpl implements PaymentService {
 
     @Value("${stripe.secret}")
-    private String SECRET_KEY;
+    private String secretKey;
 
     @Value("${stripe.public}")
-    private String PUBLIC_KEY;
+    private String publicKey;
 
     private final CustomersPassengersRepository customersPassengersRepository;
 
@@ -50,14 +50,12 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public TokenDto generateTokenByCard(CardRequest cardRequest) {
         try {
-            Stripe.apiKey = PUBLIC_KEY;
+            Stripe.apiKey = publicKey;
             Map<String, Object> cardParams = createCardParams(cardRequest);
             Token token = createToken(cardParams);
             return new TokenDto(token.getId());
         } catch (StripeException ex) {
             throw new TokenException(ExceptionMessage.GENERATION_TOKEN_EXCEPTION + ex.getMessage());
-        } finally {
-            Stripe.apiKey = SECRET_KEY;
         }
     }
 
@@ -76,7 +74,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private void createPayment(String customerId) {
         try {
-            Stripe.apiKey = SECRET_KEY;
+            Stripe.apiKey = secretKey;
             Map<String, Object> paymentParams = Map.of(
                     "type", "card",
                     "card", Map.of("token", "tok_visa")
@@ -85,8 +83,6 @@ public class PaymentServiceImpl implements PaymentService {
             paymentMethod.attach(Map.of("customer", customerId));
         } catch (StripeException e) {
             throw new PaymentException(ExceptionMessage.PAYMENT_EXCEPTION + e.getMessage());
-        } finally {
-            Stripe.apiKey = SECRET_KEY;
         }
     }
 
@@ -108,7 +104,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Customer createStripeCustomer(CustomerRequest customerRequest) {
         try {
-            Stripe.apiKey = PUBLIC_KEY;
+            Stripe.apiKey = secretKey;
             CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
                     .setPhone(customerRequest.getPhone())
                     .setEmail(customerRequest.getEmail())
@@ -116,20 +112,18 @@ public class PaymentServiceImpl implements PaymentService {
                     .setBalance(customerRequest.getAmount())
                     .build();
 
-            Stripe.apiKey = SECRET_KEY;
+            Stripe.apiKey = secretKey;
 
             return Customer.create(customerCreateParams);
         } catch (StripeException ex) {
             throw new CustomerCreatingException(ex.getMessage());
-        } finally {
-            Stripe.apiKey = SECRET_KEY;
         }
 
     }
 
     @Override
     public CustomerResponse retrieve(long id) {
-        Stripe.apiKey = SECRET_KEY;
+        Stripe.apiKey = secretKey;
         String customerId = getOrThrow(id).getCustomerId();
         Customer customer = retrieveCustomer(customerId);
         return CustomerResponse.builder()
@@ -168,7 +162,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public MessageResponse charge(ChargeRequest chargeRequest) {
-        Stripe.apiKey = SECRET_KEY;
+        Stripe.apiKey = secretKey;
         Charge charge = checkChargeData(chargeRequest);
         String message = "Payment successful. ID: " + charge.getId();
         return MessageResponse.builder().message(message).build();
@@ -185,7 +179,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public BalanceResponse balance() {
-        Stripe.apiKey = SECRET_KEY;
+        Stripe.apiKey = secretKey;
         Balance balance = retrieveBalance();
         return BalanceResponse
                 .builder()
@@ -234,7 +228,7 @@ public class PaymentServiceImpl implements PaymentService {
                 CustomerUpdateParams.builder()
                         .setBalance(customer.getBalance() - amount * 100)
                         .build();
-        Stripe.apiKey = SECRET_KEY;
+        Stripe.apiKey = secretKey;
         updateCustomer(customer, params);
     }
 
@@ -248,7 +242,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ChargeResponse chargeFromCustomer(CustomerChargeRequest customerChargeRequest) {
-        Stripe.apiKey = SECRET_KEY;
+        Stripe.apiKey = secretKey;
         Long passengerId = customerChargeRequest.getPassengerId();
         CustomersPassengers user = getOrThrow(passengerId);
         String customerId = user.getCustomerId();
