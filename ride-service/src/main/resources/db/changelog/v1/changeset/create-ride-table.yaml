@@ -6,16 +6,15 @@ databaseChangeLog:
         - onFail: MARK_RAN
           or:
             - not:
-          tableExists:
-          tableName: rides
+                tableExists:
+                  tableName: rides
       changes:
         - createTable:
             tableName: rides
             columns:
               - column:
                   name: ride_id
-                  type: bigint
-                  autoIncrement: true
+                  type: UUID
                   constraints:
                     primaryKey: true
                     nullable: false
@@ -33,10 +32,13 @@ databaseChangeLog:
                   type: VARCHAR(255)
               - column:
                   name: start_date
-                  type: DATE
+                  type: VARCHAR(50)
               - column:
                   name: end_date
-                  type: DATE
+                  type: VARCHAR(50)
+              - column:
+                  name: find_date
+                  type: VARCHAR(50)
               - column:
                   name: price
                   type: DOUBLE
@@ -47,6 +49,9 @@ databaseChangeLog:
               - column:
                   name: instructions
                   type: VARCHAR(255)
+              - column:
+                  name: waiting_driver_id
+                  type: bigint
       rollback:
         - dropTable:
             tableName: rides

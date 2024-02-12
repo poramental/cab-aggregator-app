@@ -14,5 +14,13 @@ public class ExceptionMessages {
 
     public final String RIDE_WITH_ID_ALREADY_ACTIVE_EXCEPTION = "Ride with id: '%s' already active.";
 
-    public final String RIDE_WITH_ID_ALREADY_INACTIVE_EXCEPTION = "Ride with id: '%s' already inactive";
+    public final String RIDE_WITH_ID_ALREADY_INACTIVE_EXCEPTION = "Ride with id: '%s' already inactive.";
+
+    public final String RIDE_HAVE_ANOTHER_DRIVER_EXCEPTION = "Ride have another driver.";
+
+    public final String DRIVER_ALREADY_HAVE_RIDE_EXCEPTION = "Driver already have a ride.";
+
+    public final String NO_AVAILABLE_DRIVERS = "No available drivers yet.";
+
+    public final String RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION = "Ride is waiting for another driver response.";
 }
