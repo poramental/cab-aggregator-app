@@ -1,0 +1,14 @@
+spring:
+  config:
+    import: secrets.yaml
+  datasource:
+    url: jdbc:postgresql://localhost:5447/payment-db
+    username: admin
+    password: admin
+    driver-class-name:  org.postgresql.Driver
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  liquibase:
+    change-log: classpath:/db/changelog/db.changelog-master.xml
