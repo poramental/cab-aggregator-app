@@ -1,4 +1,4 @@
-package com.modsen.passengerservice.entities;
+package com.modsen.passengerservice.entity;
 
 import jakarta.persistence.*;
 import lombok.Data;

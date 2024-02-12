@@ -1,4 +1,4 @@
-package com.modsen.passengerservice.exceptions;
+package com.modsen.passengerservice.exception;
 
 import lombok.Getter;
 import lombok.Setter;

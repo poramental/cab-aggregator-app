@@ -1,6 +1,6 @@
-package com.modsen.passengerservice.repositories;
+package com.modsen.passengerservice.repository;
 
-import com.modsen.passengerservice.entities.Passenger;
+import com.modsen.passengerservice.entity.Passenger;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

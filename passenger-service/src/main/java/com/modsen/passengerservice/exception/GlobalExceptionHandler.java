@@ -1,4 +1,4 @@
-package com.modsen.passengerservice.exceptions;
+package com.modsen.passengerservice.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,8 +34,14 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler({PaginationFormatException.class,RatingException.class,SortTypeException.class})
-    public ResponseEntity<AppError> badRequestException(PaginationFormatException ex){
+    @ExceptionHandler({
+            PaginationFormatException.class,
+            RatingException.class,
+            SortTypeException.class,
+            RideHaveAnotherPassengerException.class,
+            RideIsNotInactiveException.class
+    })
+    public ResponseEntity<AppError> badRequestException(RuntimeException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new AppError(ex.getMessage()));
     }

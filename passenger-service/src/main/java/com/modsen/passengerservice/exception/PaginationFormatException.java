@@ -1,4 +1,4 @@
-package com.modsen.passengerservice.exceptions;
+package com.modsen.passengerservice.exception;
 
 public class PaginationFormatException extends RuntimeException{
     public PaginationFormatException(String m){

@@ -1,16 +1,18 @@
-package com.modsen.passengerservice.controllers;
+package com.modsen.passengerservice.controller;
 
 
 import com.modsen.passengerservice.dto.PassengerPageResponse;
 import com.modsen.passengerservice.dto.PassengerRequest;
 import com.modsen.passengerservice.dto.PassengerResponse;
-import com.modsen.passengerservice.dto.PassengerListResponse;
-import com.modsen.passengerservice.services.PassengerServiceImpl;
+import com.modsen.passengerservice.dto.ListPassengerResponse;
+import com.modsen.passengerservice.service.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 
 @RestController
@@ -18,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class PassengerController {
 
-    private final PassengerServiceImpl passengerService;
+    private final PassengerService passengerService;
 
     @GetMapping
-    public ResponseEntity<PassengerListResponse> getAll(){
+    public ResponseEntity<ListPassengerResponse> getAll(){
         return ResponseEntity.ok(passengerService.getAll());
     }
 
@@ -33,21 +35,21 @@ public class PassengerController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<PassengerResponse> deletePassenger(@PathVariable(name = "id") Long passengerId)
+    public ResponseEntity<PassengerResponse> deletePassenger(@PathVariable Long id)
     {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
-                .body(passengerService.deletePassengerById(passengerId));
+                .body(passengerService.deletePassengerById(id));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PassengerResponse> getById(@PathVariable(name = "id") Long id)
+    public ResponseEntity<PassengerResponse> getById(@PathVariable Long id)
     {
         return ResponseEntity.ok(passengerService.getById(id));
     }
 
    @PutMapping("/{id}")
-   public ResponseEntity<PassengerResponse> updateById(@PathVariable(name = "id") Long id,
+   public ResponseEntity<PassengerResponse> updateById(@PathVariable Long id,
                                                        @RequestBody PassengerRequest passengerDto)
    {
         return ResponseEntity.ok(passengerService.updateById(id, passengerDto));
@@ -64,9 +66,10 @@ public class PassengerController {
 
     @PatchMapping("/{passengerId}/rating")
     public ResponseEntity<PassengerResponse> addRating(@RequestParam("rating") int rating,
-                                                       @PathVariable(name = "passengerId") Long passengerId)
+                                                       @RequestParam("ride_id") UUID rideId,
+                                                       @PathVariable Long passengerId)
     {
-        return ResponseEntity.ok(passengerService.addRatingById(rating,passengerId));
+        return ResponseEntity.ok(passengerService.addRatingById(rating, rideId, passengerId));
     }
 
 }

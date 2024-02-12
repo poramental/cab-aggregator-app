@@ -1,4 +1,4 @@
-package com.modsen.passengerservice.exceptions;
+package com.modsen.passengerservice.exception;
 
 public class PassengerAlreadyExistException extends RuntimeException{
     public PassengerAlreadyExistException(String message){

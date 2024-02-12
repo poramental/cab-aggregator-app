@@ -4,6 +4,7 @@ server:
 spring:
   liquibase:
     enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
     url: jdbc:postgresql://localhost:5444/passenger-db
     username: admin
@@ -13,3 +14,11 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+
+
+feign:
+  client:
+    ride:
+      url: http://localhost:8083
+      name: ride
+      path: /api/v1/rides
