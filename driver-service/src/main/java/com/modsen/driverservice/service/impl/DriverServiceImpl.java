@@ -1,8 +1,11 @@
 package com.modsen.driverservice.service.impl;
 
 import com.modsen.driverservice.dto.*;
+import com.modsen.driverservice.entity.Auto;
 import com.modsen.driverservice.entity.Driver;
 import com.modsen.driverservice.exception.*;
+import com.modsen.driverservice.feignclient.RideFeignClient;
+import com.modsen.driverservice.kafka.DriverProducer;
 import com.modsen.driverservice.mapper.AutoMapper;
 import com.modsen.driverservice.mapper.DriverMapper;
 import com.modsen.driverservice.repository.AutoRepository;
@@ -11,17 +14,20 @@ import com.modsen.driverservice.service.DriverService;
 import com.modsen.driverservice.util.ExceptionMessage;
 import com.modsen.driverservice.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class DriverServiceImpl implements DriverService {
 
 
@@ -33,25 +39,29 @@ public class DriverServiceImpl implements DriverService {
 
     private final AutoMapper autoMapper;
 
+    private final RideFeignClient rideFeignClient;
+
+    private final DriverProducer driverProducer;
+
     @Override
     public ListDriverResponse getAll() {
         return new ListDriverResponse(driverRepository.findAll().stream()
-                .map(driverMapper::entityToRespDto)
-                .collect(Collectors.toList()));
+                .map(driverMapper::entityToResp)
+                .toList());
     }
 
     @Override
     public DriverResponse add(DriverRequest driverDto) {
         checkDriverParamsExist(driverDto.getEmail(), driverDto.getPhone());
         return driverMapper
-                .entityToRespDto(driverRepository.save(driverMapper.reqDtoToEntity(driverDto)));
+                .entityToResp(driverRepository.save(driverMapper.reqToEntity(driverDto).setIsInRide(false)));
     }
 
     @Override
     public DriverResponse deleteById(Long id) {
         Driver driver = getDriverOrThrow(id);
         driverRepository.delete(driver);
-        return driverMapper.entityToRespDto(driver);
+        return driverMapper.entityToResp(driver);
 
     }
 
@@ -67,9 +77,10 @@ public class DriverServiceImpl implements DriverService {
         checkDriverEmailExist(email);
         checkDriverPhoneExist(phone);
     }
+
     @Override
     public DriverResponse getById(Long id) {
-        return driverMapper.entityToRespDto(driverRepository.findById(id)
+        return driverMapper.entityToResp(driverRepository.findById(id)
                 .orElseThrow(() -> new DriverNotFoundException(String.format(
                         ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,
                         id))));
@@ -77,16 +88,24 @@ public class DriverServiceImpl implements DriverService {
 
     @Override
     public DriverResponse update(Long id, DriverRequest driverDto) {
+        Driver oldDriver = getDriverOrThrow(id);
         preUpdateAllParamsCheck(driverDto, id);
-        Driver driver = driverMapper.reqDtoToEntity(driverDto);
-        return driverMapper.entityToRespDto(driverRepository.save(driver));
+        Driver newDriver = driverMapper.reqToEntity(driverDto);
+        newDriver
+                .setId(id)
+                .setIsInRide(oldDriver.getIsInRide())
+                .setAverageRating(oldDriver.getAverageRating())
+                .setRatingsCount(oldDriver.getRatingsCount());
+        return driverMapper.entityToResp(driverRepository
+                .save(newDriver.setAutos(oldDriver.getAutos())));
     }
 
     @Override
-    public DriverResponse addRatingById(Long id, int rating) {
+    public DriverResponse addRatingById(Long id, UUID rideId, int rating) {
         return addRating(
                 rating,
                 id,
+                rideId,
                 String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, id),
                 driverRepository::findById
         );
@@ -94,6 +113,7 @@ public class DriverServiceImpl implements DriverService {
 
     private <T> DriverResponse addRating(int rating,
                                          T param,
+                                         UUID rideId,
                                          String exMessage,
                                          Function<T, Optional<Driver>> repositoryFunc) {
         if (rating > 5 || rating < 0) {
@@ -101,9 +121,25 @@ public class DriverServiceImpl implements DriverService {
         }
         Driver driver = repositoryFunc.apply(param)
                 .orElseThrow(() -> new DriverNotFoundException(exMessage));
+
+        RideResponse rideResponse = rideFeignClient.getRideById(rideId);
+        LocalDateTime rideResponseEndDate = rideResponse.getEndDate();
+
+        if (!rideResponseEndDate.isAfter(LocalDateTime.now().minusMinutes(3))) {
+            throw new RatingException(ExceptionMessage.RATING_EXPIRED_EXCEPTION);
+        }
+
+        if (!Objects.equals(rideResponse.getDriverId(), driver.getId())) {
+            throw new RideHaveAnotherDriverException(ExceptionMessage.RIDE_HAVE_ANOTHER_DRIVER);
+        }
+
+        if (Objects.isNull(rideResponse.getEndDate())) {
+            throw new RideIsNotInactiveException(ExceptionMessage.RIDE_IS_NOT_INACTIVE_EXCEPTION);
+        }
+
         float ratingSum = driver.getAverageRating() * driver.getRatingsCount();
         int newRatingsCount = driver.getRatingsCount() + 1;
-        return driverMapper.entityToRespDto(driverRepository.save(
+        return driverMapper.entityToResp(driverRepository.save(
                 driver.setAverageRating((ratingSum + rating) / newRatingsCount)
                         .setRatingsCount(newRatingsCount)
         ));
@@ -122,13 +158,12 @@ public class DriverServiceImpl implements DriverService {
         preUpdatePhoneCheck(id, driverDto);
     }
 
-    private <T> void checkDriverParamExist(T param,
-                                           Predicate<T> repositoryPredicate,
-                                           String exMessage) {
-        if(repositoryPredicate.test(param)) {
+    private void checkDriverParamExist(String param,
+                                       Function<String, Boolean> repositoryFunc,
+                                       String exMessage) {
+        if (repositoryFunc.apply(param)) {
             throw new DriverAlreadyExistException(exMessage);
         }
-
     }
 
     private void preUpdateEmailCheck(Long id, DriverRequest driverDto) {
@@ -145,7 +180,7 @@ public class DriverServiceImpl implements DriverService {
     }
 
     @Override
-    public DriverResponse setAutoById(Long driverId, AutoDto autoDto) {
+    public DriverResponse setAutoById(Long driverId, AutoRequest autoDto) {
         return setAuto(
                 driverId,
                 autoDto,
@@ -154,23 +189,29 @@ public class DriverServiceImpl implements DriverService {
         );
     }
 
+    //метод ставит машину водителю если машина и водитель свободны
     private <T> DriverResponse setAuto(T param,
-                                       AutoDto autoDto,
+                                       AutoRequest autoDto,
                                        Function<T, Optional<Driver>> repositoryFunc,
                                        String exceptionMessage) {
         Driver driver = repositoryFunc.apply(param).orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
-        autoRepository.findByNumber(autoDto.getNumber()).orElseThrow(() -> new AutoNotFoundException(String.format(
-                ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION,
-                autoDto.getNumber()))
-        );
+
+        if (autoRepository.existsByNumber(autoDto.getNumber())) {
+            throw new AutoAlreadyExistException(String.format(
+                    ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION,
+                    autoDto.getNumber()));
+        }
+
         if (!driver.getAutos().isEmpty())
             throw new DriverAlreadyHaveAutoException(ExceptionMessage.DRIVER_ALREADY_HAVE_AUTO_EXCEPTION);
-
-        return driverMapper.entityToRespDto(driverRepository.save(driver), autoDto);
-
+        else {
+            driver.getAutos().add(autoMapper.dtoToEntity(autoDto).setDriverId(driver.getId()));
+            return driverMapper.entityToResp(driverRepository.save(driver));
+        }
     }
+
     @Override
-    public DriverResponse replaceAutoById(Long driverId, AutoDto autoDto) {
+    public DriverResponse replaceAutoById(Long driverId, AutoRequest autoDto) {
         return replaceAuto(
                 driverId,
                 autoDto,
@@ -179,18 +220,27 @@ public class DriverServiceImpl implements DriverService {
         );
     }
 
+    //метод ставит новую машину если такой нет, и старую если находит машину в базе по номеру
     private <T> DriverResponse replaceAuto(
             T param,
-            AutoDto autoDto,
+            AutoRequest autoDto,
             Function<T, Optional<Driver>> driverRepositoryFunc,
             String exceptionMessage) {
+        Optional<Auto> autoOpt = autoRepository.findByNumber(autoDto.getNumber());
+
         Driver driver = driverRepositoryFunc.apply(param)
                 .orElseThrow(() -> new DriverNotFoundException(exceptionMessage));
-        autoRepository.findByNumber(autoDto.getNumber())
-                .orElseThrow(() -> new AutoNotFoundException(String
-                        .format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, autoDto.getNumber())));
-        driver.getAutos().set(0, autoMapper.dtoToEntity(autoDto));
-        return driverMapper.entityToRespDto(driverRepository.save(driver), autoDto);
+
+        driver.getAutos().clear();
+        if (autoOpt.isPresent()) {
+            Auto oldAuto = autoOpt.get();
+            Auto newAuto = autoMapper.dtoToEntity(autoDto).setId(oldAuto.getId());
+            driver.getAutos().add(autoRepository.save(newAuto.setDriverId(driver.getId())));
+        } else {
+            driver.getAutos().add(autoMapper.dtoToEntity(autoDto).setDriverId(driver.getId()));
+        }
+
+        return driverMapper.entityToResp(driverRepository.save(driver));
     }
 
     @Override
@@ -204,7 +254,7 @@ public class DriverServiceImpl implements DriverService {
         List<Driver> retrievedDrivers = driversPage.getContent();
         long total = driversPage.getTotalElements();
         List<DriverResponse> drivers = retrievedDrivers.stream()
-                .map(driverMapper::entityToRespDto)
+                .map(driverMapper::entityToResp)
                 .toList();
         return DriverPageResponse.builder()
                 .driversList(drivers)
@@ -218,4 +268,46 @@ public class DriverServiceImpl implements DriverService {
                 .format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, id)));
     }
 
+    @Override
+    public DriverResponse changeIsInRideStatus(Long driverId) {
+        Driver driver = getDriverOrThrow(driverId);
+        return driverMapper.entityToResp(driverRepository.save(driver.setIsInRide(!driver.getIsInRide())));
+    }
+
+    @Override
+    public List<DriverResponse> getAvailableDrivers() {
+        return driverRepository.findAllByIsInRideIsFalse().stream()
+                .map(driverMapper::entityToResp)
+                .toList();
+    }
+
+    @Override
+    public void findDriverForRide(FindDriverRequest request) {
+        List<Driver> availableDrivers = driverRepository.findAllByIsInRideIsFalse();
+        if ((Objects.nonNull(request.getNotAcceptedDrivers()) && !request.getNotAcceptedDrivers().isEmpty())) {
+            availableDrivers = availableDrivers.stream()
+                    .filter(x -> !request.getNotAcceptedDrivers().contains(x.getId()))
+                    .toList();
+        }
+        if ((Objects.nonNull(request.getWaitingDrivers()) && !request.getWaitingDrivers().isEmpty())) {
+            availableDrivers = availableDrivers.stream()
+                    .filter(x -> !request.getWaitingDrivers().contains(x.getId()))
+                    .toList();
+        }
+        if (availableDrivers.isEmpty()) {
+            driverProducer.sendMessage(
+                    DriverForRideResponse.builder()
+                            .driverId(0L)
+                            .rideId(request.getRideId())
+                            .build()
+            );
+        } else {
+            driverProducer.sendMessage(
+                    DriverForRideResponse.builder()
+                            .driverId(availableDrivers.get(0).getId())
+                            .rideId(request.getRideId())
+                            .build()
+            );
+        }
+    }
 }

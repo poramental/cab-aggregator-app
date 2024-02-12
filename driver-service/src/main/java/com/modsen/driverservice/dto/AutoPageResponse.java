@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class AutoPageResponse {
-    private List<AutoDto> autosList;
+    private List<AutoResponse> autosList;
     private long totalElements;
     private int totalPages;
 }

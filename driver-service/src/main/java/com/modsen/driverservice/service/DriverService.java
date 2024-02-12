@@ -2,6 +2,9 @@ package com.modsen.driverservice.service;
 
 import com.modsen.driverservice.dto.*;
 
+import java.util.List;
+import java.util.UUID;
+
 public interface DriverService {
     ListDriverResponse getAll();
     DriverResponse add(DriverRequest driverDto);
@@ -10,14 +13,19 @@ public interface DriverService {
 
     DriverResponse update(Long id, DriverRequest driverDto);
 
-    DriverResponse addRatingById(Long id, int rating);
+    DriverResponse addRatingById(Long id, UUID rideId, int rating);
 
-    DriverResponse setAutoById(Long driver_id, AutoDto autoDto);
+    DriverResponse setAutoById(Long driver_id, AutoRequest autoDto);
 
-    DriverResponse replaceAutoById(Long driver_id, AutoDto autoDto);
+    DriverResponse replaceAutoById(Long driver_id, AutoRequest autoDto);
 
     DriverPageResponse getDriversPage(int page, int size, String orderBy);
 
-    DriverResponse getById(Long id);
+    List<DriverResponse> getAvailableDrivers();
 
+    void findDriverForRide(FindDriverRequest message);
+
+    DriverResponse changeIsInRideStatus(Long driverId);
+
+    DriverResponse getById(Long id);
 }

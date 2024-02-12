@@ -1,6 +1,7 @@
 package com.modsen.driverservice.mapper;
 
-import com.modsen.driverservice.dto.AutoDto;
+import com.modsen.driverservice.dto.AutoRequest;
+import com.modsen.driverservice.dto.AutoResponse;
 import com.modsen.driverservice.entity.Auto;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -12,11 +13,11 @@ public class AutoMapper {
 
     private final ModelMapper mapper;
 
-    public AutoDto entityToDto(Auto auto) {
-        return mapper.map(auto, AutoDto.class);
+    public AutoResponse entityToDto(Auto auto) {
+        return mapper.map(auto, AutoResponse.class);
     }
 
-    public Auto dtoToEntity(AutoDto autoDto) {
+    public Auto dtoToEntity(AutoRequest autoDto) {
         return mapper.map(autoDto, Auto.class);
     }
 
