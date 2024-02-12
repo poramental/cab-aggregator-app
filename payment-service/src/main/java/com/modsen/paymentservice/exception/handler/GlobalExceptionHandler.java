@@ -15,21 +15,21 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler({CustomerCreatingException.class, PaymentException.class, TokenException.class})
-    public ResponseEntity<AppError> badRequestException(RuntimeException e){
+    public ResponseEntity<AppError> badRequestException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(new AppError(e.getMessage()));
     }
 
     @ExceptionHandler(CustomerAlreadyExistException.class)
-    public ResponseEntity<AppError> conflictException(RuntimeException e){
+    public ResponseEntity<AppError> conflictException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
                 .body(new AppError(e.getMessage()));
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<AppError> notFoundException(RuntimeException e){
+    public ResponseEntity<AppError> notFoundException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new AppError(e.getMessage()));
@@ -50,7 +50,7 @@ public class GlobalExceptionHandler {
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
         });
-        return new ResponseEntity<>(errors,HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
     }
 
 }
