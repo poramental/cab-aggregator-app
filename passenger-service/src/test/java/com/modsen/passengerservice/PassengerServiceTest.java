@@ -43,7 +43,7 @@ class PassengerServiceTest {
     private PassengerMapper mapper;
 
     @Test
-    void getAll() {
+    void getAll_PassengerListNotEmpty_ReturnsExpectedPassengerList() {
         var listPassenger = getListPassenger();
         var exceptList = getListPassengerResponse();
 
@@ -68,7 +68,7 @@ class PassengerServiceTest {
 
 
     @Test
-    void getByIdWhenPassengerExist() {
+    void getById_WhenPassengerExists_ReturnsExpectedPassengerResponse() {
         var passenger = getPassenger();
         var passengerResponse = getPassengerResponse();
 
@@ -87,7 +87,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void getByIdWhenPassengerNotExist() {
+    void getById_WhenPassengerDoesNotExist_ThrowsPassengerNotFoundException() {
         doReturn(Optional.empty())
                 .when(passengerRepository)
                 .findById(DEFAULT_PASSENGER_ID);
@@ -99,7 +99,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void deleteByIdWhenPassengerExist() {
+    void deleteById_WhenPassengerExists_ReturnsExpectedPassengerResponse() {
         var passenger = getPassenger();
         var passengerResponse = getPassengerResponse();
 
@@ -120,7 +120,7 @@ class PassengerServiceTest {
 
 
     @Test
-    void deleteByIdWhenPassengerNotExist() {
+    void deleteById_WhenPassengerDoesNotExist_ThrowsPassengerNotFoundException() {
         doReturn(Optional.empty())
                 .when(passengerRepository)
                 .findById(DEFAULT_PASSENGER_ID);
@@ -132,25 +132,25 @@ class PassengerServiceTest {
     }
 
     @Test
-    void addPassengerWhenEmailExist() {
+    void addPassenger_WhenEmailExists_ThrowsExceptionAndVerifiesExistenceByEmail() {
         tryAddWhenParamExist(passengerRepository::existsByEmail, DEFAULT_PASSENGER_EMAIL);
         verify(passengerRepository).existsByEmail(DEFAULT_PASSENGER_EMAIL);
     }
 
     @Test
-    void addPassengerWhenPhoneExist() {
+    void addPassenger_WhenPhoneExists_ThrowsExceptionAndVerifiesExistenceByPhone() {
         tryAddWhenParamExist(passengerRepository::existsByPhone, DEFAULT_PASSENGER_PHONE);
         verify(passengerRepository).existsByPhone(DEFAULT_PASSENGER_PHONE);
     }
 
     @Test
-    void addPassengerWhenUsernameExist() {
+    void addPassenger_WhenUsernameExists_ThrowsExceptionAndVerifiesExistenceByUsername() {
         tryAddWhenParamExist(passengerRepository::existsByUsername, DEFAULT_PASSENGER_USERNAME);
         verify(passengerRepository).existsByUsername(DEFAULT_PASSENGER_USERNAME);
     }
 
     @Test
-    void addPassengerWhenPassengerNotExist() {
+    void addPassenger_WhenPassengerDoesNotExist_ReturnsExpectedPassengerResponse() {
         var passengerRequest = getPassengerRequest();
         var passengerResponse = getPassengerResponse();
         var passenger = getPassenger();
@@ -175,7 +175,7 @@ class PassengerServiceTest {
 
 
     @Test
-    void updatePassengerWhenPassengerNotExist() {
+    void updatePassenger_WhenPassengerDoesNotExist_ReturnsExpectedPassengerResponse() {
         var passengerRequest = getPassengerRequest();
         var passengerResponse = getPassengerResponse();
         var passenger = getPassenger();
@@ -195,28 +195,28 @@ class PassengerServiceTest {
     }
 
     @Test
-    void tryUpdateWhenEmailExist() {
+    void tryUpdate_WhenEmailExists_ThrowsExceptionAndVerifiesExistenceByEmail() {
         var passenger = getPassenger().setEmail("not equals email");
         tryUpdateWhenParamExist(passenger, passengerRepository::existsByEmail, DEFAULT_PASSENGER_EMAIL);
         verify(passengerRepository).existsByEmail(DEFAULT_PASSENGER_EMAIL);
     }
 
     @Test
-    void tryUpdateWhenPhoneExist() {
+    void tryUpdate_WhenPhoneExists_ThrowsExceptionAndVerifiesExistenceByPhone() {
         var passenger = getPassenger().setPhone("not equals phone");
         tryUpdateWhenParamExist(passenger, passengerRepository::existsByPhone, DEFAULT_PASSENGER_PHONE);
         verify(passengerRepository).existsByPhone(DEFAULT_PASSENGER_PHONE);
     }
 
     @Test
-    void tryUpdateWhenUsernameExist() {
+    void tryUpdate_WhenUsernameExists_ThrowsExceptionAndVerifiesExistenceByUsername() {
         var passenger = getPassenger().setUsername("not equals username");
         tryUpdateWhenParamExist(passenger, passengerRepository::existsByUsername, DEFAULT_PASSENGER_USERNAME);
         verify(passengerRepository).existsByUsername(DEFAULT_PASSENGER_USERNAME);
     }
 
     @Test
-    void addRatingWhenRatingIsInvalid() {
+    void addRating_WhenRatingIsInvalid_ThrowsRuntimeException() {
 
         assertThrows(
                 RuntimeException.class,
@@ -225,7 +225,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void addRatingWhenPassengerNotExist() {
+    void addRating_WhenPassengerDoesNotExist_ThrowsPassengerNotFoundException() {
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.empty());
         assertThrows(
                 PassengerNotFoundException.class,
@@ -234,7 +234,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void addRatingWhenRideHaveAnotherPassenger() {
+    void addRating_WhenRideHasAnotherPassenger_ThrowsRideHaveAnotherPassengerException() {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
@@ -250,7 +250,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void addRatingWhenRideIsExpired() {
+    void addRating_WhenRideIsExpired_ThrowsRatingException() {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
@@ -264,7 +264,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void addRating() {
+    void addRating_WhenValidRating_AddsRatingToPassenger() {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         var passengerResponse = getPassengerResponse();
@@ -283,7 +283,7 @@ class PassengerServiceTest {
 
 
     @Test
-    void getPageWhenPaginationParamsIsInvalid() {
+    void getPage_WhenPaginationParamsAreInvalid_ThrowsPaginationFormatException() {
         assertThrows(
                 PaginationFormatException.class,
                 () -> passengerService.getPage(-1, -1, "order")
@@ -291,7 +291,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void getPageWhenOrderByIsInvalid() {
+    void getPage_WhenOrderByIsInvalid_ThrowsSortTypeException() {
         assertThrows(
                 SortTypeException.class,
                 () -> passengerService.getPage(1, 1, "order")
@@ -299,7 +299,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void addRatingWhenRideIsNotInactive() {
+    void addRating_WhenRideIsNotInactive_ThrowsRideIsNotInactiveException() {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
