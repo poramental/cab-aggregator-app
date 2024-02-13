@@ -70,18 +70,18 @@ class PassengerServiceTest {
     @Test
     void getById_WhenPassengerExists_ReturnsExpectedPassengerResponse() {
         var passenger = getPassenger();
-        var passengerResponse = getPassengerResponse();
+        var expectedResult = getPassengerResponse();
 
         doReturn(Optional.of(passenger))
                 .when(passengerRepository)
                 .findById(DEFAULT_PASSENGER_ID);
-        doReturn(passengerResponse)
+        doReturn(expectedResult)
                 .when(mapper)
                 .entityToResponse(passenger);
 
-        var passengerResult = passengerService.getById(DEFAULT_PASSENGER_ID);
+        var actual = passengerService.getById(DEFAULT_PASSENGER_ID);
 
-        assertEquals(passengerResponse, passengerResult);
+        assertEquals(expectedResult, actual);
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
         verify(mapper).entityToResponse(passenger);
     }
@@ -101,18 +101,18 @@ class PassengerServiceTest {
     @Test
     void deleteById_WhenPassengerExists_ReturnsExpectedPassengerResponse() {
         var passenger = getPassenger();
-        var passengerResponse = getPassengerResponse();
+        var expectedResult = getPassengerResponse();
 
         doReturn(Optional.of(passenger))
                 .when(passengerRepository)
                 .findById(DEFAULT_PASSENGER_ID);
-        doReturn(passengerResponse)
+        doReturn(expectedResult)
                 .when(mapper)
                 .entityToResponse(passenger);
 
-        PassengerResponse passengerResult = passengerService.deleteById(DEFAULT_PASSENGER_ID);
+        var actual = passengerService.deleteById(DEFAULT_PASSENGER_ID);
 
-        assertEquals(passengerResponse, passengerResult);
+        assertEquals(expectedResult, actual);
         verify(passengerRepository).delete(passenger);
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
         verify(mapper).entityToResponse(passenger);
@@ -152,17 +152,17 @@ class PassengerServiceTest {
     @Test
     void addPassenger_WhenPassengerDoesNotExist_ReturnsExpectedPassengerResponse() {
         var passengerRequest = getPassengerRequest();
-        var passengerResponse = getPassengerResponse();
+        var expectedResult = getPassengerResponse();
         var passenger = getPassenger();
 
         when(passengerRepository.existsByPhone(DEFAULT_PASSENGER_PHONE)).thenReturn(false);
         when(passengerRepository.existsByUsername(DEFAULT_PASSENGER_USERNAME)).thenReturn(false);
         when(passengerRepository.existsByEmail(DEFAULT_PASSENGER_EMAIL)).thenReturn(false);
         when(mapper.requestToEntity(passengerRequest)).thenReturn(passenger);
-        when(mapper.entityToResponse(passenger)).thenReturn(passengerResponse);
+        when(mapper.entityToResponse(passenger)).thenReturn(expectedResult);
         when(passengerRepository.save(passenger)).thenReturn(passenger);
 
-        var passengerResult = passengerService.add(passengerRequest);
+        var actual = passengerService.add(passengerRequest);
 
         verify(passengerRepository).existsByEmail(DEFAULT_PASSENGER_EMAIL);
         verify(passengerRepository).existsByUsername(DEFAULT_PASSENGER_USERNAME);
@@ -170,28 +170,28 @@ class PassengerServiceTest {
         verify(passengerRepository).save(passenger);
         verify(mapper).requestToEntity(passengerRequest);
         verify(mapper).entityToResponse(passenger);
-        assertEquals(passengerResponse, passengerResult);
+        assertEquals(expectedResult, actual);
     }
 
 
     @Test
     void updatePassenger_WhenPassengerDoesNotExist_ReturnsExpectedPassengerResponse() {
         var passengerRequest = getPassengerRequest();
-        var passengerResponse = getPassengerResponse();
+        var expectedResult = getPassengerResponse();
         var passenger = getPassenger();
 
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
         when(mapper.requestToEntity(passengerRequest)).thenReturn(passenger);
-        when(mapper.entityToResponse(passenger)).thenReturn(passengerResponse);
+        when(mapper.entityToResponse(passenger)).thenReturn(expectedResult);
         when(passengerRepository.save(passenger)).thenReturn(passenger);
 
-        var passengerResult = passengerService.updateById(DEFAULT_PASSENGER_ID, passengerRequest);
+        var actual = passengerService.updateById(DEFAULT_PASSENGER_ID, passengerRequest);
 
         verify(passengerRepository).save(passenger);
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
         verify(mapper).requestToEntity(passengerRequest);
         verify(mapper).entityToResponse(passenger);
-        assertEquals(passengerResponse, passengerResult);
+        assertEquals(actual, expectedResult);
     }
 
     @Test
