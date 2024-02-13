@@ -38,14 +38,14 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerResponse addPassenger(PassengerRequest passengerReqDto) {
+    public PassengerResponse add(PassengerRequest passengerReqDto) {
         checkPassengerParamsExists(passengerReqDto);
         return passengerMapper.entityToResponse(passengerRepository
                 .save(passengerMapper.requestToEntity(passengerReqDto)));
     }
 
     @Override
-    public PassengerResponse deletePassengerById(Long passengerId) {
+    public PassengerResponse deleteById(Long passengerId) {
         return delete(
                 passengerId,
                 String.format(ExceptionMessage.PASSENGER_NOT_FOUND_EXCEPTION, passengerId),
@@ -179,8 +179,8 @@ public class PassengerServiceImpl implements PassengerService {
                         ));
     }
 
-    @Override
-    public PageRequest getPageRequest(int page, int size, String orderBy) {
+
+    private PageRequest getPageRequest(int page, int size, String orderBy) {
         if (page < 1 || size < 1) {
             throw new PaginationFormatException(ExceptionMessage.PAGINATION_FORMAT_EXCEPTION);
         }
@@ -204,7 +204,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerPageResponse getPassengerPage(int page, int size, String orderBy) {
+    public PassengerPageResponse getPage(int page, int size, String orderBy) {
         PageRequest pageRequest = getPageRequest(page, size, orderBy);
         Page<Passenger> passengersPage = passengerRepository.findAll(pageRequest);
         List<Passenger> retrievedPassengers = passengersPage.getContent();

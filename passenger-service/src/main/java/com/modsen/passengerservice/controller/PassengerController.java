@@ -37,18 +37,18 @@ public class PassengerController {
     }
 
     @PostMapping
-    public ResponseEntity<PassengerResponse> addPassenger(@RequestBody @Valid PassengerRequest passengerDto)
+    public ResponseEntity<PassengerResponse> add(@RequestBody @Valid PassengerRequest passengerDto)
     {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(passengerService.addPassenger(passengerDto));
+                .body(passengerService.add(passengerDto));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<PassengerResponse> deletePassenger(@PathVariable Long id)
+    public ResponseEntity<PassengerResponse> delete(@PathVariable Long id)
     {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
-                .body(passengerService.deletePassengerById(id));
+                .body(passengerService.deleteById(id));
     }
 
     @GetMapping("/{id}")
@@ -69,7 +69,7 @@ public class PassengerController {
                                                         @RequestParam int size,
                                                         @RequestParam String orderBy)
    {
-        return ResponseEntity.ok(passengerService.getPassengerPage(page,size,orderBy ));
+        return ResponseEntity.ok(passengerService.getPage(page,size,orderBy ));
    }
 
 
