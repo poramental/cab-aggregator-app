@@ -1,6 +1,5 @@
 package com.modsen.passengerservice;
 
-import com.modsen.passengerservice.dto.PassengerResponse;
 import com.modsen.passengerservice.entity.Passenger;
 import com.modsen.passengerservice.exception.*;
 import com.modsen.passengerservice.feignclient.RideFeignClient;
@@ -238,7 +237,7 @@ class PassengerServiceTest {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
-        when(rideFeignClient.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setPassenger(43L)); // not equal passenger id
+        when(rideFeignClient.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setPassengerId(43L)); // not equal passenger id
 
         assertThrows(
                 RideHaveAnotherPassengerException.class,

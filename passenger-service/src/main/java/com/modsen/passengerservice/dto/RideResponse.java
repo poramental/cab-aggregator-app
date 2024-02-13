@@ -15,7 +15,7 @@ public class RideResponse {
 
     private Long driverId;
 
-    private Long passenger;
+    private Long passengerId;
 
     private String pickUpAddress;
 

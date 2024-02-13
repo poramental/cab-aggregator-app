@@ -61,7 +61,7 @@ public class PassengerTestUtil {
     public static RideResponse getRideResponse() {
         return new RideResponse()
                 .setId(DEFAULT_RIDE_ID)
-                .setPassenger(DEFAULT_PASSENGER_ID)
+                .setPassengerId(DEFAULT_PASSENGER_ID)
                 .setEndDate(LocalDateTime.now());
     }
 
