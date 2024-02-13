@@ -1,5 +1,6 @@
-package com.modsen.passengerservice.exceptions;
+package com.modsen.passengerservice.controller;
 
+import com.modsen.passengerservice.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -14,7 +15,7 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
 
-    @ExceptionHandler({PassengerNotFoundException.class,PassengerAlreadyExistException.class})
+    @ExceptionHandler({PassengerNotFoundException.class, PassengerAlreadyExistException.class})
     public ResponseEntity<AppError> notFoundException(PassengerNotFoundException ex){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
                 .body(new AppError(ex.getMessage()));
@@ -34,8 +35,14 @@ public class GlobalExceptionHandler {
     }
 
 
-    @ExceptionHandler({PaginationFormatException.class,RatingException.class,SortTypeException.class})
-    public ResponseEntity<AppError> badRequestException(PaginationFormatException ex){
+    @ExceptionHandler({
+            PaginationFormatException.class,
+            RatingException.class,
+            SortTypeException.class,
+            RideHaveAnotherPassengerException.class,
+            RideIsNotInactiveException.class
+    })
+    public ResponseEntity<AppError> badRequestException(RuntimeException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new AppError(ex.getMessage()));
     }
