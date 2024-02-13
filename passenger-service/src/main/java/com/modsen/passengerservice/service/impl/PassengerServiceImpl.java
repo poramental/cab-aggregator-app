@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -35,6 +36,7 @@ public class PassengerServiceImpl implements PassengerService {
     private final RideFeignClient rideFeignClient;
 
     @Override
+    @Transactional(readOnly = true)
     public ListPassengerResponse getAll() {
         return new ListPassengerResponse(passengerRepository.findAll().stream()
                 .map(passengerMapper::entityToResponse)
@@ -42,13 +44,15 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerResponse add(PassengerRequest passengerReqDto) {
-        checkPassengerParamsExists(passengerReqDto);
+    @Transactional
+    public PassengerResponse add(PassengerRequest passengerReq) {
+        checkPassengerParamsExists(passengerReq);
         return passengerMapper.entityToResponse(passengerRepository
-                .save(passengerMapper.requestToEntity(passengerReqDto)));
+                .save(passengerMapper.requestToEntity(passengerReq)));
     }
 
     @Override
+    @Transactional
     public PassengerResponse deleteById(Long passengerId) {
         return delete(
                 passengerId,
@@ -58,6 +62,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
+    @Transactional(readOnly=true)
     public PassengerResponse getById(Long id) {
         return passengerMapper.entityToResponse(getOrThrow(id));
     }
