@@ -28,7 +28,7 @@ public class GlobalExceptionHandler {
                 .body(new AppError(e.getMessage()));
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(FeignClientNotFoundException.class)
     public ResponseEntity<AppError> notFoundException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)

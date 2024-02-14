@@ -145,7 +145,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private CustomersPassengers getOrThrow(Long id) {
         return customersPassengersRepository.findByPassengerId(id)
-                .orElseThrow(() -> new NotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND_EXCEPTION));
+                .orElseThrow(() -> new FeignClientNotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND_EXCEPTION));
     }
 
     private Customer retrieveCustomer(String customerId) {
