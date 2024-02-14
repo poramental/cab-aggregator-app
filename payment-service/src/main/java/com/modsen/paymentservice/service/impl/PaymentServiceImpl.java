@@ -124,7 +124,7 @@ public class PaymentServiceImpl implements PaymentService {
 
             return Customer.create(customerCreateParams);
         } catch (StripeException ex) {
-            throw new CustomerCreatingException(ex.getMessage());
+            throw new StripeCustomerCreationException(ex.getMessage());
         }
 
     }
