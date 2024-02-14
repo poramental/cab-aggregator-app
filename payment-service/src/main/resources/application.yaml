@@ -1,10 +1,8 @@
 spring:
-  config:
-    import: secrets.yaml
+  profiles:
+    include: secrets
   datasource:
-    url: ${paymentDbUrl}
-    username: admin
-    password: admin
+    url: jdbc:postgresql://localhost:${driversDbHost}/payment-db
     driver-class-name:  org.postgresql.Driver
   jpa:
     show-sql: true
