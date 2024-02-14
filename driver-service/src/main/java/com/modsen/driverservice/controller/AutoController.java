@@ -1,7 +1,7 @@
 package com.modsen.driverservice.controller;
 
-import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
+import com.modsen.driverservice.dto.AutoResponse;
 import com.modsen.driverservice.dto.ListAutoResponse;
 import com.modsen.driverservice.service.AutoService;
 import lombok.RequiredArgsConstructor;
@@ -19,22 +19,26 @@ public class AutoController {
 
 
     @GetMapping
-    public ResponseEntity<ListAutoResponse> getAll() {
+    public ResponseEntity<ListAutoResponse> getAll()
+    {
         return ResponseEntity.ok(autoService.getAll());
     }
 
     @GetMapping("/by-number")
-    public ResponseEntity<AutoDto> getByNumber(@RequestParam String number) {
+    public ResponseEntity<AutoResponse> getByNumber(@RequestParam String number)
+    {
         return ResponseEntity.ok(autoService.getByNumber(number));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<AutoDto> getById(@PathVariable Long id) {
+    public ResponseEntity<AutoResponse> getById(@PathVariable Long id)
+    {
         return ResponseEntity.ok(autoService.getById(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<AutoDto> deleteById(@PathVariable Long id) {
+    public ResponseEntity<AutoResponse> deleteById(@PathVariable Long id)
+    {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
                 .body(autoService.deleteById(id));
@@ -43,8 +47,9 @@ public class AutoController {
     @GetMapping("/page")
     public ResponseEntity<AutoPageResponse> getPage(@RequestParam int page,
                                                     @RequestParam int size,
-                                                    @RequestParam String orderBy) {
-        return ResponseEntity.ok(autoService.getAutosPage(page, size, orderBy));
+                                                    @RequestParam String orderBy)
+    {
+        return ResponseEntity.ok(autoService.getAutosPage(page,size,orderBy));
     }
 
 }

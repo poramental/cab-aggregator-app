@@ -1,6 +1,5 @@
 package com.modsen.driverservice.mapper;
 
-import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.DriverRequest;
 import com.modsen.driverservice.dto.DriverResponse;
 import com.modsen.driverservice.entity.Driver;
@@ -16,19 +15,14 @@ public class DriverMapper {
     private final ModelMapper mapper;
     private final AutoMapper autoMapper;
 
-    public DriverResponse entityToRespDto(Driver driver) {
+    public DriverResponse entityToResp(Driver driver) {
         DriverResponse driverDto = mapper.map(driver, DriverResponse.class);
         return driverDto.getAutos().isEmpty() ? driverDto :
                 driverDto.setAutos(driver.getAutos().stream()
                         .map(autoMapper::entityToDto).toList());
     }
 
-    public DriverResponse entityToRespDto(Driver driver, AutoDto autoDto){
-        driver.getAutos().add(autoMapper.dtoToEntity(autoDto));
-        return this.entityToRespDto(driver);
-    }
-
-    public Driver reqDtoToEntity(DriverRequest driverDto) {
+    public Driver reqToEntity(DriverRequest driverDto) {
         return mapper.map(driverDto, Driver.class);
 
     }

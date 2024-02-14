@@ -6,8 +6,8 @@ databaseChangeLog:
         - onFail: MARK_RAN
           or:
             - not:
-          tableExists:
-          tableName: drivers
+                tableExists:
+                  tableName: drivers
       changes:
         - createTable:
             tableName: drivers
@@ -54,7 +54,10 @@ databaseChangeLog:
                   type: bigint
                   constraints:
                     nullable: true
-
+              - column:
+                  name: is_in_ride
+                  type: BOOLEAN
+                  defaultValue: "False"
       rollback:
         - dropTable:
             tableName: passengers

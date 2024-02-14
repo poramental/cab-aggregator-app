@@ -24,6 +24,10 @@ repositories {
 ext{
     modelmapperVersion = '3.2.0'
     validationVersion =  '3.2.1'
+    feignClientVersion = '4.1.0'
+    kafkaVersion = '3.1.1'
+    testContainersVersion = '1.19.4'
+    restAssuredVersion = '5.4.0'
 }
 
 dependencies {
@@ -34,8 +38,13 @@ dependencies {
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation "org.modelmapper:modelmapper:${modelmapperVersion}"
-    implementation "org.springframework.boot:spring-boot-starter-validation:${validationVersion}"
+    implementation group: 'org.modelmapper', name: 'modelmapper', version:modelmapperVersion
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
+    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version:feignClientVersion
+    implementation group: 'org.springframework.kafka', name: 'spring-kafka', version:kafkaVersion
+    testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation 'org.projectlombok:lombok'
 
 }
 

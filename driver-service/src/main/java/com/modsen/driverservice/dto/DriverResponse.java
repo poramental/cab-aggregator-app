@@ -1,12 +1,18 @@
 package com.modsen.driverservice.dto;
 
 
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+@EqualsAndHashCode
 @Accessors(chain = true)
 public class DriverResponse {
 
@@ -20,9 +26,11 @@ public class DriverResponse {
 
     private String surname;
 
-    private List<AutoDto> autos;
+    private List<AutoResponse> autos;
 
     private String phone;
 
     private String email;
+
+    private Boolean isInRide;
 }

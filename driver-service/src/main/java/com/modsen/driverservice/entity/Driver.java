@@ -30,12 +30,15 @@ public class Driver {
 
     private String surname;
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = false, fetch = FetchType.EAGER)
     @JoinColumn(name = "driver_id")
     private List<Auto> autos = new ArrayList<>();
 
     private String phone;
 
     private String email;
+
+    @Column(name = "is_in_ride")
+    private Boolean isInRide;
 
 }

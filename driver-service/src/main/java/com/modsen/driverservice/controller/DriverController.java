@@ -9,6 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.UUID;
+
 @RestController
 @RequestMapping("api/v1/drivers")
 @RequiredArgsConstructor
@@ -30,16 +33,16 @@ public class DriverController {
                 .body(driverService.add(driverDto));
     }
 
-    @DeleteMapping("/{driverId}")
-    public ResponseEntity<DriverResponse> deleteById(@PathVariable Long driverId) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<DriverResponse> deleteById(@PathVariable Long id) {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
-                .body(driverService.deleteById(driverId));
+                .body(driverService.deleteById(id));
     }
 
-    @GetMapping("/{driverId}")
-    public ResponseEntity<DriverResponse> getById(@PathVariable Long driverId) {
-        return ResponseEntity.ok(driverService.getById(driverId));
+    @GetMapping("/{id}")
+    public ResponseEntity<DriverResponse> getById(@PathVariable Long id) {
+        return ResponseEntity.ok(driverService.getById(id));
     }
 
     @PutMapping("/{driverId}")
@@ -57,20 +60,30 @@ public class DriverController {
 
     @PostMapping("{driverId}/auto")
     public ResponseEntity<DriverResponse> setAutoById(@PathVariable Long driverId,
-                                                      @RequestBody AutoDto autoDto) {
+                                                      @RequestBody AutoRequest autoDto) {
         return ResponseEntity.ok(driverService.setAutoById(driverId, autoDto));
     }
 
     @PatchMapping("/{driverId}/rating")
     public ResponseEntity<DriverResponse> addRating(@PathVariable Long driverId,
-                                                    @RequestParam int rating) {
-        return ResponseEntity.ok(driverService.addRatingById(driverId, rating));
+                                                    @RequestParam("rideId") UUID rideId,
+                                                    @RequestParam("rating") int rating) {
+        return ResponseEntity.ok(driverService.addRatingById(driverId, rideId, rating));
     }
 
     @PutMapping("/{driverId}/auto")
     public ResponseEntity<DriverResponse> replaceAutoById(@PathVariable Long driverId,
-                                                          @RequestBody @Valid AutoDto autoDto) {
+                                                          @RequestBody @Valid AutoRequest autoDto) {
         return ResponseEntity.ok(driverService.replaceAutoById(driverId, autoDto));
     }
 
+    @PostMapping("/{driverId}/is-in-ride")
+    public ResponseEntity<DriverResponse> changeIsInRideStatus(@PathVariable Long driverId) {
+        return ResponseEntity.ok(driverService.changeIsInRideStatus(driverId));
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<List<DriverResponse>> getAvailableDrivers() {
+        return ResponseEntity.ok(driverService.getAvailableDrivers());
+    }
 }

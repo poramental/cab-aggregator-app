@@ -1,12 +1,16 @@
 package com.modsen.driverservice.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Setter
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
+@Builder
 public class ListDriverResponse {
     private List<DriverResponse> driverResponseList;
 }

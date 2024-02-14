@@ -5,8 +5,9 @@ server:
 spring:
   liquibase:
     enabled: true
+    change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
-    url: jdbc:postgresql://localhost:5445/driver-db
+    url: ${driversDbUrl}
     username: admin
     password: admin
     driver-class-name: org.postgresql.Driver
@@ -14,3 +15,29 @@ spring:
     show-sql: true
     hibernate:
       ddl-auto: none
+  kafka:
+    consumer:
+      group-id:
+        ride: ride-creation-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+    bootstrap-servers: localhost:9092
+topic:
+  name:
+    ride: create.ride
+    driver: available.driver
+kafka:
+  bootstrap-servers: localhost:9092
+  partitions:
+    count: 1
+  replicas:
+    count: 1
+feign:
+  client:
+    ride:
+      url: http://localhost:8083
+      name: ride
+      path: /api/v1/rides

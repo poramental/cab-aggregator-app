@@ -1,10 +1,10 @@
 package com.modsen.driverservice.service.impl;
 
-import com.modsen.driverservice.dto.AutoDto;
 import com.modsen.driverservice.dto.AutoPageResponse;
 import com.modsen.driverservice.dto.ListAutoResponse;
+import com.modsen.driverservice.dto.AutoResponse;
 import com.modsen.driverservice.entity.Auto;
-import com.modsen.driverservice.exception.AutoNotFoundException;
+import com.modsen.driverservice.exception.*;
 import com.modsen.driverservice.mapper.AutoMapper;
 import com.modsen.driverservice.repository.AutoRepository;
 import com.modsen.driverservice.service.AutoService;
@@ -24,27 +24,27 @@ public class AutoServiceImpl implements AutoService {
 
     private final AutoMapper autoMapper;
 
+
     @Override
     public ListAutoResponse getAll() {
         return new ListAutoResponse(autoRepository.findAll().stream()
-                .map(autoMapper::entityToDto)
-                .toList());
+                .map(autoMapper::entityToDto).toList());
     }
 
     @Override
-    public AutoDto getByNumber(String number) {
+    public AutoResponse getByNumber(String number) {
         Auto auto = getOrThrowByNumber(number);
         return autoMapper.entityToDto(auto);
     }
 
     @Override
-    public AutoDto getById(Long id) {
+    public AutoResponse getById(Long id) {
         Auto auto = getOrThrowById(id);
         return autoMapper.entityToDto(auto);
     }
 
     @Override
-    public AutoDto deleteById(Long id) {
+    public AutoResponse deleteById(Long id) {
         Auto auto = getOrThrowById(id);
         autoRepository.delete(auto);
         return autoMapper.entityToDto(auto);
@@ -63,7 +63,7 @@ public class AutoServiceImpl implements AutoService {
         List<Auto> retrievedDrivers = autosPage.getContent();
         long total = autosPage.getTotalElements();
 
-        List<AutoDto> autos = retrievedDrivers.stream()
+        List<AutoResponse> autos = retrievedDrivers.stream()
                 .map(autoMapper::entityToDto)
                 .toList();
 
@@ -74,11 +74,11 @@ public class AutoServiceImpl implements AutoService {
                 .build();
     }
 
-    private Auto getOrThrowById(Long id) {
-        return autoRepository.findById(id)
-                .orElseThrow(() -> new AutoNotFoundException(String.format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, id)));
-    }
 
+    private Auto getOrThrowById(Long id) {
+        return autoRepository.findById(id).orElseThrow(() -> new AutoNotFoundException(String
+                .format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, id)));
+    }
 
     private Auto getOrThrowByNumber(String number) {
         return autoRepository.findByNumber(number)
