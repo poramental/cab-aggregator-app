@@ -1,4 +1,4 @@
-package com.modsen.paymentservice.exceptions;
+package com.modsen.paymentservice.exception;
 
 
 import lombok.AllArgsConstructor;

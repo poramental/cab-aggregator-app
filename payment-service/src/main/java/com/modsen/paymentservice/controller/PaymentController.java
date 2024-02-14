@@ -1,7 +1,7 @@
-package com.modsen.paymentservice.controllers;
+package com.modsen.paymentservice.controller;
 
 import com.modsen.paymentservice.dto.*;
-import com.modsen.paymentservice.services.PaymentService;
+import com.modsen.paymentservice.service.PaymentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -28,23 +28,23 @@ public class PaymentController {
     }
 
     @GetMapping("/customers/{id}")
-    public ResponseEntity<CustomerResponse> findCustomer(@PathVariable long id) {
-        return ResponseEntity.ok(paymentService.retrieve(id));
+    public CustomerResponse findCustomer(@PathVariable long id) {
+        return paymentService.retrieve(id);
     }
 
     @PostMapping("/charge")
-    public ResponseEntity<MessageResponse> chargeCard(@RequestBody @Valid ChargeRequest chargeRequest) {
-        return ResponseEntity.ok(paymentService.charge(chargeRequest));
+    public MessageResponse payFromCard(@RequestBody @Valid ChargeRequest chargeRequest) {
+        return paymentService.payFromCard(chargeRequest);
     }
 
     @GetMapping("/balance")
-    public ResponseEntity<BalanceResponse> balance() {
-        return ResponseEntity.ok(paymentService.balance());
+    public BalanceResponse getBalance() {
+        return paymentService.getBalance();
     }
 
     @PostMapping("/customers/charge")
-    public ResponseEntity<ChargeResponse> chargeFromCustomer(@RequestBody @Valid CustomerChargeRequest request) {
-        return ResponseEntity.ok(paymentService.chargeFromCustomer(request));
+    public ChargeResponse payFromCustomer(@RequestBody @Valid CustomerChargeRequest request) {
+        return paymentService.payFromCustomer(request);
     }
 
 }

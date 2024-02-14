@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.Range;
 public class CustomerChargeRequest {
     @NotNull(message = "{amount.not.empty.message}")
     @Range(min = 1, max = 10000,message = "{amount.range.message}")
-    Long amount;
+    long amount;
     @NotBlank(message = "{currency.not.empty.message}")
     String currency;
     @NotNull(message = "{passenger.not.empty.message}")

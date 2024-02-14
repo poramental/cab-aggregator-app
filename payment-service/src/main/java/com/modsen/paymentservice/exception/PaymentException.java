@@ -1,4 +1,4 @@
-package com.modsen.paymentservice.exceptions;
+package com.modsen.paymentservice.exception;
 
 public class PaymentException extends RuntimeException {
     public PaymentException(String ex) {

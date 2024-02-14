@@ -1,20 +1,20 @@
-package com.modsen.paymentservice.exceptions.handler;
+package com.modsen.paymentservice.exception.handler;
 
-import com.modsen.paymentservice.exceptions.*;
+import com.modsen.paymentservice.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.HashMap;
 import java.util.Map;
 
-@RestControllerAdvice
+@ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({CustomerCreatingException.class, PaymentException.class, TokenException.class})
+    @ExceptionHandler({StripeCustomerCreationException.class, PaymentException.class, GenerationTokenException.class})
     public ResponseEntity<AppError> badRequestException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -28,15 +28,15 @@ public class GlobalExceptionHandler {
                 .body(new AppError(e.getMessage()));
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(FeignClientNotFoundException.class)
     public ResponseEntity<AppError> notFoundException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new AppError(e.getMessage()));
     }
 
-    @ExceptionHandler(value = {BalanceException.class})
-    public ResponseEntity<AppError> handleBalanceException(BalanceException balanceException) {
+    @ExceptionHandler(value = {LowBalanceException.class})
+    public ResponseEntity<AppError> handleBalanceException(LowBalanceException balanceException) {
         return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED)
                 .body(new AppError(balanceException.getMessage()));
     }
@@ -45,7 +45,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach(error -> {
+        ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);

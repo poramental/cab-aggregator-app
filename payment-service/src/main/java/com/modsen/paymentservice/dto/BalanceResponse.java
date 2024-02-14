@@ -9,6 +9,6 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class BalanceResponse {
-    Long amount;
+    long amount;
     String currency;
 }

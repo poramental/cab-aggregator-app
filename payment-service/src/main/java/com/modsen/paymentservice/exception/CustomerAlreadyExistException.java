@@ -1,4 +1,4 @@
-package com.modsen.paymentservice.exceptions;
+package com.modsen.paymentservice.exception;
 
 public class CustomerAlreadyExistException extends RuntimeException {
     public CustomerAlreadyExistException(String e) {

@@ -2,8 +2,9 @@ HELP.md
 .gradle
 build/
 !gradle/wrapper/gradle-wrapper.jar
-/secrets.yaml
-/secrets-profile.yaml
+!**/src/main/**/build/
+!**/src/test/**/build/
+
 ### STS ###
 .apt_generated
 .classpath

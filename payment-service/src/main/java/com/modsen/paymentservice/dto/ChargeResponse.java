@@ -11,5 +11,5 @@ import lombok.experimental.FieldDefaults;
 public class ChargeResponse {
     String id;
     String currency;
-    Long amount;
+    long amount;
 }
