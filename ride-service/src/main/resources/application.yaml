@@ -2,6 +2,7 @@
 server:
   port: 8083
 
+
 spring:
   liquibase:
     enabled: true
@@ -25,6 +26,9 @@ spring:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     bootstrap-servers: localhost:9092
+  mail:
+    password: eYhQkUaeGTtSajKuvhXS
+    username: modsen-taxi123@mail.ru
 topic:
   name:
     ride: create.ride

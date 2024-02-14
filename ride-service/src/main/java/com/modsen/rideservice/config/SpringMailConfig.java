@@ -15,9 +15,6 @@ public class SpringMailConfig {
         mailSender.setHost("smtp.mail.ru");
         mailSender.setPort(587);
 
-        mailSender.setUsername("modsen-taxi123@mail.ru");
-        mailSender.setPassword("eYhQkUaeGTtSajKuvhXS");
-
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
