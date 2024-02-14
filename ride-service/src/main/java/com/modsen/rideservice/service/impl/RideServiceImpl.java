@@ -15,6 +15,7 @@ import com.modsen.rideservice.feignclient.PaymentFeignClient;
 import com.modsen.rideservice.kafka.RideProducer;
 import com.modsen.rideservice.mapper.RideMapper;
 import com.modsen.rideservice.repository.RideRepository;
+import com.modsen.rideservice.service.PassengerMailService;
 import com.modsen.rideservice.service.RideService;
 import com.modsen.rideservice.util.ExceptionMessages;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class RideServiceImpl implements RideService {
 
     private final DriverFeignClient driverFeignClient;
 
-    private final com.modsen.rideservice.service.PassengerMailService PassengerMailService;
+    private final PassengerMailService passengerMailService;
 
     private final RideProducer rideProducer;
 
@@ -94,7 +95,7 @@ public class RideServiceImpl implements RideService {
         }
 
         driverFeignClient.changeIsInRideStatus(driverId);
-        PassengerMailService.sendAcceptRideMessage("alexey_tsurkan@mail.ru", driverResponse);
+        passengerMailService.sendAcceptRideMessage("alexey_tsurkan@mail.ru", driverResponse);
         return mapper.entityToResponse(repository.save(ride.setDriverId(driverId)));
     }
 
@@ -125,7 +126,7 @@ public class RideServiceImpl implements RideService {
         ride
                 .setIsActive(true)
                 .setStartDate(LocalDateTime.now());
-        PassengerMailService.sendStartRideMessage("alexey_tsurkan@mail.ru");
+        passengerMailService.sendStartRideMessage("alexey_tsurkan@mail.ru");
         return mapper.entityToResponse(repository.save(ride));
     }
 
