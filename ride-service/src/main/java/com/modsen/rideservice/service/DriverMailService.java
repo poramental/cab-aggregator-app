@@ -1,8 +1,8 @@
 package com.modsen.rideservice.service;
 
 import com.modsen.rideservice.dto.response.DriverResponse;
-import com.modsen.rideservice.util.MailUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
@@ -11,8 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
-import static com.modsen.rideservice.util.MailUtil.acceptRideUrl;
-import static com.modsen.rideservice.util.MailUtil.cancelRideUrl;
+import static com.modsen.rideservice.util.MailUtil.*;
 
 @RequiredArgsConstructor
 @Service
@@ -20,16 +19,19 @@ import static com.modsen.rideservice.util.MailUtil.cancelRideUrl;
 public class DriverMailService  {
     private final JavaMailSender emailSender;
 
+    @Value("${spring.mail.username}")
+    private String emailFrom;
+
     @Async
     public void sendRideIsFoundMessage(
             String to, DriverResponse driver, UUID rideId) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("modsen-taxi123@mail.ru");
-        message.setTo(to);
-        message.setSubject("Найдена поездка");
-        message.setText("прнять -> " + acceptRideUrl + "?driver_id=" + driver.getId() + "&ride_id=" + rideId + "\n" +
-                "отклонить -> " + cancelRideUrl + "?driver_id=" + driver.getId() + "&ride_id=" + rideId + "\n" );
 
+        message.setFrom(emailFrom);
+        message.setTo(to);
+        message.setSubject(driverMailSubject);
+        message.setText(String.format(driverAcceptRideText,driver.getId(),rideId)+
+                String.format(cancelRideMessage,driver.getId(),rideId));
         emailSender.send(message);
     }
 

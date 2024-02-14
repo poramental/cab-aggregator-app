@@ -3,11 +3,14 @@ package com.modsen.rideservice.service;
 import com.modsen.rideservice.dto.response.AutoResponse;
 import com.modsen.rideservice.dto.response.DriverResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
+
+import static com.modsen.rideservice.util.MailUtil.*;
 
 
 @RequiredArgsConstructor
@@ -17,31 +20,36 @@ public class PassengerMailService {
 
     private final JavaMailSender emailSender;
 
+    @Value("${spring.mail.username}")
+    private String emailFrom;
+
     @Async
     public void sendAcceptRideMessage(String to, DriverResponse driver) {
         AutoResponse autoResponse = driver.getAutos().get(0);
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("modsen-taxi123@mail.ru");
+        message.setFrom(emailFrom);
         message.setTo(to);
-        message.setSubject("Заказ Принят");
-        message.setText("Ваш заказ приняли!\n " +
-                        "имя водителя: \t" + driver.getName() +
-                        "\n телефон : \t" + driver.getPhone() +
-                        "\n средний рейтинг : \t" + driver.getAverageRating() +
-                        "\n модель машины : \t" + autoResponse.getModel() +
-                        "\n номер машины : \t" + autoResponse.getNumber() +
-                        "\n цветы машины : \t" + autoResponse.getColor());
-
+        message.setSubject(passengerAcceptRideSubject);
+        message.setText(
+                String.format(
+                        passengerAcceptRideText,
+                        driver.getName(),
+                        driver.getPhone(),
+                        driver.getAverageRating(),
+                        autoResponse.getModel(),
+                        autoResponse.getNumber(),
+                        autoResponse.getColor())
+        );
         emailSender.send(message);
     }
 
     @Async
     public void sendStartRideMessage(String to) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("modsen-taxi123@mail.ru");
+        message.setFrom(emailFrom);
         message.setTo(to);
-        message.setSubject("Поездка началась!");
-        message.setText("Водитель начал поездку.");
+        message.setSubject(passengerStartRideSubject);
+        message.setText(passengerStartRideText);
 
         emailSender.send(message);
     }
@@ -49,10 +57,10 @@ public class PassengerMailService {
     @Async
     public void sendNoAvailableDriversExceptionMessage(String to) {
         SimpleMailMessage message = new SimpleMailMessage();
-        message.setFrom("modsen-taxi123@mail.ru");
+        message.setFrom(emailFrom);
         message.setTo(to);
-        message.setSubject("Нет доступных водителей!");
-        message.setText("Нет доступных водителей, попробуйте позже :(");
+        message.setSubject(passengerNoAvailableDriversSubject);
+        message.setText(passengerNoAvailableDriversText);
 
         emailSender.send(message);
     }
