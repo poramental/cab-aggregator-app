@@ -35,8 +35,8 @@ public class GlobalExceptionHandler {
                 .body(new AppError(e.getMessage()));
     }
 
-    @ExceptionHandler(value = {CheckBalanceException.class})
-    public ResponseEntity<AppError> handleBalanceException(CheckBalanceException balanceException) {
+    @ExceptionHandler(value = {LowBalanceException.class})
+    public ResponseEntity<AppError> handleBalanceException(LowBalanceException balanceException) {
         return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED)
                 .body(new AppError(balanceException.getMessage()));
     }

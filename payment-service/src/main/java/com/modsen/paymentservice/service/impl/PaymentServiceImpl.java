@@ -232,7 +232,7 @@ public class PaymentServiceImpl implements PaymentService {
         Customer customer = retrieveCustomer(customerId);
         Long balance = customer.getBalance();
         if (balance < amount) {
-            throw new CheckBalanceException(ExceptionMessage.BALANCE_EXCEPTION);
+            throw new LowBalanceException(ExceptionMessage.BALANCE_EXCEPTION);
         }
     }
 
