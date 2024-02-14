@@ -2,6 +2,8 @@
 server:
   port: 8083
 
+mail:
+  test-mail: "alexey_tsurkan@mail.ru"
 
 spring:
   liquibase:

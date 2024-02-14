@@ -26,6 +26,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.modsen.rideservice.util.MailUtil.testMail;
+
 @Service
 @RequiredArgsConstructor
 public class RideServiceImpl implements RideService {
@@ -95,7 +97,7 @@ public class RideServiceImpl implements RideService {
         }
 
         driverFeignClient.changeIsInRideStatus(driverId);
-        passengerMailService.sendAcceptRideMessage("alexey_tsurkan@mail.ru", driverResponse);
+        passengerMailService.sendAcceptRideMessage(testMail, driverResponse);
         return mapper.entityToResponse(repository.save(ride.setDriverId(driverId)));
     }
 
@@ -126,7 +128,7 @@ public class RideServiceImpl implements RideService {
         ride
                 .setIsActive(true)
                 .setStartDate(LocalDateTime.now());
-        passengerMailService.sendStartRideMessage("alexey_tsurkan@mail.ru");
+        passengerMailService.sendStartRideMessage(testMail);
         return mapper.entityToResponse(repository.save(ride));
     }
 

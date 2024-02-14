@@ -1,12 +1,14 @@
 package com.modsen.rideservice.util;
 
 import lombok.experimental.UtilityClass;
+import org.springframework.beans.factory.annotation.Value;
 
 @UtilityClass
 public class MailUtil {
 
+    @Value("${mail.test-mail}")
+    public String testMail; //TODO only for tests
     public final String acceptRideUrl = "http://localhost:8083/api/v1/rides/accept-ride-driver";
-
     public final String cancelRideUrl = "http://localhost:8083/api/v1/rides/cancel-ride-driver";
     public final String driverMailSubject = "Найдена поездка";
     public final String passengerAcceptRideSubject = "Заказ Принят";
