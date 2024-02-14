@@ -1,6 +1,7 @@
 package com.modsen.rideservice.service;
 
 import com.modsen.rideservice.dto.response.DriverResponse;
+import com.modsen.rideservice.util.MailUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -10,14 +11,15 @@ import org.springframework.stereotype.Service;
 
 import java.util.UUID;
 
+import static com.modsen.rideservice.util.MailUtil.acceptRideUrl;
+import static com.modsen.rideservice.util.MailUtil.cancelRideUrl;
+
 @RequiredArgsConstructor
 @Service
 @EnableAsync
 public class DriverMailService  {
     private final JavaMailSender emailSender;
-    private String acceptRideUrl = "http://localhost:8083/api/v1/rides/accept-ride-driver";
 
-    private String cancelRideUrl = "http://localhost:8083/api/v1/rides/cancel-ride-driver";
     @Async
     public void sendRideIsFoundMessage(
             String to, DriverResponse driver, UUID rideId) {
