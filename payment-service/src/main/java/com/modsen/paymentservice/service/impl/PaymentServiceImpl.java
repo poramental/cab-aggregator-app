@@ -57,7 +57,7 @@ public class PaymentServiceImpl implements PaymentService {
             Token token = createToken(cardParams);
             return new TokenDto(token.getId());
         } catch (StripeException ex) {
-            throw new TokenException(ExceptionMessage.GENERATION_TOKEN_EXCEPTION + ex.getMessage());
+            throw new GenerationTokenException(ExceptionMessage.GENERATION_TOKEN_EXCEPTION + ex.getMessage());
         }
     }
 

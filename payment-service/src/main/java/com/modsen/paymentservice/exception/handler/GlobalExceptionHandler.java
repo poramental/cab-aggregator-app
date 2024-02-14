@@ -14,7 +14,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({StripeCustomerCreationException.class, PaymentException.class, TokenException.class})
+    @ExceptionHandler({StripeCustomerCreationException.class, PaymentException.class, GenerationTokenException.class})
     public ResponseEntity<AppError> badRequestException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
