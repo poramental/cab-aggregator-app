@@ -257,7 +257,7 @@ public class RideServiceTest {
                 .setDriverId(DEFAULT_DRIVER_ID)
                 .setPassenger(1L);
         var rideResponse = getRideResponse();
-        var rideRequest = getRideRequest().setPassenger(DEFAULT_PASSENGER_ID);
+        var rideRequest = getRideRequest().setPassengerId(DEFAULT_PASSENGER_ID);
         doReturn(ride).when(rideRepository).save(any(Ride.class));
         doReturn(rideResponse).when(rideMapper).entityToResponse(ride);
         when(rideMapper.requestToEntity(any(RideRequest.class))).thenReturn(ride);
