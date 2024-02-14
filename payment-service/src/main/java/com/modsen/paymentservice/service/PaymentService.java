@@ -6,7 +6,7 @@ public interface PaymentService {
     CustomerResponse createCustomer(CustomerRequest customerRequest);
     TokenDto generateTokenByCard(CardRequest cardRequest);
     CustomerResponse retrieve(long id);
-    BalanceResponse balance();
-    MessageResponse charge(ChargeRequest chargeRequest);
-    ChargeResponse chargeFromCustomer(CustomerChargeRequest customerChargeRequest);
+    BalanceResponse getBalance();
+    MessageResponse payFromCard(ChargeRequest chargeRequest);
+    ChargeResponse payFromCustomer(CustomerChargeRequest customerChargeRequest);
 }

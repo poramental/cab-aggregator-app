@@ -171,7 +171,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public MessageResponse charge(ChargeRequest chargeRequest) {
+    public MessageResponse payFromCard(ChargeRequest chargeRequest) {
         RequestOptions.builder()
                 .setApiKey(secretKey)
                 .build();
@@ -190,7 +190,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public BalanceResponse balance() {
+    public BalanceResponse getBalance() {
         RequestOptions.builder()
                 .setApiKey(secretKey)
                 .build();
@@ -257,7 +257,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ChargeResponse chargeFromCustomer(CustomerChargeRequest customerChargeRequest) {
+    public ChargeResponse payFromCustomer(CustomerChargeRequest customerChargeRequest) {
         RequestOptions.builder()
                 .setApiKey(secretKey)
                 .build();
