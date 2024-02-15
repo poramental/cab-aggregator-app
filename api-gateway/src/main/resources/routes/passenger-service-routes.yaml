@@ -32,13 +32,13 @@ spring:
             - Path=/api/v1/passengers/{id}
             - Method=PUT
 
-        - id: getPage
+        - id: getPagePassenger
           uri: lb://passenger-service
           predicates:
             - Path=/api/v1/passengers/page
             - Method=GET
 
-        - id: addRating
+        - id: addRatingPassenger
           uri: lb://passenger-service
           predicates:
             - Path=/api/v1/passengers/{passengerId}/rating

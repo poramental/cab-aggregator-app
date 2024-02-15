@@ -1,0 +1,100 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: getAllDrivers
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers
+            - Method=GET
+
+        - id: createDriver
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers
+            - Method=POST
+
+        - id: deleteDriver
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/{id}
+            - Method=DELETE
+
+        - id: getDriver
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/{id}
+            - Method=GET
+
+        - id: updateDriver
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/{driverId}
+            - Method=PUT
+
+        - id: getPageDrivers
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/page
+            - Method=GET
+
+        - id: addRatingDriver
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/{driverId}/rating
+            - Method=PATCH
+
+        - id: setAuto
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/{driverId}/auto
+            - Method=POST
+
+        - id: replaceAuto
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/{driverId}/auto
+            - Method=PUT
+
+        - id: changeIsInRideStatus
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/{driverId}/is-in-ride
+            - Method=POST
+
+        - id: getAvailableDrivers
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/available
+            - Method=GET
+
+#auto service routes
+        - id: getAllAutos
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/autos
+            - Method=GET
+
+        - id: getAutoByNumber
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/autos/by-number
+            - Method=GET
+
+        - id: getAutoById
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/autos/{id}
+            - Method=GET
+
+        - id: deleteAutoById
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/autos/{id}
+            - Method=DELETE
+
+        - id: getPageAutos
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/autos/page
+            - Method=GET

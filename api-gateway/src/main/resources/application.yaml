@@ -7,6 +7,7 @@ spring:
   config:
     import:
       - classpath:routes/passenger-service-routes.yaml
+      - classpath:routes/driver-service-routes.yaml
   cloud:
     gateway:
       discovery:
