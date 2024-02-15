@@ -1,0 +1,26 @@
+server:
+  port: 8765
+
+spring:
+  application:
+    name: api-gateway
+  config:
+    import:
+      - classpath:routes/passenger-service-routes.yaml
+  cloud:
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+logging:
+  pattern:
+    console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
+
+
+

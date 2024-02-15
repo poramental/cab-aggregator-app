@@ -41,6 +41,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version:feignClientVersion
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
 }
 
 dependencyManagement {
