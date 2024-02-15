@@ -11,7 +11,7 @@ public class RideRequest {
 
     @NotNull(message = "passengerId.not-blank")
     @Min(value = 0, message = "passengerId.negative-value")
-    private Long passengerId;
+    private Long passenger;
 
     @NotNull(message = "pickUpAddress.not-blank")
     private String pickUpAddress;

@@ -10,9 +10,9 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-ride-master.xml
   datasource:
-    url: jdbc:postgresql://localhost:5446/ride-db
-    username: admin
-    password: admin
+    url: jdbc:postgresql://localhost:${rideDbHost}/ride-db
+    username: ${dbUsername}
+    password: ${dbPassword}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -45,15 +45,15 @@ kafka:
 feign:
   client:
     passenger:
-      url: http://localhost:8081
+      url: http://localhost:${passengerServiceHost}
       name: passenger
       path: /api/v1/passengers
     driver:
-      url: http://localhost:8082
+      url: http://localhost:${driverServiceHost}
       name: driver
       path: /api/v1/drivers
     payment:
-      url: http://localhost:8080
+      url: http://localhost:${paymentServiceHost}
       name: payment
       path: /api/v1/payment
 

@@ -7,6 +7,7 @@ import com.modsen.paymentservice.model.CustomersPassengers;
 import com.modsen.paymentservice.repository.CustomersPassengersRepository;
 import com.modsen.paymentservice.service.PaymentService;
 import com.modsen.paymentservice.util.ExceptionMessage;
+import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.net.RequestOptions;
@@ -45,6 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .phone(customer.getPhone())
                 .name(customer.getName())
                 .build();
+
     }
 
     @Override
@@ -108,9 +110,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Customer createStripeCustomer(CustomerRequest customerRequest) {
         try {
-            RequestOptions.builder()
-                    .setApiKey(secretKey)
-                    .build();
+            Stripe.apiKey = secretKey;
             CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
                     .setPhone(customerRequest.getPhone())
                     .setEmail(customerRequest.getEmail())
@@ -118,9 +118,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .setBalance(customerRequest.getAmount())
                     .build();
 
-            RequestOptions.builder()
-                    .setApiKey(secretKey)
-                    .build();
+            Stripe.apiKey = secretKey;
 
             return Customer.create(customerCreateParams);
         } catch (StripeException ex) {

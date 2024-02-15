@@ -90,7 +90,7 @@ public class DriverConsumer {
 
     private void processingDriver(DriverResponse driverResponse, UUID rideId) {
         driverMailService.sendRideIsFoundMessage(testMail, driverResponse, rideId);
-        scheduledExecutorService.schedule(() -> handleTimeout(rideId, driverResponse.getId()), 40, TimeUnit.SECONDS);
+        scheduledExecutorService.schedule(() -> handleTimeout(rideId, driverResponse.getId()), 2, TimeUnit.MINUTES);
     }
 
     private void handleTimeout(UUID rideId, Long driverId) {

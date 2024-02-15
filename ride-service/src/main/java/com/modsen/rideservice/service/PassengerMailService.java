@@ -46,6 +46,7 @@ public class PassengerMailService {
     @Async
     public void sendStartRideMessage(String to) {
         SimpleMailMessage message = new SimpleMailMessage();
+        to = "alexey_tsurkan@mail.ru";
         message.setFrom(emailFrom);
         message.setTo(to);
         message.setSubject(passengerStartRideSubject);
@@ -56,6 +57,7 @@ public class PassengerMailService {
 
     @Async
     public void sendNoAvailableDriversExceptionMessage(String to) {
+        to = "alexey_tsurkan@mail.ru";
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailFrom);
         message.setTo(to);

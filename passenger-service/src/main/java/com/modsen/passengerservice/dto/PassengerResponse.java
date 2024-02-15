@@ -1,11 +1,11 @@
 package com.modsen.passengerservice.dto;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 public class PassengerResponse {
     private Long id;

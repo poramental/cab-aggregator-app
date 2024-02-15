@@ -26,7 +26,7 @@ public class DriverMailService  {
     public void sendRideIsFoundMessage(
             String to, DriverResponse driver, UUID rideId) {
         SimpleMailMessage message = new SimpleMailMessage();
-
+        to = "alexey_tsurkan@mail.ru";
         message.setFrom(emailFrom);
         message.setTo(to);
         message.setSubject(driverMailSubject);

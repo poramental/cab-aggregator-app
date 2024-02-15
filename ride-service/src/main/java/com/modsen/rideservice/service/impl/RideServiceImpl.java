@@ -168,7 +168,6 @@ public class RideServiceImpl implements RideService {
     @Override
     public RideResponse endRide(UUID rideId, Long driverId) {
         driverFeignClient.getDriverById(driverId);
-        driverFeignClient.changeIsInRideStatus(driverId);
         Ride ride = getOrThrow(rideId);
         checkRideToEnd(ride, driverId);
         ride
@@ -176,6 +175,7 @@ public class RideServiceImpl implements RideService {
                 .setEndDate(LocalDateTime.now());
         paymentFeignClient.chargeFromCustomer(new CustomerChargeRequest()
                 .setAmount(20).setPassengerId(ride.getPassenger()).setCurrency("USD"));
+        driverFeignClient.changeIsInRideStatus(driverId);
         repository.save(ride);
         return mapper.entityToResponse(ride);
 

@@ -1,6 +1,5 @@
 package com.modsen.passengerservice.dto;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.experimental.Accessors;
 
@@ -15,7 +14,7 @@ public class RideResponse {
 
     private Long driverId;
 
-    private Long passengerId;
+    private Long passenger;
 
     private String pickUpAddress;
 
