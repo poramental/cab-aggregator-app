@@ -38,7 +38,7 @@ spring:
             - Path=/api/v1/passengers/page
             - Method=GET
 
-        - id: updatePassenger
+        - id: addRating
           uri: lb://passenger-service
           predicates:
             - Path=/api/v1/passengers/{passengerId}/rating
