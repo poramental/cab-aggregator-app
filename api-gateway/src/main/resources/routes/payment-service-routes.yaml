@@ -1,0 +1,21 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: createCustomer
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/drivers
+            - Method=GET
+
+        - id: createDriver
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers
+            - Method=POST
+
+        - id: deleteDriver
+          uri: lb://driver-service
+          predicates:
+            - Path=/api/v1/drivers/{id}
+            - Method=DELETE
