@@ -2,14 +2,50 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: createCustomer
-          uri: lb://payment-service
+        - id: acceptRide
+          uri: lb://ride-service
           predicates:
-            - Path=/api/v1/payment/customers
+            - Path=/api/v1/rides/accept
+            - Method=PATCH
+
+        - id: cancelRide
+          uri: lb://ride-service
+          predicates:
+            - Path=/api/v1/rides/cancel
+            - Method=PATCH
+
+        - id: getAllRides
+          uri: lb://ride-service
+          predicates:
+            - Path=/api/v1/rides
+            - Method=GET
+
+        - id: getPassengerRides
+          uri: lb://ride-service
+          predicates:
+            - Path=/api/v1/rides/passenger-rides
+            - Method=GET
+
+        - id: getDriverRides
+          uri: lb://ride-service
+          predicates:
+            - Path=/api/v1/rides/driver-rides
+            - Method=GET
+
+        - id: startRide
+          uri: lb://ride-service
+          predicates:
+            - Path=/api/v1/rides/start
+            - Method=PATCH
+
+        - id: findRide
+          uri: lb://ride-service
+          predicates:
+            - Path=/api/v1/rides/find
             - Method=POST
 
-        - id: generateToken
-          uri: lb://payment-service
+        - id: endRide
+          uri: lb://ride-service
           predicates:
-            - Path=/api/v1/payment/token
-            - Method=POST
+            - Path=/api/v1/rides/end
+            - Method=PATCH

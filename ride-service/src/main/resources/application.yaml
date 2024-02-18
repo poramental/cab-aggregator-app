@@ -6,6 +6,8 @@ mail:
   test-mail: "alexey_tsurkan@mail.ru"
 
 spring:
+  application:
+    name: ride-service
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-ride-master.xml
@@ -41,6 +43,16 @@ kafka:
     count: 1
   replicas:
     count: 1
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+logging:
+  pattern:
+    console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
+
 
 feign:
   client:
