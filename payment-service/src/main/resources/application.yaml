@@ -1,11 +1,12 @@
 spring:
   application:
     name: payment-service
-  profiles:
-    include: secrets
+
   datasource:
     url: jdbc:postgresql://localhost:${driversDbHost}/payment-db
     driver-class-name:  org.postgresql.Driver
+    username: ${dbPassword}
+    password: ${dbUsername}
   jpa:
     show-sql: true
     hibernate:
@@ -17,6 +18,10 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
+
+stripe:
+  public: ${stripePublicKey}
+  secret: ${stripeSecretKey}
 
 logging:
   pattern:

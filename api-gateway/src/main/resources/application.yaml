@@ -9,6 +9,7 @@ spring:
       - classpath:routes/passenger-service-routes.yaml
       - classpath:routes/driver-service-routes.yaml
       - classpath:routes/payment-service-routes.yaml
+      - classpath:routes/ride-service-routes.yaml
   cloud:
     gateway:
       discovery:

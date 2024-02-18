@@ -1,0 +1,15 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: createCustomer
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payment/customers
+            - Method=POST
+
+        - id: generateToken
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payment/token
+            - Method=POST
