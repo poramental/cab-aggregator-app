@@ -5,17 +5,36 @@ spring:
         - id: createCustomer
           uri: lb://payment-service
           predicates:
-            - Path=/api/v1/drivers
-            - Method=GET
-
-        - id: createDriver
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/drivers
+            - Path=/api/v1/payment/customers
             - Method=POST
 
-        - id: deleteDriver
-          uri: lb://driver-service
+        - id: generateToken
+          uri: lb://payment-service
           predicates:
-            - Path=/api/v1/drivers/{id}
-            - Method=DELETE
+            - Path=/api/v1/payment/token
+            - Method=POST
+
+        - id: getCustomerById
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payment/customer/{id}
+            - Method=GET
+
+        - id: payFromCard
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payment/charge
+            - Method=POST
+
+        - id: getBalance
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payment/balance
+            - Method=GET
+
+        - id: payFromCustomer
+          uri: lb://payment-service
+          predicates:
+            - Path=/api/v1/payment/customers/charge
+            - Method=POST
+
