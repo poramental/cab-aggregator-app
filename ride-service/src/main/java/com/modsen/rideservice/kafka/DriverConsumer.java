@@ -78,7 +78,7 @@ public class DriverConsumer {
             repository.deleteById(driverForRideRequest.getRideId());
             executorService.shutdownNow();
             notAvailableDrivers.deleteNotAcceptedDriversForRide(rideId);
-            passengerMailService.sendNoAvailableDriversExceptionMessage(testMail);
+            passengerMailService.sendNoAvailableDriversExceptionMessage("alexey_tsurkan@mail.ru");
         } else {
             DriverResponse driverResponse = driverFeignClient.getDriverById(driverForRideRequest.getDriverId());
             processingDriver(driverResponse, rideId);
@@ -89,7 +89,7 @@ public class DriverConsumer {
     }
 
     private void processingDriver(DriverResponse driverResponse, UUID rideId) {
-        driverMailService.sendRideIsFoundMessage(testMail, driverResponse, rideId);
+        driverMailService.sendRideIsFoundMessage("alexey_tsurkan@mail.ru", driverResponse, rideId);
         scheduledExecutorService.schedule(() -> handleTimeout(rideId, driverResponse.getId()), 40, TimeUnit.SECONDS);
     }
 

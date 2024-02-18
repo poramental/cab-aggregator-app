@@ -47,6 +47,7 @@ public class PassengerMailService {
     public void sendStartRideMessage(String to) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailFrom);
+        to = "alexey_tsurkan@mail.ru";
         message.setTo(to);
         message.setSubject(passengerStartRideSubject);
         message.setText(passengerStartRideText);
@@ -58,6 +59,7 @@ public class PassengerMailService {
     public void sendNoAvailableDriversExceptionMessage(String to) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailFrom);
+        to = "alexey_tsurkan@mail.ru";
         message.setTo(to);
         message.setSubject(passengerNoAvailableDriversSubject);
         message.setText(passengerNoAvailableDriversText);
