@@ -19,8 +19,9 @@ public class ExceptionMessages {
     public final String RIDE_HAVE_ANOTHER_DRIVER_EXCEPTION = "Ride have another driver.";
 
     public final String DRIVER_ALREADY_HAVE_RIDE_EXCEPTION = "Driver already have a ride.";
-
-    public final String NO_AVAILABLE_DRIVERS = "No available drivers yet.";
+    public final String DRIVER_SERVICE_NOT_AVAILABLE = "driver service is not available.";
+    public final String PASSENGER_SERVICE_NOT_AVAILABLE = "passenger service is not available.";
+    public final String PAYMENT_SERVICE_NOT_AVAILABLE = "payment service is not available.";
 
     public final String RIDE_WAITING_ANOTHER_DRIVER_EXCEPTION = "Ride is waiting for another driver response.";
 }

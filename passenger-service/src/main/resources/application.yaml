@@ -20,7 +20,6 @@ spring:
 feign:
   client:
     ride:
-      url: ${rideServiceUrl}
       name: ride
       path: /api/v1/rides
 

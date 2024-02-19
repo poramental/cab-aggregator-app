@@ -3,7 +3,7 @@ package com.modsen.passengerservice.util;
 import lombok.experimental.UtilityClass;
 
 @UtilityClass
-public class ExceptionMessage {
+public class ExceptionMessages {
     public final String PASSENGER_NOT_FOUND_EXCEPTION = "Passenger with id: '%s' not found.";
     public final String INVALID_TYPE_OF_SORT = "Invalid type of sort.";
     public final String PASSENGER_WITH_EMAIL_ALREADY_EXIST = "Passenger with email: '%s' already exist.";
@@ -14,5 +14,6 @@ public class ExceptionMessage {
     public final String RIDE_HAVE_ANOTHER_PASSENGER = "Ride have another passenger.";
     public final String RIDE_IS_NOT_INACTIVE_EXCEPTION = "Ride is not inactive.";
     public final String RATING_EXPIRED_EXCEPTION = "Rating expired.";
+    public final String RIDE_SERVICE_NOT_AVAILABLE = "ride service id not available.";
 }
 

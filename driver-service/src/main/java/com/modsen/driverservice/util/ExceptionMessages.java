@@ -1,9 +1,6 @@
 package com.modsen.driverservice.util;
 
-import lombok.experimental.UtilityClass;
-
-@UtilityClass
-public class ExceptionMessage{
+public class ExceptionMessages {
 
     public static final String AUTO_NUMBER_ALREADY_EXIST_EXCEPTION = "Auto with number: '%s' is present.";
     public static final String AUTO_NOT_FOUND_EXCEPTION = "Auto with id: '%s' not found.";
@@ -18,5 +15,6 @@ public class ExceptionMessage{
     public static final String RIDE_HAVE_ANOTHER_DRIVER = "Ride have another driver.";
     public static final String RIDE_IS_NOT_INACTIVE_EXCEPTION = "Ride is not inactive.";
     public static final String RATING_EXPIRED_EXCEPTION = "Rating expired";
+    public static final String RIDE_SERVICE_NOT_AVAILABLE = "ride service is not available.";
 
 }

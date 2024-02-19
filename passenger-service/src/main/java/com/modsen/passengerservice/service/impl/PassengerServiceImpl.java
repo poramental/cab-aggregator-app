@@ -4,11 +4,11 @@ package com.modsen.passengerservice.service.impl;
 import com.modsen.passengerservice.dto.*;
 import com.modsen.passengerservice.entity.Passenger;
 import com.modsen.passengerservice.exception.*;
-import com.modsen.passengerservice.feignclient.RideFeignClient;
 import com.modsen.passengerservice.mapper.PassengerMapper;
 import com.modsen.passengerservice.repository.PassengerRepository;
 import com.modsen.passengerservice.service.PassengerService;
-import com.modsen.passengerservice.util.ExceptionMessage;
+import com.modsen.passengerservice.service.RideService;
+import com.modsen.passengerservice.util.ExceptionMessages;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -18,11 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Arrays;
-import java.util.UUID;
-import java.util.Optional;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -33,7 +29,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
-    private final RideFeignClient rideFeignClient;
+    private final RideService rideService;
 
     @Override
     @Transactional(readOnly = true)
@@ -56,7 +52,7 @@ public class PassengerServiceImpl implements PassengerService {
     public PassengerResponse deleteById(Long passengerId) {
         return delete(
                 passengerId,
-                String.format(ExceptionMessage.PASSENGER_NOT_FOUND_EXCEPTION, passengerId),
+                String.format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION, passengerId),
                 passengerRepository::findById
         );
     }
@@ -114,7 +110,7 @@ public class PassengerServiceImpl implements PassengerService {
     private void checkPhoneExist(PassengerRequest passengerDto) {
         if (passengerRepository.existsByPhone(passengerDto.getPhone())) {
             throw new PassengerAlreadyExistException(String.format(
-                    ExceptionMessage.PASSENGER_WITH_PHONE_ALREADY_EXIST,
+                    ExceptionMessages.PASSENGER_WITH_PHONE_ALREADY_EXIST,
                     passengerDto.getPhone()));
         }
     }
@@ -122,7 +118,7 @@ public class PassengerServiceImpl implements PassengerService {
     private void checkEmailExist(PassengerRequest passengerDto) {
         if (passengerRepository.existsByEmail(passengerDto.getEmail())) {
             throw new PassengerAlreadyExistException(String.format(
-                    ExceptionMessage.PASSENGER_WITH_EMAIL_ALREADY_EXIST,
+                    ExceptionMessages.PASSENGER_WITH_EMAIL_ALREADY_EXIST,
                     passengerDto.getEmail()));
         }
     }
@@ -130,7 +126,7 @@ public class PassengerServiceImpl implements PassengerService {
     private void checkUsernameExist(PassengerRequest passengerDto) {
         if (passengerRepository.existsByUsername(passengerDto.getUsername())) {
             throw new PassengerAlreadyExistException(String.format(
-                    ExceptionMessage.PASSENGER_WITH_USERNAME_ALREADY_EXIST,
+                    ExceptionMessages.PASSENGER_WITH_USERNAME_ALREADY_EXIST,
                     passengerDto.getUsername())
             );
         }
@@ -148,7 +144,7 @@ public class PassengerServiceImpl implements PassengerService {
                 rating,
                 id,
                 rideId,
-                ExceptionMessage.PASSENGER_NOT_FOUND_EXCEPTION,
+                ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION,
                 passengerRepository::findById
         );
     }
@@ -159,23 +155,23 @@ public class PassengerServiceImpl implements PassengerService {
                                             String exMessage,
                                             Function<T, Optional<Passenger>> repositoryFunc) {
         if (rating > 5 || rating < 0) {
-            throw new RatingException(ExceptionMessage.RATING_EXCEPTION);
+            throw new RatingException(ExceptionMessages.RATING_EXCEPTION);
         }
         Passenger passenger = repositoryFunc.apply(param)
                 .orElseThrow(() -> new PassengerNotFoundException(exMessage));
-        RideResponse rideResponse = rideFeignClient.getRideById(rideId);
+        RideResponse rideResponse = rideService.getRideById(rideId);
         LocalDateTime rideResponseEndDate = rideResponse.getEndDate();
 
         if (Objects.isNull(rideResponseEndDate)) {
-            throw new RideIsNotInactiveException(ExceptionMessage.RIDE_IS_NOT_INACTIVE_EXCEPTION);
+            throw new RideIsNotInactiveException(ExceptionMessages.RIDE_IS_NOT_INACTIVE_EXCEPTION);
         }
 
         if (!rideResponseEndDate.isAfter(LocalDateTime.now().minusMinutes(3))) {
-            throw new RatingException(ExceptionMessage.RATING_EXPIRED_EXCEPTION);
+            throw new RatingException(ExceptionMessages.RATING_EXPIRED_EXCEPTION);
         }
 
         if (!Objects.equals(rideResponse.getPassengerId(), passenger.getId())) {
-            throw new RideHaveAnotherPassengerException(ExceptionMessage.RIDE_HAVE_ANOTHER_PASSENGER);
+            throw new RideHaveAnotherPassengerException(ExceptionMessages.RIDE_HAVE_ANOTHER_PASSENGER);
         }
 
 
@@ -191,7 +187,7 @@ public class PassengerServiceImpl implements PassengerService {
 
     private PageRequest getPageRequest(int page, int size, String orderBy) {
         if (page < 1 || size < 1) {
-            throw new PaginationFormatException(ExceptionMessage.PAGINATION_FORMAT_EXCEPTION);
+            throw new PaginationFormatException(ExceptionMessages.PAGINATION_FORMAT_EXCEPTION);
         }
         PageRequest pageRequest;
         if (orderBy == null) {
@@ -208,7 +204,7 @@ public class PassengerServiceImpl implements PassengerService {
                 .map(Field::getName)
                 .filter(orderBy::equals)
                 .findFirst()
-                .orElseThrow(() -> new SortTypeException(ExceptionMessage.INVALID_TYPE_OF_SORT));
+                .orElseThrow(() -> new SortTypeException(ExceptionMessages.INVALID_TYPE_OF_SORT));
 
     }
 
@@ -231,7 +227,7 @@ public class PassengerServiceImpl implements PassengerService {
     private Passenger getOrThrow(Long id) {
         return passengerRepository.findById(id)
                 .orElseThrow(() -> new PassengerNotFoundException(String.format(
-                        ExceptionMessage.PASSENGER_NOT_FOUND_EXCEPTION,
+                        ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION,
                         id)));
     }
 }

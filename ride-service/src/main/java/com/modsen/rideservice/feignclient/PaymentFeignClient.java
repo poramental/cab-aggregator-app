@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient(
         value = "${feign.client.payment.name}",
-        url = "${feign.client.payment.url}",
         path = "${feign.client.payment.path}",
         configuration = FeignClientsConfiguration.class
 )

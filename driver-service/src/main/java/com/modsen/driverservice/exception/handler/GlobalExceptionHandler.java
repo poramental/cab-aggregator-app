@@ -9,7 +9,6 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -51,7 +50,8 @@ public class GlobalExceptionHandler {
             RatingException.class,
             PaginationFormatException.class,
             RideIsNotInactiveException.class,
-            RideHaveAnotherDriverException.class
+            RideHaveAnotherDriverException.class,
+            ServiceUnAvailableException.class
     })
     public ResponseEntity<AppError> badRequestException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.BAD_REQUEST);

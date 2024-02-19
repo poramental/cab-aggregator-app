@@ -33,6 +33,7 @@ ext{
     testContainersVersion = '1.19.4'
     restAssuredVersion = '5.4.0'
     set('springCloudVersion', "2023.0.0")
+    circuitBreakerVrsion = '3.1.0'
 }
 
 dependencies {
@@ -51,6 +52,8 @@ dependencies {
     testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
     testImplementation 'org.projectlombok:lombok'
+    implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:${circuitBreakerVrsion}"
+
 }
 
 dependencyManagement {

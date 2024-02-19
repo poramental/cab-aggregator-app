@@ -11,7 +11,8 @@ import com.modsen.driverservice.mapper.DriverMapper;
 import com.modsen.driverservice.repository.AutoRepository;
 import com.modsen.driverservice.repository.DriverRepository;
 import com.modsen.driverservice.service.DriverService;
-import com.modsen.driverservice.util.ExceptionMessage;
+import com.modsen.driverservice.service.RideService;
+import com.modsen.driverservice.util.ExceptionMessages;
 import com.modsen.driverservice.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +40,7 @@ public class DriverServiceImpl implements DriverService {
 
     private final AutoMapper autoMapper;
 
-    private final RideFeignClient rideFeignClient;
+    private final RideService rideService;
 
     private final DriverProducer driverProducer;
 
@@ -69,7 +70,7 @@ public class DriverServiceImpl implements DriverService {
         checkDriverParamExist(
                 email,
                 driverRepository::existsByEmail,
-                String.format(ExceptionMessage.DRIVER_EMAIL_ALREADY_EXIST_EXCEPTION, email)
+                String.format(ExceptionMessages.DRIVER_EMAIL_ALREADY_EXIST_EXCEPTION, email)
         );
     }
 
@@ -82,7 +83,7 @@ public class DriverServiceImpl implements DriverService {
     public DriverResponse getById(Long id) {
         return driverMapper.entityToResp(driverRepository.findById(id)
                 .orElseThrow(() -> new DriverNotFoundException(String.format(
-                        ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION,
+                        ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION,
                         id))));
     }
 
@@ -106,7 +107,7 @@ public class DriverServiceImpl implements DriverService {
                 rating,
                 id,
                 rideId,
-                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, id),
+                String.format(ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION, id),
                 driverRepository::findById
         );
     }
@@ -117,24 +118,24 @@ public class DriverServiceImpl implements DriverService {
                                          String exMessage,
                                          Function<T, Optional<Driver>> repositoryFunc) {
         if (rating > 5 || rating < 0) {
-            throw new RatingException(ExceptionMessage.RATING_EXCEPTION);
+            throw new RatingException(ExceptionMessages.RATING_EXCEPTION);
         }
         Driver driver = repositoryFunc.apply(param)
                 .orElseThrow(() -> new DriverNotFoundException(exMessage));
 
-        RideResponse rideResponse = rideFeignClient.getRideById(rideId);
+        RideResponse rideResponse = rideService.getRideById(rideId);
         LocalDateTime rideResponseEndDate = rideResponse.getEndDate();
 
         if (!rideResponseEndDate.isAfter(LocalDateTime.now().minusMinutes(3))) {
-            throw new RatingException(ExceptionMessage.RATING_EXPIRED_EXCEPTION);
+            throw new RatingException(ExceptionMessages.RATING_EXPIRED_EXCEPTION);
         }
 
         if (!Objects.equals(rideResponse.getDriverId(), driver.getId())) {
-            throw new RideHaveAnotherDriverException(ExceptionMessage.RIDE_HAVE_ANOTHER_DRIVER);
+            throw new RideHaveAnotherDriverException(ExceptionMessages.RIDE_HAVE_ANOTHER_DRIVER);
         }
 
         if (Objects.isNull(rideResponse.getEndDate())) {
-            throw new RideIsNotInactiveException(ExceptionMessage.RIDE_IS_NOT_INACTIVE_EXCEPTION);
+            throw new RideIsNotInactiveException(ExceptionMessages.RIDE_IS_NOT_INACTIVE_EXCEPTION);
         }
 
         float ratingSum = driver.getAverageRating() * driver.getRatingsCount();
@@ -149,7 +150,7 @@ public class DriverServiceImpl implements DriverService {
         checkDriverParamExist(
                 phone,
                 driverRepository::existsByPhone,
-                String.format(ExceptionMessage.DRIVER_PHONE_ALREADY_EXIST_EXCEPTION, phone)
+                String.format(ExceptionMessages.DRIVER_PHONE_ALREADY_EXIST_EXCEPTION, phone)
         );
     }
 
@@ -185,7 +186,7 @@ public class DriverServiceImpl implements DriverService {
                 driverId,
                 autoDto,
                 driverRepository::findById,
-                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driverId)
+                String.format(ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION, driverId)
         );
     }
 
@@ -198,12 +199,12 @@ public class DriverServiceImpl implements DriverService {
 
         if (autoRepository.existsByNumber(autoDto.getNumber())) {
             throw new AutoAlreadyExistException(String.format(
-                    ExceptionMessage.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION,
+                    ExceptionMessages.AUTO_NUMBER_ALREADY_EXIST_EXCEPTION,
                     autoDto.getNumber()));
         }
 
         if (!driver.getAutos().isEmpty())
-            throw new DriverAlreadyHaveAutoException(ExceptionMessage.DRIVER_ALREADY_HAVE_AUTO_EXCEPTION);
+            throw new DriverAlreadyHaveAutoException(ExceptionMessages.DRIVER_ALREADY_HAVE_AUTO_EXCEPTION);
         else {
             driver.getAutos().add(autoMapper.dtoToEntity(autoDto).setDriverId(driver.getId()));
             return driverMapper.entityToResp(driverRepository.save(driver));
@@ -216,7 +217,7 @@ public class DriverServiceImpl implements DriverService {
                 driverId,
                 autoDto,
                 driverRepository::findById,
-                String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, driverId)
+                String.format(ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION, driverId)
         );
     }
 
@@ -265,7 +266,7 @@ public class DriverServiceImpl implements DriverService {
 
     private Driver getDriverOrThrow(Long id) {
         return driverRepository.findById(id).orElseThrow(() -> new DriverNotFoundException(String
-                .format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, id)));
+                .format(ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION, id)));
     }
 
     @Override

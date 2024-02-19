@@ -40,7 +40,6 @@ kafka:
 feign:
   client:
     ride:
-      url: http://localhost:8083
       name: ride
       path: /api/v1/rides
 

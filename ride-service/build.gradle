@@ -32,6 +32,7 @@ ext {
     feignClientVersion = '4.1.0'
     springMailVersion = '3.2.2'
     kafkaVersion = '3.1.1'
+    circuitBreakerVrsion = '3.1.0'
 }
 
 dependencies {
@@ -49,6 +50,8 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version:springMailVersion
     implementation group: 'org.springframework.kafka', name: 'spring-kafka', version:kafkaVersion
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:${circuitBreakerVrsion}"
+
 }
 
 dependencyManagement {

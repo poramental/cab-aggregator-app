@@ -1,4 +1,4 @@
-package com.modsen.passengerservice.controller;
+package com.modsen.passengerservice.exception.handler;
 
 import com.modsen.passengerservice.exception.*;
 import org.springframework.http.HttpStatus;
@@ -46,7 +46,8 @@ public class GlobalExceptionHandler {
             RatingException.class,
             SortTypeException.class,
             RideHaveAnotherPassengerException.class,
-            RideIsNotInactiveException.class
+            RideIsNotInactiveException.class,
+            ServiceUnAvailableException.class
     })
     public ResponseEntity<AppError> badRequestException(RuntimeException ex){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
