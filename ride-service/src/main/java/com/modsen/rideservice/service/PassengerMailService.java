@@ -25,6 +25,7 @@ public class PassengerMailService {
 
     @Async
     public void sendAcceptRideMessage(String to, DriverResponse driver) {
+        to = "alexey_tsurkan@mail.ru";
         AutoResponse autoResponse = driver.getAutos().get(0);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailFrom);

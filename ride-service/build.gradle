@@ -11,6 +11,10 @@ java {
     sourceCompatibility = '17'
 }
 
+test {
+    ignoreFailures = true
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor

@@ -1,12 +1,13 @@
 package com.modsen.paymentservice.service.impl;
 
 import com.modsen.paymentservice.dto.*;
-import com.modsen.paymentservice.exception.*;
 import com.modsen.paymentservice.enums.PaymentMethodEnum;
+import com.modsen.paymentservice.exception.*;
 import com.modsen.paymentservice.model.CustomersPassengers;
 import com.modsen.paymentservice.repository.CustomersPassengersRepository;
 import com.modsen.paymentservice.service.PaymentService;
 import com.modsen.paymentservice.util.ExceptionMessage;
+import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.net.RequestOptions;
@@ -76,9 +77,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private void createPayment(String customerId) {
         try {
-            RequestOptions.builder()
-                    .setApiKey(secretKey)
-                    .build();
+            Stripe.apiKey = secretKey;
             Map<String, Object> paymentParams = Map.of(
                     "type", "card",
                     "card", Map.of("token", "tok_visa")
@@ -108,9 +107,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Customer createStripeCustomer(CustomerRequest customerRequest) {
         try {
-            RequestOptions.builder()
-                    .setApiKey(secretKey)
-                    .build();
+            Stripe.apiKey = secretKey;
             CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
                     .setPhone(customerRequest.getPhone())
                     .setEmail(customerRequest.getEmail())
@@ -118,9 +115,7 @@ public class PaymentServiceImpl implements PaymentService {
                     .setBalance(customerRequest.getAmount())
                     .build();
 
-            RequestOptions.builder()
-                    .setApiKey(secretKey)
-                    .build();
+            Stripe.apiKey = secretKey;
 
             return Customer.create(customerCreateParams);
         } catch (StripeException ex) {
@@ -191,9 +186,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public BalanceResponse getBalance() {
-        RequestOptions.builder()
-                .setApiKey(secretKey)
-                .build();
+        Stripe.apiKey = secretKey;
         Balance balance = retrieveBalance();
         return BalanceResponse
                 .builder()
