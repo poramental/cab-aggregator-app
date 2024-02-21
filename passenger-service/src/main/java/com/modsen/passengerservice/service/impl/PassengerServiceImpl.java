@@ -170,7 +170,7 @@ public class PassengerServiceImpl implements PassengerService {
             throw new RatingException(ExceptionMessages.RATING_EXPIRED_EXCEPTION);
         }
 
-        if (!Objects.equals(rideResponse.getPassengerId(), passenger.getId())) {
+        if (!Objects.equals(rideResponse.getPassenger(), passenger.getId())) {
             throw new RideHaveAnotherPassengerException(ExceptionMessages.RIDE_HAVE_ANOTHER_PASSENGER);
         }
 
