@@ -6,9 +6,9 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
-    url: jdbc:postgresql://localhost:5444/passenger-db
-    username: admin
-    password: admin
+    url: ${passengerDbUrl}
+    username: ${dbPassword}
+    password: ${dbUsername}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -19,6 +19,6 @@ spring:
 feign:
   client:
     ride:
-      url: http://localhost:8083
+      url: ${rideServiceUrl}
       name: ride
       path: /api/v1/rides

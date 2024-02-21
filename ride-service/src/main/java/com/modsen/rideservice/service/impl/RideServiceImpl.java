@@ -15,6 +15,7 @@ import com.modsen.rideservice.feignclient.PaymentFeignClient;
 import com.modsen.rideservice.kafka.RideProducer;
 import com.modsen.rideservice.mapper.RideMapper;
 import com.modsen.rideservice.repository.RideRepository;
+import com.modsen.rideservice.service.PassengerMailService;
 import com.modsen.rideservice.service.RideService;
 import com.modsen.rideservice.util.ExceptionMessages;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,8 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.stream.Collectors;
+
+import static com.modsen.rideservice.util.MailUtil.testMail;
 
 @Service
 @RequiredArgsConstructor
@@ -37,7 +39,7 @@ public class RideServiceImpl implements RideService {
 
     private final DriverFeignClient driverFeignClient;
 
-    private final com.modsen.rideservice.service.PassengerMailService PassengerMailService;
+    private final PassengerMailService passengerMailService;
 
     private final RideProducer rideProducer;
 
@@ -94,7 +96,7 @@ public class RideServiceImpl implements RideService {
         }
 
         driverFeignClient.changeIsInRideStatus(driverId);
-        PassengerMailService.sendAcceptRideMessage("alexey_tsurkan@mail.ru", driverResponse);
+        passengerMailService.sendAcceptRideMessage(testMail, driverResponse);
         return mapper.entityToResponse(repository.save(ride.setDriverId(driverId)));
     }
 
@@ -125,7 +127,7 @@ public class RideServiceImpl implements RideService {
         ride
                 .setIsActive(true)
                 .setStartDate(LocalDateTime.now());
-        PassengerMailService.sendStartRideMessage("alexey_tsurkan@mail.ru");
+        passengerMailService.sendStartRideMessage(testMail);
         return mapper.entityToResponse(repository.save(ride));
     }
 
@@ -166,7 +168,6 @@ public class RideServiceImpl implements RideService {
     @Override
     public RideResponse endRide(UUID rideId, Long driverId) {
         driverFeignClient.getDriverById(driverId);
-        driverFeignClient.changeIsInRideStatus(driverId);
         Ride ride = getOrThrow(rideId);
         checkRideToEnd(ride, driverId);
         ride
@@ -174,6 +175,7 @@ public class RideServiceImpl implements RideService {
                 .setEndDate(LocalDateTime.now());
         paymentFeignClient.chargeFromCustomer(new CustomerChargeRequest()
                 .setAmount(20).setPassengerId(ride.getPassenger()).setCurrency("USD"));
+        driverFeignClient.changeIsInRideStatus(driverId);
         repository.save(ride);
         return mapper.entityToResponse(ride);
 

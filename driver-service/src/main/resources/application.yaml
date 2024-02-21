@@ -7,9 +7,9 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
-    url: jdbc:postgresql://localhost:5445/driver-db
-    username: admin
-    password: admin
+    url: ${driversDbUrl}
+    username: ${dbUsername}
+    password: ${dbPassword}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true

@@ -14,7 +14,7 @@ import java.util.Map;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler({CustomerCreatingException.class, PaymentException.class, TokenException.class})
+    @ExceptionHandler({StripeCustomerCreationException.class, PaymentException.class, GenerationTokenException.class})
     public ResponseEntity<AppError> badRequestException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
@@ -28,15 +28,15 @@ public class GlobalExceptionHandler {
                 .body(new AppError(e.getMessage()));
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler(FeignClientNotFoundException.class)
     public ResponseEntity<AppError> notFoundException(RuntimeException e) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(new AppError(e.getMessage()));
     }
 
-    @ExceptionHandler(value = {BalanceException.class})
-    public ResponseEntity<AppError> handleBalanceException(BalanceException balanceException) {
+    @ExceptionHandler(value = {LowBalanceException.class})
+    public ResponseEntity<AppError> handleBalanceException(LowBalanceException balanceException) {
         return ResponseEntity.status(HttpStatus.PAYMENT_REQUIRED)
                 .body(new AppError(balanceException.getMessage()));
     }

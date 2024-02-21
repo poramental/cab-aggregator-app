@@ -14,10 +14,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
+import java.util.Arrays;
+import java.util.UUID;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -31,6 +36,7 @@ public class PassengerServiceImpl implements PassengerService {
     private final RideFeignClient rideFeignClient;
 
     @Override
+    @Transactional(readOnly = true)
     public ListPassengerResponse getAll() {
         return new ListPassengerResponse(passengerRepository.findAll().stream()
                 .map(passengerMapper::entityToResponse)
@@ -38,14 +44,16 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerResponse addPassenger(PassengerRequest passengerReqDto) {
-        checkPassengerParamsExists(passengerReqDto);
+    @Transactional
+    public PassengerResponse add(PassengerRequest passengerReq) {
+        checkPassengerParamsExists(passengerReq);
         return passengerMapper.entityToResponse(passengerRepository
-                .save(passengerMapper.requestToEntity(passengerReqDto)));
+                .save(passengerMapper.requestToEntity(passengerReq)));
     }
 
     @Override
-    public PassengerResponse deletePassengerById(Long passengerId) {
+    @Transactional
+    public PassengerResponse deleteById(Long passengerId) {
         return delete(
                 passengerId,
                 String.format(ExceptionMessage.PASSENGER_NOT_FOUND_EXCEPTION, passengerId),
@@ -54,6 +62,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
+    @Transactional(readOnly=true)
     public PassengerResponse getById(Long id) {
         return passengerMapper.entityToResponse(getOrThrow(id));
     }
@@ -179,8 +188,8 @@ public class PassengerServiceImpl implements PassengerService {
                         ));
     }
 
-    @Override
-    public PageRequest getPageRequest(int page, int size, String orderBy) {
+
+    private PageRequest getPageRequest(int page, int size, String orderBy) {
         if (page < 1 || size < 1) {
             throw new PaginationFormatException(ExceptionMessage.PAGINATION_FORMAT_EXCEPTION);
         }
@@ -204,7 +213,7 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerPageResponse getPassengerPage(int page, int size, String orderBy) {
+    public PassengerPageResponse getPage(int page, int size, String orderBy) {
         PageRequest pageRequest = getPageRequest(page, size, orderBy);
         Page<Passenger> passengersPage = passengerRepository.findAll(pageRequest);
         List<Passenger> retrievedPassengers = passengersPage.getContent();

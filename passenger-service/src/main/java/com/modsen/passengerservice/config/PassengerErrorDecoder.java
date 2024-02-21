@@ -1,6 +1,6 @@
 package com.modsen.passengerservice.config;
 
-import com.modsen.passengerservice.exception.NotFoundException;
+import com.modsen.passengerservice.exception.FeignClientNotFoundException;
 import feign.FeignException;
 import feign.Response;
 import feign.RetryableException;
@@ -17,7 +17,7 @@ public class PassengerErrorDecoder implements ErrorDecoder {
         String exMessage = exMessageSplit[exMessageSplit.length - 2];
         switch (status){
             case 404:
-                return new NotFoundException(exMessage);
+                return new FeignClientNotFoundException(exMessage);
         }
         if (status >= 500) {
             return new RetryableException(

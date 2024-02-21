@@ -22,9 +22,9 @@ public class RideProducerConfig {
     @Value("${topic.name.ride}")
     private String rideTopic;
     @Value("${kafka.partitions.count}")
-    private int PARTITIONS_COUNT;
+    private int partitionsCount;
     @Value("${kafka.replicas.count}")
-    private int REPLICAS_COUNT;
+    private int replicasCount;
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
@@ -47,8 +47,8 @@ public class RideProducerConfig {
     @Bean
     public NewTopic sendRideTopic() {
         return TopicBuilder.name(rideTopic)
-                .partitions(PARTITIONS_COUNT)
-                .replicas(REPLICAS_COUNT)
+                .partitions(partitionsCount)
+                .replicas(replicasCount)
                 .build();
     }
 

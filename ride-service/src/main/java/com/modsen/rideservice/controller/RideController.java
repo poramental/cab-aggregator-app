@@ -44,14 +44,14 @@ public class RideController {
         return ResponseEntity.ok(rideService.getById(id));
     }
 
-    @GetMapping("/passenger")
+    @GetMapping("/passenger-rides")
     public ResponseEntity<ListRideResponse> getAllPassengerRidesById(
             @RequestParam Long passengerId
     ) {
         return ResponseEntity.ok(rideService.getAllPassengerRidesById(passengerId));
     }
 
-    @GetMapping("/driver")
+    @GetMapping("/driver-rides")
     public ResponseEntity<ListRideResponse> getAllDriverRidesById(
             @RequestParam Long driverId
     ) {

@@ -6,6 +6,7 @@ import lombok.experimental.UtilityClass;
 
 import java.util.ArrayList;
 
+@UtilityClass
 public class IntegrationTestUtil {
     public static final String PATH_PARAM_ID = "id";
     public static final Long ID_NOT_FOUND = 100L;

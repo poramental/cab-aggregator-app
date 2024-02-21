@@ -1,11 +1,14 @@
+stripe:
+  public: ${stripePublicKey}
+  secret: ${stripeSecretKey}
+
 spring:
-  config:
-    import: secrets.yaml
   datasource:
-    url: jdbc:postgresql://localhost:5447/payment-db
-    username: admin
-    password: admin
+    url: ${paymentDbUrl}
+    username: ${dbUsername}
+    password: ${dbPassword}
     driver-class-name:  org.postgresql.Driver
+
   jpa:
     show-sql: true
     hibernate:

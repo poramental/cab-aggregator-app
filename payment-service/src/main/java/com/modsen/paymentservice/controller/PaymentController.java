@@ -33,18 +33,18 @@ public class PaymentController {
     }
 
     @PostMapping("/charge")
-    public MessageResponse chargeCard(@RequestBody @Valid ChargeRequest chargeRequest) {
-        return paymentService.charge(chargeRequest);
+    public MessageResponse payFromCard(@RequestBody @Valid ChargeRequest chargeRequest) {
+        return paymentService.payFromCard(chargeRequest);
     }
 
     @GetMapping("/balance")
-    public BalanceResponse balance() {
-        return paymentService.balance();
+    public BalanceResponse getBalance() {
+        return paymentService.getBalance();
     }
 
     @PostMapping("/customers/charge")
-    public ChargeResponse chargeFromCustomer(@RequestBody @Valid CustomerChargeRequest request) {
-        return paymentService.chargeFromCustomer(request);
+    public ChargeResponse payFromCustomer(@RequestBody @Valid CustomerChargeRequest request) {
+        return paymentService.payFromCustomer(request);
     }
 
 }

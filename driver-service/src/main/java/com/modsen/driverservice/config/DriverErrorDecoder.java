@@ -1,6 +1,6 @@
 package com.modsen.driverservice.config;
 
-import com.modsen.driverservice.exception.NotFoundException;
+import com.modsen.driverservice.exception.FeignClientNotFoundException;
 import feign.FeignException;
 import feign.Response;
 import feign.RetryableException;
@@ -17,7 +17,7 @@ public class DriverErrorDecoder implements ErrorDecoder {
         String exMessage = exMessageSplit[exMessageSplit.length - 2];
         switch (status){
             case 404:
-                return new NotFoundException(exMessage);
+                return new FeignClientNotFoundException(exMessage);
         }
         if (status >= 500) {
             return new RetryableException(

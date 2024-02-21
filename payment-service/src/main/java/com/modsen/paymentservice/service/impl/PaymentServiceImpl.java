@@ -7,6 +7,7 @@ import com.modsen.paymentservice.model.CustomersPassengers;
 import com.modsen.paymentservice.repository.CustomersPassengersRepository;
 import com.modsen.paymentservice.service.PaymentService;
 import com.modsen.paymentservice.util.ExceptionMessage;
+import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
 import com.stripe.net.RequestOptions;
@@ -45,6 +46,7 @@ public class PaymentServiceImpl implements PaymentService {
                 .phone(customer.getPhone())
                 .name(customer.getName())
                 .build();
+
     }
 
     @Override
@@ -57,7 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
             Token token = createToken(cardParams);
             return new TokenDto(token.getId());
         } catch (StripeException ex) {
-            throw new TokenException(ExceptionMessage.GENERATION_TOKEN_EXCEPTION + ex.getMessage());
+            throw new GenerationTokenException(ExceptionMessage.GENERATION_TOKEN_EXCEPTION + ex.getMessage());
         }
     }
 
@@ -108,9 +110,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private Customer createStripeCustomer(CustomerRequest customerRequest) {
         try {
-            RequestOptions.builder()
-                    .setApiKey(secretKey)
-                    .build();
+            Stripe.apiKey = secretKey;
             CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
                     .setPhone(customerRequest.getPhone())
                     .setEmail(customerRequest.getEmail())
@@ -118,13 +118,11 @@ public class PaymentServiceImpl implements PaymentService {
                     .setBalance(customerRequest.getAmount())
                     .build();
 
-            RequestOptions.builder()
-                    .setApiKey(secretKey)
-                    .build();
+            Stripe.apiKey = secretKey;
 
             return Customer.create(customerCreateParams);
         } catch (StripeException ex) {
-            throw new CustomerCreatingException(ex.getMessage());
+            throw new StripeCustomerCreationException(ex.getMessage());
         }
 
     }
@@ -145,7 +143,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private CustomersPassengers getOrThrow(Long id) {
         return customersPassengersRepository.findByPassengerId(id)
-                .orElseThrow(() -> new NotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND_EXCEPTION));
+                .orElseThrow(() -> new FeignClientNotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND_EXCEPTION));
     }
 
     private Customer retrieveCustomer(String customerId) {
@@ -171,7 +169,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public MessageResponse charge(ChargeRequest chargeRequest) {
+    public MessageResponse payFromCard(ChargeRequest chargeRequest) {
         RequestOptions.builder()
                 .setApiKey(secretKey)
                 .build();
@@ -190,7 +188,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public BalanceResponse balance() {
+    public BalanceResponse getBalance() {
         RequestOptions.builder()
                 .setApiKey(secretKey)
                 .build();
@@ -232,7 +230,7 @@ public class PaymentServiceImpl implements PaymentService {
         Customer customer = retrieveCustomer(customerId);
         Long balance = customer.getBalance();
         if (balance < amount) {
-            throw new BalanceException(ExceptionMessage.BALANCE_EXCEPTION);
+            throw new LowBalanceException(ExceptionMessage.BALANCE_EXCEPTION);
         }
     }
 
@@ -257,7 +255,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     @Override
-    public ChargeResponse chargeFromCustomer(CustomerChargeRequest customerChargeRequest) {
+    public ChargeResponse payFromCustomer(CustomerChargeRequest customerChargeRequest) {
         RequestOptions.builder()
                 .setApiKey(secretKey)
                 .build();

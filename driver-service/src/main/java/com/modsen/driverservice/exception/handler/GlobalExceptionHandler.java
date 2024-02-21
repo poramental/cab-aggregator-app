@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler({
             AutoNotFoundException.class,
             DriverNotFoundException.class,
-            NotFoundException.class
+            FeignClientNotFoundException.class
     })
     public ResponseEntity<AppError> notFoundException(RuntimeException e){
         return new ResponseEntity<>(new AppError(e.getMessage()),HttpStatus.NOT_FOUND);

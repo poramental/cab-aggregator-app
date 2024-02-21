@@ -3,7 +3,12 @@ package com.modsen.rideservice.entity;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.List;
+import java.util.UUID;
+import java.util.Map;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Objects;
 
 @Component
 public final class NotAvailableDrivers {
