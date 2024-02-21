@@ -1,8 +1,6 @@
 package com.modsen.rideservice.util;
 
-import lombok.experimental.UtilityClass;
 import org.springframework.beans.factory.annotation.Value;
-
 
 public class MailUtil {
 

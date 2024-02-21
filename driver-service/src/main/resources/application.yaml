@@ -10,8 +10,8 @@ spring:
     change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
     url: ${driversDbUrl}
-    username: admin
-    password: admin
+    username: ${dbUsername}
+    password: ${dbPassword}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true

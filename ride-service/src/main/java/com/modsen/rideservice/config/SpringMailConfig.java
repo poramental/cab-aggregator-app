@@ -14,6 +14,7 @@ public class SpringMailConfig {
     @Value("${spring.mail.password}")
     private String mailPass;
 
+
     @Value("${spring.mail.username}")
     private String mailUsername;
 
@@ -22,8 +23,8 @@ public class SpringMailConfig {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost("smtp.mail.ru");
         mailSender.setPort(587);
-        mailSender.setUsername(mailUsername);
         mailSender.setPassword(mailPass);
+        mailSender.setUsername(mailUsername);
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");

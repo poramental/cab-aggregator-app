@@ -1,12 +1,17 @@
+stripe:
+  public: ${stripePublicKey}
+  secret: ${stripeSecretKey}
+
 spring:
   application:
     name: payment-service
 
   datasource:
-    url: jdbc:postgresql://localhost:${driversDbHost}/payment-db
+    url: ${paymentDbUrl}
     driver-class-name:  org.postgresql.Driver
     username: ${dbPassword}
     password: ${dbUsername}
+
   jpa:
     show-sql: true
     hibernate:
