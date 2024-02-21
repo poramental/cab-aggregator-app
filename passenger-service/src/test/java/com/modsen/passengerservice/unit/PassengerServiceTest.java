@@ -107,7 +107,7 @@ class PassengerServiceTest {
                 .when(mapper)
                 .entityToResponse(passenger);
 
-        PassengerResponse passengerResult = passengerService.deletePassengerById(DEFAULT_PASSENGER_ID);
+        PassengerResponse passengerResult = passengerService.deleteById(DEFAULT_PASSENGER_ID);
 
         assertEquals(passengerResponse, passengerResult);
         verify(passengerRepository).delete(passenger);
@@ -123,7 +123,7 @@ class PassengerServiceTest {
                 .findById(DEFAULT_PASSENGER_ID);
         assertThrows(
                 PassengerNotFoundException.class,
-                () -> passengerService.deletePassengerById(DEFAULT_PASSENGER_ID)
+                () -> passengerService.deleteById(DEFAULT_PASSENGER_ID)
         );
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
     }
@@ -159,7 +159,7 @@ class PassengerServiceTest {
         when(mapper.entityToResponse(passenger)).thenReturn(passengerResponse);
         when(passengerRepository.save(passenger)).thenReturn(passenger);
 
-        var passengerResult = passengerService.addPassenger(passengerRequest);
+        var passengerResult = passengerService.add(passengerRequest);
 
         verify(passengerRepository).existsByEmail(DEFAULT_PASSENGER_EMAIL);
         verify(passengerRepository).existsByUsername(DEFAULT_PASSENGER_USERNAME);
@@ -283,7 +283,7 @@ class PassengerServiceTest {
     void getPageWhenPaginationParamsIsInvalid() {
         assertThrows(
                 PaginationFormatException.class,
-                () -> passengerService.getPassengerPage(-1, -1, "order")
+                () -> passengerService.getPage(-1, -1, "order")
         );
     }
 
@@ -291,7 +291,7 @@ class PassengerServiceTest {
     void getPageWhenOrderByIsInvalid() {
         assertThrows(
                 SortTypeException.class,
-                () -> passengerService.getPassengerPage(1, 1, "order")
+                () -> passengerService.getPage(1, 1, "order")
         );
     }
 
@@ -327,7 +327,7 @@ class PassengerServiceTest {
         when(existParam.test(param)).thenReturn(true);
         assertThrows(
                 PassengerAlreadyExistException.class,
-                () -> passengerService.addPassenger(passengerRequest)
+                () -> passengerService.add(passengerRequest)
         );
     }
 
