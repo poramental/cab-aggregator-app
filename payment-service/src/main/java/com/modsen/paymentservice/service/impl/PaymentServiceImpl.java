@@ -2,14 +2,14 @@ package com.modsen.paymentservice.service.impl;
 
 import com.modsen.paymentservice.dto.*;
 import com.modsen.paymentservice.exception.*;
-import com.modsen.paymentservice.model.User;
 import com.modsen.paymentservice.enums.PaymentMethodEnum;
-import com.modsen.paymentservice.repository.UserRepository;
+import com.modsen.paymentservice.model.CustomersPassengers;
+import com.modsen.paymentservice.repository.CustomersPassengersRepository;
 import com.modsen.paymentservice.service.PaymentService;
 import com.modsen.paymentservice.util.ExceptionMessage;
-import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.*;
+import com.stripe.net.RequestOptions;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.CustomerUpdateParams;
 import com.stripe.param.PaymentIntentConfirmParams;
@@ -24,15 +24,15 @@ import java.util.Map;
 public class PaymentServiceImpl implements PaymentService {
 
     @Value("${stripe.secret}")
-    private String SECRET_KEY;
+    private String secretKey;
 
     @Value("${stripe.public}")
-    private String PUBLIC_KEY;
+    private String publicKey;
 
-    private final UserRepository userRepository;
+    private final CustomersPassengersRepository customersPassengersRepository;
 
     @Override
-    public CustomerResponse createCustomer(CustomerRequest customerRequest){
+    public CustomerResponse createCustomer(CustomerRequest customerRequest) {
         checkCustomerAlreadyExist(customerRequest.getPassengerId());
         Customer customer = createStripeCustomer(customerRequest);
 
@@ -50,14 +50,14 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public TokenDto generateTokenByCard(CardRequest cardRequest) {
         try {
-            Stripe.apiKey = PUBLIC_KEY;
+            RequestOptions.builder()
+                    .setApiKey(publicKey)
+                    .build();
             Map<String, Object> cardParams = createCardParams(cardRequest);
             Token token = createToken(cardParams);
             return new TokenDto(token.getId());
         } catch (StripeException ex) {
             throw new TokenException(ExceptionMessage.GENERATION_TOKEN_EXCEPTION + ex.getMessage());
-        } finally {
-            Stripe.apiKey = SECRET_KEY;
         }
     }
 
@@ -66,49 +66,51 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private Map<String, Object> createCardParams(CardRequest cardRequest) {
-        return  Map.of(
+        return Map.of(
                 "number", cardRequest.getCardNumber(),
                 "exp_month", cardRequest.getExpM(),
-                "exp_year" , cardRequest.getExpY(),
+                "exp_year", cardRequest.getExpY(),
                 "cvc", cardRequest.getCvc()
         );
     }
 
-    private void createPayment(String customerId)  {
-        try{
-            Stripe.apiKey = SECRET_KEY;
+    private void createPayment(String customerId) {
+        try {
+            RequestOptions.builder()
+                    .setApiKey(secretKey)
+                    .build();
             Map<String, Object> paymentParams = Map.of(
                     "type", "card",
                     "card", Map.of("token", "tok_visa")
             );
             PaymentMethod paymentMethod = PaymentMethod.create(paymentParams);
             paymentMethod.attach(Map.of("customer", customerId));
-        }catch (StripeException e){
+        } catch (StripeException e) {
             throw new PaymentException(ExceptionMessage.PAYMENT_EXCEPTION + e.getMessage());
-        }finally {
-            Stripe.apiKey = SECRET_KEY;
         }
     }
 
-    private void checkCustomerAlreadyExist(Long passengerId){
-        if (userRepository.existsByPassengerId(passengerId)) {
-            throw new CustomerAlreadyExistException(String.format(ExceptionMessage.CUSTOMER_ALREADY_EXIST_EXCEPTION,passengerId));
+    private void checkCustomerAlreadyExist(Long passengerId) {
+        if (customersPassengersRepository.existsByPassengerId(passengerId)) {
+            throw new CustomerAlreadyExistException(String.format(ExceptionMessage.CUSTOMER_ALREADY_EXIST_EXCEPTION, passengerId));
         }
     }
 
-    private void saveUserToDatabase(Long passengerId, String customerId){
-        User user = User.builder()
+    private void saveUserToDatabase(Long passengerId, String customerId) {
+        CustomersPassengers user = CustomersPassengers.builder()
                 .customerId(customerId)
                 .passengerId(passengerId)
                 .build();
 
-        userRepository.save(user);
+        customersPassengersRepository.save(user);
     }
 
 
     private Customer createStripeCustomer(CustomerRequest customerRequest) {
-        try{
-            Stripe.apiKey=PUBLIC_KEY;
+        try {
+            RequestOptions.builder()
+                    .setApiKey(secretKey)
+                    .build();
             CustomerCreateParams customerCreateParams = CustomerCreateParams.builder()
                     .setPhone(customerRequest.getPhone())
                     .setEmail(customerRequest.getEmail())
@@ -116,20 +118,22 @@ public class PaymentServiceImpl implements PaymentService {
                     .setBalance(customerRequest.getAmount())
                     .build();
 
-            Stripe.apiKey = SECRET_KEY;
+            RequestOptions.builder()
+                    .setApiKey(secretKey)
+                    .build();
 
             return Customer.create(customerCreateParams);
-        }catch (StripeException ex) {
+        } catch (StripeException ex) {
             throw new CustomerCreatingException(ex.getMessage());
-        } finally {
-            Stripe.apiKey = SECRET_KEY;
         }
 
     }
 
     @Override
     public CustomerResponse retrieve(long id) {
-        Stripe.apiKey = SECRET_KEY;
+        RequestOptions.builder()
+                .setApiKey(secretKey)
+                .build();
         String customerId = getOrThrow(id).getCustomerId();
         Customer customer = retrieveCustomer(customerId);
         return CustomerResponse.builder()
@@ -139,8 +143,8 @@ public class PaymentServiceImpl implements PaymentService {
                 .name(customer.getName()).build();
     }
 
-    private User getOrThrow(Long id){
-        return userRepository.findById(id)
+    private CustomersPassengers getOrThrow(Long id) {
+        return customersPassengersRepository.findByPassengerId(id)
                 .orElseThrow(() -> new NotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND_EXCEPTION));
     }
 
@@ -168,7 +172,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public MessageResponse charge(ChargeRequest chargeRequest) {
-        Stripe.apiKey = SECRET_KEY;
+        RequestOptions.builder()
+                .setApiKey(secretKey)
+                .build();
         Charge charge = checkChargeData(chargeRequest);
         String message = "Payment successful. ID: " + charge.getId();
         return MessageResponse.builder().message(message).build();
@@ -185,7 +191,9 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public BalanceResponse balance() {
-        Stripe.apiKey = SECRET_KEY;
+        RequestOptions.builder()
+                .setApiKey(secretKey)
+                .build();
         Balance balance = retrieveBalance();
         return BalanceResponse
                 .builder()
@@ -234,7 +242,9 @@ public class PaymentServiceImpl implements PaymentService {
                 CustomerUpdateParams.builder()
                         .setBalance(customer.getBalance() - amount * 100)
                         .build();
-        Stripe.apiKey = SECRET_KEY;
+        RequestOptions.builder()
+                .setApiKey(secretKey)
+                .build();
         updateCustomer(customer, params);
     }
 
@@ -248,9 +258,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ChargeResponse chargeFromCustomer(CustomerChargeRequest customerChargeRequest) {
-        Stripe.apiKey = SECRET_KEY;
+        RequestOptions.builder()
+                .setApiKey(secretKey)
+                .build();
         Long passengerId = customerChargeRequest.getPassengerId();
-        User user = getOrThrow(passengerId);
+        CustomersPassengers user = getOrThrow(passengerId);
         String customerId = user.getCustomerId();
         checkBalance(customerId, customerChargeRequest.getAmount());
         PaymentIntent intent = confirmIntent(customerChargeRequest, customerId);

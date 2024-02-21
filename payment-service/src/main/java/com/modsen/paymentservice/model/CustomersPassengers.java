@@ -12,7 +12,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "customers")
-public class User {
+public class CustomersPassengers {
     @Id
     private Long passengerId;
     private String customerId;
