@@ -22,7 +22,7 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentFeignClient.chargeFromCustomer(req);
     }
 
-    private void fallbackMethod(Exception e) {
+    private ChargeResponse fallbackMethod(Exception e) {
         throw new ServiceUnAvailableException(ExceptionMessages.PAYMENT_SERVICE_NOT_AVAILABLE);
     }
 }

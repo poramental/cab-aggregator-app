@@ -23,7 +23,7 @@ public class RideServiceImpl implements RideService {
         return rideFeignClient.getRideById(id);
     }
 
-    private void fallbackMethod(Exception e) {
+    private RideResponse fallbackMethod(Exception e) {
         throw new ServiceUnAvailableException(ExceptionMessages.RIDE_SERVICE_NOT_AVAILABLE);
     }
 }

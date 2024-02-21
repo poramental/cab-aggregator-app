@@ -27,7 +27,7 @@ public class DriverServiceImpl implements DriverService {
         return driverFeignClient.changeIsInRideStatus(id);
     }
 
-    private void fallbackMethod(Exception e) {
+    private DriverResponse fallbackMethod(Exception e) {
         throw new ServiceUnAvailableException(ExceptionMessages.DRIVER_SERVICE_NOT_AVAILABLE);
     }
 }

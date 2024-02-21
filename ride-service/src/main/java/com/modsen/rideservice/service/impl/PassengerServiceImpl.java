@@ -21,7 +21,7 @@ public class PassengerServiceImpl implements PassengerService {
         return passengerFeignClient.getPassengerById(id);
     }
 
-    private void fallbackMethod(Exception e) {
+    private PassengerResponse fallbackMethod(Exception e) {
         throw new ServiceUnAvailableException(ExceptionMessages.PASSENGER_SERVICE_NOT_AVAILABLE);
     }
 }
