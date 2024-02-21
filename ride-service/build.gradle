@@ -15,14 +15,11 @@ test {
     ignoreFailures = true
 }
 
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
-}
-
-test {
-    ignoreFailures = true
 }
 
 repositories {
@@ -37,6 +34,8 @@ ext {
     springMailVersion = '3.2.2'
     kafkaVersion = '3.1.1'
     circuitBreakerVrsion = '3.1.0'
+    testContainersVersion = '1.19.4'
+    restAssuredVersion = '5.4.0'
 }
 
 dependencies {
@@ -46,15 +45,16 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
+    implementation "org.modelmapper:modelmapper:${modelmapperVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-validation:${validationVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-mail:${springMailVersion}"
+    implementation "org.springframework.kafka:spring-kafka:${kafkaVersion}"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${feignClientVersion}"
+    testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation group: 'org.modelmapper', name: 'modelmapper', version:modelmapperVersion
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version:feignClientVersion
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version:springMailVersion
-    implementation group: 'org.springframework.kafka', name: 'spring-kafka', version:kafkaVersion
-    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:${circuitBreakerVrsion}"
-
 }
 
 dependencyManagement {

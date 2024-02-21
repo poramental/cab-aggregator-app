@@ -1,4 +1,4 @@
-package com.modsen.passengerservice;
+package com.modsen.passengerservice.util;
 
 import com.modsen.passengerservice.dto.ListPassengerResponse;
 import com.modsen.passengerservice.dto.PassengerRequest;
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 
 
+@Component
 public class PassengerTestUtil {
 
     public static final Long DEFAULT_PASSENGER_ID = 1L;

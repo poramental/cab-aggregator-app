@@ -1,5 +1,6 @@
-package com.modsen.passengerservice;
+package com.modsen.passengerservice.unit;
 
+import com.modsen.passengerservice.dto.PassengerResponse;
 import com.modsen.passengerservice.entity.Passenger;
 import com.modsen.passengerservice.exception.*;
 import com.modsen.passengerservice.feignclient.RideFeignClient;
@@ -16,16 +17,13 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.function.Predicate;
 
-import static com.modsen.passengerservice.PassengerTestUtil.*;
+import static com.modsen.passengerservice.util.PassengerTestUtil.*;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PassengerServiceTest {
@@ -42,7 +40,7 @@ class PassengerServiceTest {
     private PassengerMapper mapper;
 
     @Test
-    void getAll_PassengerListNotEmpty_ReturnsExpectedPassengerList() {
+    void getAll() {
         var listPassenger = getListPassenger();
         var exceptList = getListPassengerResponse();
 
@@ -67,26 +65,26 @@ class PassengerServiceTest {
 
 
     @Test
-    void getById_WhenPassengerExists_ReturnsExpectedPassengerResponse() {
+    void getByIdWhenPassengerExist() {
         var passenger = getPassenger();
-        var expectedResult = getPassengerResponse();
+        var passengerResponse = getPassengerResponse();
 
         doReturn(Optional.of(passenger))
                 .when(passengerRepository)
                 .findById(DEFAULT_PASSENGER_ID);
-        doReturn(expectedResult)
+        doReturn(passengerResponse)
                 .when(mapper)
                 .entityToResponse(passenger);
 
-        var actual = passengerService.getById(DEFAULT_PASSENGER_ID);
+        var passengerResult = passengerService.getById(DEFAULT_PASSENGER_ID);
 
-        assertEquals(expectedResult, actual);
+        assertEquals(passengerResponse, passengerResult);
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
         verify(mapper).entityToResponse(passenger);
     }
 
     @Test
-    void getById_WhenPassengerDoesNotExist_ThrowsPassengerNotFoundException() {
+    void getByIdWhenPassengerNotExist() {
         doReturn(Optional.empty())
                 .when(passengerRepository)
                 .findById(DEFAULT_PASSENGER_ID);
@@ -98,20 +96,20 @@ class PassengerServiceTest {
     }
 
     @Test
-    void deleteById_WhenPassengerExists_ReturnsExpectedPassengerResponse() {
+    void deleteByIdWhenPassengerExist() {
         var passenger = getPassenger();
-        var expectedResult = getPassengerResponse();
+        var passengerResponse = getPassengerResponse();
 
         doReturn(Optional.of(passenger))
                 .when(passengerRepository)
                 .findById(DEFAULT_PASSENGER_ID);
-        doReturn(expectedResult)
+        doReturn(passengerResponse)
                 .when(mapper)
                 .entityToResponse(passenger);
 
-        var actual = passengerService.deleteById(DEFAULT_PASSENGER_ID);
+        PassengerResponse passengerResult = passengerService.deletePassengerById(DEFAULT_PASSENGER_ID);
 
-        assertEquals(expectedResult, actual);
+        assertEquals(passengerResponse, passengerResult);
         verify(passengerRepository).delete(passenger);
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
         verify(mapper).entityToResponse(passenger);
@@ -119,49 +117,49 @@ class PassengerServiceTest {
 
 
     @Test
-    void deleteById_WhenPassengerDoesNotExist_ThrowsPassengerNotFoundException() {
+    void deleteByIdWhenPassengerNotExist() {
         doReturn(Optional.empty())
                 .when(passengerRepository)
                 .findById(DEFAULT_PASSENGER_ID);
         assertThrows(
                 PassengerNotFoundException.class,
-                () -> passengerService.deleteById(DEFAULT_PASSENGER_ID)
+                () -> passengerService.deletePassengerById(DEFAULT_PASSENGER_ID)
         );
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
     }
 
     @Test
-    void addPassenger_WhenEmailExists_ThrowsExceptionAndVerifiesExistenceByEmail() {
+    void addPassengerWhenEmailExist() {
         tryAddWhenParamExist(passengerRepository::existsByEmail, DEFAULT_PASSENGER_EMAIL);
         verify(passengerRepository).existsByEmail(DEFAULT_PASSENGER_EMAIL);
     }
 
     @Test
-    void addPassenger_WhenPhoneExists_ThrowsExceptionAndVerifiesExistenceByPhone() {
+    void addPassengerWhenPhoneExist() {
         tryAddWhenParamExist(passengerRepository::existsByPhone, DEFAULT_PASSENGER_PHONE);
         verify(passengerRepository).existsByPhone(DEFAULT_PASSENGER_PHONE);
     }
 
     @Test
-    void addPassenger_WhenUsernameExists_ThrowsExceptionAndVerifiesExistenceByUsername() {
+    void addPassengerWhenUsernameExist() {
         tryAddWhenParamExist(passengerRepository::existsByUsername, DEFAULT_PASSENGER_USERNAME);
         verify(passengerRepository).existsByUsername(DEFAULT_PASSENGER_USERNAME);
     }
 
     @Test
-    void addPassenger_WhenPassengerDoesNotExist_ReturnsExpectedPassengerResponse() {
+    void addPassengerWhenPassengerNotExist() {
         var passengerRequest = getPassengerRequest();
-        var expectedResult = getPassengerResponse();
+        var passengerResponse = getPassengerResponse();
         var passenger = getPassenger();
 
         when(passengerRepository.existsByPhone(DEFAULT_PASSENGER_PHONE)).thenReturn(false);
         when(passengerRepository.existsByUsername(DEFAULT_PASSENGER_USERNAME)).thenReturn(false);
         when(passengerRepository.existsByEmail(DEFAULT_PASSENGER_EMAIL)).thenReturn(false);
         when(mapper.requestToEntity(passengerRequest)).thenReturn(passenger);
-        when(mapper.entityToResponse(passenger)).thenReturn(expectedResult);
+        when(mapper.entityToResponse(passenger)).thenReturn(passengerResponse);
         when(passengerRepository.save(passenger)).thenReturn(passenger);
 
-        var actual = passengerService.add(passengerRequest);
+        var passengerResult = passengerService.addPassenger(passengerRequest);
 
         verify(passengerRepository).existsByEmail(DEFAULT_PASSENGER_EMAIL);
         verify(passengerRepository).existsByUsername(DEFAULT_PASSENGER_USERNAME);
@@ -169,53 +167,53 @@ class PassengerServiceTest {
         verify(passengerRepository).save(passenger);
         verify(mapper).requestToEntity(passengerRequest);
         verify(mapper).entityToResponse(passenger);
-        assertEquals(expectedResult, actual);
+        assertEquals(passengerResponse, passengerResult);
     }
 
 
     @Test
-    void updatePassenger_WhenPassengerDoesNotExist_ReturnsExpectedPassengerResponse() {
+    void updatePassengerWhenPassengerNotExist() {
         var passengerRequest = getPassengerRequest();
-        var expectedResult = getPassengerResponse();
+        var passengerResponse = getPassengerResponse();
         var passenger = getPassenger();
 
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
         when(mapper.requestToEntity(passengerRequest)).thenReturn(passenger);
-        when(mapper.entityToResponse(passenger)).thenReturn(expectedResult);
+        when(mapper.entityToResponse(passenger)).thenReturn(passengerResponse);
         when(passengerRepository.save(passenger)).thenReturn(passenger);
 
-        var actual = passengerService.updateById(DEFAULT_PASSENGER_ID, passengerRequest);
+        var passengerResult = passengerService.updateById(DEFAULT_PASSENGER_ID, passengerRequest);
 
         verify(passengerRepository).save(passenger);
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
         verify(mapper).requestToEntity(passengerRequest);
         verify(mapper).entityToResponse(passenger);
-        assertEquals(actual, expectedResult);
+        assertEquals(passengerResponse, passengerResult);
     }
 
     @Test
-    void tryUpdate_WhenEmailExists_ThrowsExceptionAndVerifiesExistenceByEmail() {
+    void tryUpdateWhenEmailExist() {
         var passenger = getPassenger().setEmail("not equals email");
         tryUpdateWhenParamExist(passenger, passengerRepository::existsByEmail, DEFAULT_PASSENGER_EMAIL);
         verify(passengerRepository).existsByEmail(DEFAULT_PASSENGER_EMAIL);
     }
 
     @Test
-    void tryUpdate_WhenPhoneExists_ThrowsExceptionAndVerifiesExistenceByPhone() {
+    void tryUpdateWhenPhoneExist() {
         var passenger = getPassenger().setPhone("not equals phone");
         tryUpdateWhenParamExist(passenger, passengerRepository::existsByPhone, DEFAULT_PASSENGER_PHONE);
         verify(passengerRepository).existsByPhone(DEFAULT_PASSENGER_PHONE);
     }
 
     @Test
-    void tryUpdate_WhenUsernameExists_ThrowsExceptionAndVerifiesExistenceByUsername() {
+    void tryUpdateWhenUsernameExist() {
         var passenger = getPassenger().setUsername("not equals username");
         tryUpdateWhenParamExist(passenger, passengerRepository::existsByUsername, DEFAULT_PASSENGER_USERNAME);
         verify(passengerRepository).existsByUsername(DEFAULT_PASSENGER_USERNAME);
     }
 
     @Test
-    void addRating_WhenRatingIsInvalid_ThrowsRuntimeException() {
+    void addRatingWhenRatingIsInvalid() {
 
         assertThrows(
                 RuntimeException.class,
@@ -224,7 +222,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void addRating_WhenPassengerDoesNotExist_ThrowsPassengerNotFoundException() {
+    void addRatingWhenPassengerNotExist() {
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.empty());
         assertThrows(
                 PassengerNotFoundException.class,
@@ -233,7 +231,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void addRating_WhenRideHasAnotherPassenger_ThrowsRideHaveAnotherPassengerException() {
+    void addRatingWhenRideHaveAnotherPassenger() {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
@@ -249,7 +247,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void addRating_WhenRideIsExpired_ThrowsRatingException() {
+    void addRatingWhenRideIsExpired() {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
@@ -263,7 +261,7 @@ class PassengerServiceTest {
     }
 
     @Test
-    void addRating_WhenValidRating_AddsRatingToPassenger() {
+    void addRating() {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         var passengerResponse = getPassengerResponse();
@@ -282,23 +280,23 @@ class PassengerServiceTest {
 
 
     @Test
-    void getPage_WhenPaginationParamsAreInvalid_ThrowsPaginationFormatException() {
+    void getPageWhenPaginationParamsIsInvalid() {
         assertThrows(
                 PaginationFormatException.class,
-                () -> passengerService.getPage(-1, -1, "order")
+                () -> passengerService.getPassengerPage(-1, -1, "order")
         );
     }
 
     @Test
-    void getPage_WhenOrderByIsInvalid_ThrowsSortTypeException() {
+    void getPageWhenOrderByIsInvalid() {
         assertThrows(
                 SortTypeException.class,
-                () -> passengerService.getPage(1, 1, "order")
+                () -> passengerService.getPassengerPage(1, 1, "order")
         );
     }
 
     @Test
-    void addRating_WhenRideIsNotInactive_ThrowsRideIsNotInactiveException() {
+    void addRatingWhenRideIsNotInactive() {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
@@ -329,7 +327,7 @@ class PassengerServiceTest {
         when(existParam.test(param)).thenReturn(true);
         assertThrows(
                 PassengerAlreadyExistException.class,
-                () -> passengerService.add(passengerRequest)
+                () -> passengerService.addPassenger(passengerRequest)
         );
     }
 

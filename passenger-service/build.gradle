@@ -18,10 +18,6 @@ configurations {
     }
 }
 
-test {
-    ignoreFailures = true
-}
-
 repositories {
     mavenCentral()
 }
@@ -33,21 +29,26 @@ ext {
     liquibaseVersion = '4.25.1'
     feignClientVersion = '4.1.0'
     circuitBreakerVrsion = '3.1.0'
+    testContainersVersion = '1.19.4'
+    restAssuredVersion = '5.4.0'
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation group: 'org.liquibase', name: 'liquibase-core', version: liquibaseVersion
+    implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation group: 'org.modelmapper', name: 'modelmapper', version: modelMapperVersion
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version:feignClientVersion
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${feignClientVersion}"
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:${circuitBreakerVrsion}"
+    implementation "org.springframework.boot:spring-boot-starter-validation:${validationVersion}"
+    testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation 'org.projectlombok:lombok'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 }
 
