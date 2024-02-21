@@ -1,12 +1,15 @@
 package com.modsen.rideservice.dto.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class ListRideResponse {
     private List<RideResponse> rideResponseList;
 }

@@ -23,24 +23,29 @@ repositories {
 }
 
 ext {
-    set('springCloudVersion', "2023.0.0")
-    set('modelMapperVersion',  "3.2.0")
+    springCloudVersion = "2023.0.0"
+    modelMapperVersion = "3.2.0"
     validationVersion = '3.2.1'
     liquibaseVersion = '4.25.1'
     feignClientVersion = '4.1.0'
+    testContainersVersion = '1.19.4'
+    restAssuredVersion = '5.4.0'
 }
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-web'
-    implementation group: 'org.liquibase', name: 'liquibase-core', version: liquibaseVersion
+    implementation "org.liquibase:liquibase-core:${liquibaseVersion}"
     compileOnly 'org.projectlombok:lombok'
     runtimeOnly 'org.postgresql:postgresql'
     annotationProcessor 'org.projectlombok:lombok'
-    implementation group: 'org.modelmapper', name: 'modelmapper', version: modelMapperVersion
+    implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${feignClientVersion}"
+    implementation "org.springframework.boot:spring-boot-starter-validation:${validationVersion}"
+    testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
+    testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
+    testImplementation 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version:feignClientVersion
-    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
 }
 
 dependencyManagement {

@@ -2,10 +2,15 @@ package com.modsen.rideservice.dto;
 
 
 import jakarta.validation.constraints.*;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.Accessors;
 
-@Data
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 @Accessors(chain = true)
 public class RideRequest {
 

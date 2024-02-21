@@ -56,4 +56,3 @@ feign:
       url: http://localhost:${paymentServiceHost}
       name: payment
       path: /api/v1/payment
-
