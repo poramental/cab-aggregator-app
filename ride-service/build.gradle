@@ -40,9 +40,9 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     implementation "org.modelmapper:modelmapper:${modelmapperVersion}"
     implementation "org.springframework.boot:spring-boot-starter-validation:${validationVersion}"
-    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${feignClientVersion}"
     implementation "org.springframework.boot:spring-boot-starter-mail:${springMailVersion}"
     implementation "org.springframework.kafka:spring-kafka:${kafkaVersion}"
+    implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${feignClientVersion}"
     testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
     testImplementation 'org.projectlombok:lombok'
