@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre as builder
+FROM eclipse-temurin:17-jre as builder
 WORKDIR workspace
 ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} ./build/libs/payment-service-0.0.1-SNAPSHOT.jar
