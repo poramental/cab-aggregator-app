@@ -6,9 +6,6 @@ import lombok.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class PassengerResponse {
     private Long id;
 
