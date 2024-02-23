@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 @FeignClient(
         value = "${feign.client.driver.name}",
-        url = "${feign.client.driver.url}",
         path = "${feign.client.driver.path}",
         configuration = FeignClientsConfiguration.class
 )

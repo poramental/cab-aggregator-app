@@ -8,7 +8,7 @@ import com.modsen.driverservice.exception.*;
 import com.modsen.driverservice.mapper.AutoMapper;
 import com.modsen.driverservice.repository.AutoRepository;
 import com.modsen.driverservice.service.AutoService;
-import com.modsen.driverservice.util.ExceptionMessage;
+import com.modsen.driverservice.util.ExceptionMessages;
 import com.modsen.driverservice.util.PaginationUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -77,13 +77,13 @@ public class AutoServiceImpl implements AutoService {
 
     private Auto getOrThrowById(Long id) {
         return autoRepository.findById(id).orElseThrow(() -> new AutoNotFoundException(String
-                .format(ExceptionMessage.AUTO_NOT_FOUND_EXCEPTION, id)));
+                .format(ExceptionMessages.AUTO_NOT_FOUND_EXCEPTION, id)));
     }
 
     private Auto getOrThrowByNumber(String number) {
         return autoRepository.findByNumber(number)
                 .orElseThrow(() -> new AutoNotFoundException(String.format(
-                        ExceptionMessage.AUTO_NUMBER_NOT_FOUND_EXCEPTION,
+                        ExceptionMessages.AUTO_NUMBER_NOT_FOUND_EXCEPTION,
                         number)));
     }
 

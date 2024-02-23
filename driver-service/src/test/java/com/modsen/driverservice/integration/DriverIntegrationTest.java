@@ -6,7 +6,7 @@ import com.modsen.driverservice.dto.ListDriverResponse;
 import com.modsen.driverservice.entity.Driver;
 import com.modsen.driverservice.mapper.DriverMapper;
 import com.modsen.driverservice.repository.DriverRepository;
-import com.modsen.driverservice.util.ExceptionMessage;
+import com.modsen.driverservice.util.ExceptionMessages;
 import io.restassured.http.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.modsen.driverservice.exception.AppError;
@@ -46,7 +46,7 @@ public class DriverIntegrationTest extends ContainerConfiguration {
     @Test
     void findById_shouldReturnDriverNotFound_whenDriverNotExist() {
         AppError expected = AppError.builder()
-                .message(String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, ID_NOT_FOUND))
+                .message(String.format(ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION, ID_NOT_FOUND))
                 .build();
 
         var actual = given()
@@ -66,7 +66,7 @@ public class DriverIntegrationTest extends ContainerConfiguration {
     @Test
     void findById_shouldReturnDriverNotFoundMessage_whenDriverNotExist() {
         AppError expected = AppError.builder()
-                .message(String.format(ExceptionMessage.DRIVER_NOT_FOUND_EXCEPTION, ID_NOT_FOUND))
+                .message(String.format(ExceptionMessages.DRIVER_NOT_FOUND_EXCEPTION, ID_NOT_FOUND))
                 .build();
 
         var actual = given()

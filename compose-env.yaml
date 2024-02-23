@@ -1,0 +1,179 @@
+version: "3.7"
+
+networks:
+  cab_aggregator:
+    name: cab_aggregator
+    driver: bridge
+
+
+services:
+
+  api-gateway:
+    image: api-gateway:latest
+    container_name: api-gateway
+    environment:
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-server
+    ports:
+      - '8765:8765'
+    networks:
+      - cab_aggregator
+
+  eureka-server:
+    image: eureka-server:latest
+    container_name: eureka-server
+    ports:
+      - '8761:8761'
+    networks:
+      - cab_aggregator
+
+
+  passenger-service:
+    image: passenger-service:latest
+    container_name: passenger-service
+    ports:
+      - '8081:8081'
+    networks:
+      - cab_aggregator
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-passenger-service:5432/passenger-db
+      - SPRING_DATASOURCE_USERNAME=${dbUsername}
+      - SPRING_DATASOURCE_PASSWORD=${dbPassword}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+    depends_on:
+      - eureka-server
+      - db-passenger-service
+
+  driver-service:
+    image: driver-service:latest
+    container_name: driver-service
+    ports:
+      - '8082:8082'
+    networks:
+      - cab_aggregator
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-driver-service:5432/driver-db
+      - SPRING_DATASOURCE_USERNAME=${dbUsername}
+      - SPRING_DATASOURCE_PASSWORD=${dbPassword}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka:29092
+      - KAFKA_BOOTSTRAP-SERVERS=kafka:29092
+    depends_on:
+      - eureka-server
+      - db-driver-service
+      - kafka
+
+  payment-service:
+    image: payment-service:latest
+    container_name: payment-service
+    ports:
+      - '8080:8080'
+    networks:
+      - cab_aggregator
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-payment-service:5432/payment-db
+      - SPRING_DATASOURCE_USERNAME=${dbUsername}
+      - SPRING_DATASOURCE_PASSWORD=${dbPassword}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - STRIPE_PUBLIC=${stripePublicKey}
+      - STRIPE_SECRET=${stripeSecretKey}
+    depends_on:
+      - eureka-server
+      - db-payment-service
+
+  ride-service:
+    image: ride-service:latest
+    container_name: ride-service
+    ports:
+      - '8083:8083'
+    networks:
+      - cab_aggregator
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-ride-service:5432/ride-db
+      - SPRING_DATASOURCE_USERNAME=${dbUsername}
+      - SPRING_DATASOURCE_PASSWORD=${dbPassword}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
+      - SPRING_KAFKA_BOOTSTRAP-SERVERS=kafka:29092
+      - KAFKA_BOOTSTRAP-SERVERS=kafka:29092
+    depends_on:
+      - eureka-server
+      - db-ride-service
+      - kafka
+
+  #databases
+  db-ride-service:
+    image: postgres
+    ports:
+      - '5446:5432'
+    environment:
+      POSTGRES_PASSWORD: ${dbPassword}
+      POSTGRES_USER: ${dbUsername}
+      POSTGRES_DB: ride-db
+    networks:
+      - cab_aggregator
+
+  db-payment-service:
+    image: postgres
+    ports:
+      - '5447:5432'
+    environment:
+      POSTGRES_PASSWORD: ${dbPassword}
+      POSTGRES_USER: ${dbUsername}
+      POSTGRES_DB: payment-db
+    networks:
+      - cab_aggregator
+
+  db-driver-service:
+    image: postgres
+    container_name: db-driver-service
+    ports:
+      - '5445:5432'
+    environment:
+      POSTGRES_PASSWORD: ${dbPassword}
+      POSTGRES_USER: ${dbUsername}
+      POSTGRES_DB: driver-db
+    networks:
+      - cab_aggregator
+
+  db-passenger-service:
+    image: postgres
+    ports:
+      - '5444:5432'
+    environment:
+      POSTGRES_PASSWORD: ${dbPassword}
+      POSTGRES_USER: ${dbUsername}
+      POSTGRES_DB: passenger-db
+    networks:
+      - cab_aggregator
+
+
+
+
+  zookeeper:
+    image: zookeeper:3.7.0
+    container_name: zookeeper
+    networks:
+      - cab_aggregator
+    restart: "no"
+    ports:
+      - "2181:2181"
+
+  kafka:
+    image: obsidiandynamics/kafka
+    container_name: kafka
+    restart: "no"
+    networks:
+      - cab_aggregator
+    ports:
+      - "9092:9092"
+    environment:
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: DOCKER_INTERNAL:PLAINTEXT,DOCKER_EXTERNAL:PLAINTEXT
+      KAFKA_LISTENERS: DOCKER_INTERNAL://:29092,DOCKER_EXTERNAL://:9092
+      KAFKA_ADVERTISED_LISTENERS: DOCKER_INTERNAL://kafka:29092,DOCKER_EXTERNAL://${DOCKER_HOST_IP:-127.0.0.1}:9092
+      KAFKA_INTER_BROKER_LISTENER_NAME: DOCKER_INTERNAL
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+      KAFKA_BROKER_ID: 1
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    depends_on:
+      - zookeeper

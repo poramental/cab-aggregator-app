@@ -8,7 +8,7 @@ import com.modsen.passengerservice.entity.Passenger;
 import com.modsen.passengerservice.exception.AppError;
 import com.modsen.passengerservice.mapper.PassengerMapper;
 import com.modsen.passengerservice.repository.PassengerRepository;
-import com.modsen.passengerservice.util.ExceptionMessage;
+import com.modsen.passengerservice.util.ExceptionMessages;
 import io.restassured.http.ContentType;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,7 +43,7 @@ public class PassengerIntegrationTest extends ContainerConfiguration {
     @Test
     void findById_shouldReturnPassengerNotFound_whenPassengerNotExist() {
         AppError expected = AppError.builder()
-                .message(String.format(ExceptionMessage.PASSENGER_NOT_FOUND_EXCEPTION, ID_NOT_FOUND))
+                .message(String.format(ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION, ID_NOT_FOUND))
                 .build();
 
         var actual = given()

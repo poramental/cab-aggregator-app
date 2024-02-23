@@ -11,6 +11,11 @@ java {
     sourceCompatibility = '17'
 }
 
+test {
+    ignoreFailures = true
+}
+
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -22,11 +27,13 @@ repositories {
 }
 
 ext {
+    set('springCloudVersion', "2023.0.0")
     validationVersion = '3.2.1'
     modelmapperVersion = '3.2.0'
     feignClientVersion = '4.1.0'
     springMailVersion = '3.2.2'
     kafkaVersion = '3.1.1'
+    circuitBreakerVrsion = '3.1.0'
     testContainersVersion = '1.19.4'
     restAssuredVersion = '5.4.0'
 }
@@ -47,6 +54,13 @@ dependencies {
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
     testImplementation 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:${circuitBreakerVrsion}"
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('test') {

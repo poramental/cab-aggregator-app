@@ -23,11 +23,12 @@ repositories {
 }
 
 ext {
-    springCloudVersion = "2023.0.0"
-    modelMapperVersion = "3.2.0"
+    set('springCloudVersion', "2023.0.0")
+    set('modelMapperVersion',  "3.2.0")
     validationVersion = '3.2.1'
     liquibaseVersion = '4.25.1'
     feignClientVersion = '4.1.0'
+    circuitBreakerVrsion = '3.1.0'
     testContainersVersion = '1.19.4'
     restAssuredVersion = '5.4.0'
 }
@@ -41,11 +42,14 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     implementation "org.modelmapper:modelmapper:${modelMapperVersion}"
     implementation "org.springframework.cloud:spring-cloud-starter-openfeign:${feignClientVersion}"
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j:${circuitBreakerVrsion}"
     implementation "org.springframework.boot:spring-boot-starter-validation:${validationVersion}"
     testImplementation "org.testcontainers:postgresql:${testContainersVersion}"
     testImplementation "io.rest-assured:rest-assured:${restAssuredVersion}"
     testImplementation 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 }
 
 dependencyManagement {

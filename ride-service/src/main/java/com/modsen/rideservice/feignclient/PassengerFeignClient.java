@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 @FeignClient(
         value = "${feign.client.passenger.name}",
-        url = "${feign.client.passenger.url}",
         path = "${feign.client.passenger.path}",
         configuration = FeignClientsConfiguration.class
 )

@@ -11,7 +11,6 @@ import java.util.UUID;
 
 @FeignClient(
         value = "${feign.client.ride.name}",
-        url = "${feign.client.ride.url}",
         path = "${feign.client.ride.path}",
         configuration = FeignClientsConfiguration.class
 )

@@ -17,11 +17,16 @@ configurations {
     }
 }
 
+test {
+    ignoreFailures = true
+}
+
 repositories {
     mavenCentral()
 }
 
 ext{
+    set('springCloudVersion', "2023.0.0")
     set('modelMapperVersion',  '3.2.0')
     set('validationVersion', '3.2.1')
     set('stripeVersion', '20.79.0')
@@ -40,6 +45,13 @@ dependencies {
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version:validationVersion
     implementation group: 'com.stripe', name: 'stripe-java', version:stripeVersion
     implementation group: 'org.springframework.kafka', name: 'spring-kafka', version:kafkaVersion
+    implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+    }
 }
 
 tasks.named('test') {

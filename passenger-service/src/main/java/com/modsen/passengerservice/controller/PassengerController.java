@@ -33,55 +33,49 @@ public class PassengerController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public ListPassengerResponse getAll(){
+    public ListPassengerResponse getAll() {
         return passengerService.getAll();
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public PassengerResponse add(@RequestBody @Valid PassengerRequest passengerDto)
-    {
+    public PassengerResponse add(@RequestBody @Valid PassengerRequest passengerDto) {
         return passengerService.add(passengerDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public PassengerResponse delete(@PathVariable Long id)
-    {
+    public PassengerResponse delete(@PathVariable Long id) {
         return passengerService.deleteById(id);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public PassengerResponse getById(@PathVariable Long id)
-    {
+    public PassengerResponse getById(@PathVariable Long id) {
         return passengerService.getById(id);
     }
 
-   @PutMapping("/{id}")
-   @ResponseStatus(HttpStatus.OK)
-   public PassengerResponse updateById(@PathVariable Long id,
-                                                       @RequestBody PassengerRequest passengerDto)
-   {
+    @PutMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public PassengerResponse updateById(@PathVariable Long id,
+                                        @RequestBody PassengerRequest passengerDto) {
         return passengerService.updateById(id, passengerDto);
-   }
+    }
 
-   @GetMapping("/page")
-   @ResponseStatus(HttpStatus.OK)
-   public PassengerPageResponse getPage(@RequestParam int page,
-                                                        @RequestParam int size,
-                                                        @RequestParam String orderBy)
-   {
-        return passengerService.getPage(page,size,orderBy);
-   }
+    @GetMapping("/page")
+    @ResponseStatus(HttpStatus.OK)
+    public PassengerPageResponse getPage(@RequestParam int page,
+                                         @RequestParam int size,
+                                         @RequestParam String orderBy) {
+        return passengerService.getPage(page, size, orderBy);
+    }
 
 
     @PatchMapping("/{passengerId}/rating")
     @ResponseStatus(HttpStatus.OK)
     public PassengerResponse addRating(@RequestParam("rating") int rating,
-                                                       @RequestParam("ride_id") UUID rideId,
-                                                       @PathVariable Long passengerId)
-    {
+                                       @RequestParam("rideId") UUID rideId,
+                                       @PathVariable Long passengerId) {
         return passengerService.addRatingById(rating, rideId, passengerId);
     }
 

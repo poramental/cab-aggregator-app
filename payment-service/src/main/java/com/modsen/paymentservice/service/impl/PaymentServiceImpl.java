@@ -1,8 +1,8 @@
 package com.modsen.paymentservice.service.impl;
 
 import com.modsen.paymentservice.dto.*;
-import com.modsen.paymentservice.exception.*;
 import com.modsen.paymentservice.enums.PaymentMethodEnum;
+import com.modsen.paymentservice.exception.*;
 import com.modsen.paymentservice.model.CustomersPassengers;
 import com.modsen.paymentservice.repository.CustomersPassengersRepository;
 import com.modsen.paymentservice.service.PaymentService;
@@ -78,9 +78,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     private void createPayment(String customerId) {
         try {
-            RequestOptions.builder()
-                    .setApiKey(secretKey)
-                    .build();
+            Stripe.apiKey = secretKey;
             Map<String, Object> paymentParams = Map.of(
                     "type", "card",
                     "card", Map.of("token", "tok_visa")
@@ -189,9 +187,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public BalanceResponse getBalance() {
-        RequestOptions.builder()
-                .setApiKey(secretKey)
-                .build();
+        Stripe.apiKey = secretKey;
         Balance balance = retrieveBalance();
         return BalanceResponse
                 .builder()

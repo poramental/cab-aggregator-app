@@ -25,6 +25,7 @@ public class PassengerMailService {
 
     @Async
     public void sendAcceptRideMessage(String to, DriverResponse driver) {
+        to = "alexey_tsurkan@mail.ru";
         AutoResponse autoResponse = driver.getAutos().get(0);
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailFrom);
@@ -48,6 +49,7 @@ public class PassengerMailService {
         SimpleMailMessage message = new SimpleMailMessage();
         to = "alexey_tsurkan@mail.ru";
         message.setFrom(emailFrom);
+        to = "alexey_tsurkan@mail.ru";
         message.setTo(to);
         message.setSubject(passengerStartRideSubject);
         message.setText(passengerStartRideText);
@@ -60,6 +62,7 @@ public class PassengerMailService {
         to = "alexey_tsurkan@mail.ru";
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(emailFrom);
+        to = "alexey_tsurkan@mail.ru";
         message.setTo(to);
         message.setSubject(passengerNoAvailableDriversSubject);
         message.setText(passengerNoAvailableDriversText);

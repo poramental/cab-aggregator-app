@@ -14,7 +14,7 @@ import java.util.function.Function;
 public class PaginationUtil {
     private static PageRequest getPageRequest(int page, int size, String orderBy) {
         if (page < 1 || size < 1) {
-            throw new PaginationFormatException(ExceptionMessage.PAGINATION_FORMAT_EXCEPTION);
+            throw new PaginationFormatException(ExceptionMessages.PAGINATION_FORMAT_EXCEPTION);
         }
         PageRequest pageRequest;
         if (orderBy == null) {
@@ -30,7 +30,7 @@ public class PaginationUtil {
         Arrays.stream(DriverResponse.class.getDeclaredFields())
                 .map(Field::getName)
                 .filter(orderBy::equals).toList().stream().findFirst()
-                .orElseThrow(() -> new PaginationFormatException(ExceptionMessage.INVALID_TYPE_OF_SORT));
+                .orElseThrow(() -> new PaginationFormatException(ExceptionMessages.INVALID_TYPE_OF_SORT));
     }
 
     public static <T> Page<T> getPage(int page,
