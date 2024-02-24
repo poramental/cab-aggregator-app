@@ -252,9 +252,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ChargeResponse payFromCustomer(CustomerChargeRequest customerChargeRequest) {
-        RequestOptions.builder()
-                .setApiKey(secretKey)
-                .build();
+        Stripe.apiKey = secretKey;
         Long passengerId = customerChargeRequest.getPassengerId();
         CustomersPassengers user = getOrThrow(passengerId);
         String customerId = user.getCustomerId();

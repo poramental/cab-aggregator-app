@@ -1,7 +1,3 @@
-stripe:
-  public: ${stripePublicKey}
-  secret: ${stripeSecretKey}
-
 spring:
   application:
     name: payment-service
