@@ -1,2 +1,0 @@
-set docker_compose=docker compose -f compose-env.yaml up -d
-cd passenger-service && %docker_compose% && cd ../driver-service && %docker_compose% && cd ../ride-service && %docker_compose% && cd ../payment-service && %docker_compose% && cd ..

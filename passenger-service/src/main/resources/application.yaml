@@ -1,6 +1,5 @@
 server:
   port: 8081
-
 spring:
   liquibase:
     enabled: true
@@ -22,7 +21,6 @@ feign:
     ride:
       name: ride
       path: /api/v1/rides
-
 eureka:
   client:
     service-url:
@@ -31,3 +29,13 @@ eureka:
 logging:
   pattern:
     console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  endpoint:
+    prometheus:
+      enabled: true

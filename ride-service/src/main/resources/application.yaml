@@ -67,3 +67,12 @@ feign:
       name: payment-service
       path: /api/v1/payment
 
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  endpoint:
+    prometheus:
+      enabled: true

@@ -46,6 +46,8 @@ dependencies {
     implementation group: 'com.stripe', name: 'stripe-java', version:stripeVersion
     implementation group: 'org.springframework.kafka', name: 'spring-kafka', version:kafkaVersion
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    compileOnly "org.springframework.boot:spring-boot-starter-actuator"
+    compileOnly 'io.micrometer:micrometer-registry-prometheus'
 }
 
 dependencyManagement {
