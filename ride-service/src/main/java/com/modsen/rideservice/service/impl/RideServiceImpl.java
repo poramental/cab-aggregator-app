@@ -171,7 +171,6 @@ public class RideServiceImpl implements RideService {
         driverService.changeIsInRideStatus(driverId);
         paymentService.chargeFromCustomer(new CustomerChargeRequest()
                 .setAmount(20).setPassengerId(ride.getPassenger()).setCurrency("USD"));
-        driverService.changeIsInRideStatus(driverId);
         repository.save(ride);
         return mapper.entityToResponse(ride);
 

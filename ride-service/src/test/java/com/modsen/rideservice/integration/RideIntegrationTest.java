@@ -25,10 +25,8 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 )
 public class RideIntegrationTest extends ContainerConfiguration {
 
-    @Autowired
-    private RideRepository rideRepository;
-    @Autowired
-    private RideMapper rideMapper;
+    @Autowired private RideRepository rideRepository;
+    @Autowired private RideMapper rideMapper;
 
     @LocalServerPort
     private int port;

@@ -4,6 +4,7 @@ server:
 spring:
   application:
     name: api-gateway
+
   config:
     import:
       - classpath:routes/services-routes.yaml
@@ -23,6 +24,29 @@ eureka:
 logging:
   pattern:
     console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
+
+resilience4j:
+  circuitbreaker:
+    configs:
+      default:
+        register-health-indicator: true
+        event-consumer-buffer-size: 10
+        failure-rate-threshold: 50
+        minimum-number-of-calls: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 5s
+        permitted-number-of-calls-in-half-open-state: 3
+        sliding-window-size: 10
+        sliding-window-type: COUNT_BASED
+    instances:
+      passenger-service-circuit:
+        base-config: default
+      driver-service-circuit:
+        base-config: default
+      ride-service-circuit:
+        base-config: default
+      payment-service-circuit:
+        base-config: default
 
 management:
   endpoints:

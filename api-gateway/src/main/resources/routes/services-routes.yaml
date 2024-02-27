@@ -2,230 +2,53 @@ spring:
   cloud:
     gateway:
       routes:
-
-#driver-service routes
-        - id: getAllDrivers
+        - id: driverService
           uri: lb://driver-service
           predicates:
-            - Path=/api/v1/drivers
-            - Method=GET
+            - Path=/api/v1/drivers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: driver-service-circuit
+                fallbackUri: forward://fallback/driver-service
 
-        - id: createDriver
+        - id: autoService
           uri: lb://driver-service
           predicates:
-            - Path=/api/v1/drivers
-            - Method=POST
+            - Path=/api/v1/autos/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: driver-service-circuit
+                fallbackUri: forward://fallback/driver-service
 
-        - id: deleteDriver
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/drivers/{id}
-            - Method=DELETE
-
-        - id: getDriver
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/drivers/{id}
-            - Method=GET
-
-        - id: updateDriver
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/drivers/{driverId}
-            - Method=PUT
-
-        - id: getPageDrivers
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/drivers/page
-            - Method=GET
-
-        - id: addRatingDriver
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/drivers/{driverId}/rating
-            - Method=PATCH
-
-        - id: setAuto
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/drivers/{driverId}/auto
-            - Method=POST
-
-        - id: replaceAuto
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/drivers/{driverId}/auto
-            - Method=PUT
-
-        - id: changeIsInRideStatus
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/drivers/{driverId}/is-in-ride
-            - Method=POST
-
-        - id: getAvailableDrivers
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/drivers/available
-            - Method=GET
-
-#auto service routes
-        - id: getAllAutos
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/autos
-            - Method=GET
-
-        - id: getAutoByNumber
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/autos/by-number
-            - Method=GET
-
-        - id: getAutoById
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/autos/{id}
-            - Method=GET
-
-        - id: deleteAutoById
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/autos/{id}
-            - Method=DELETE
-
-        - id: getPageAutos
-          uri: lb://driver-service
-          predicates:
-            - Path=/api/v1/autos/page
-            - Method=GET
-
-#passenger-service routes
-        - id: getAllPassengers
+        - id: passengerService
           uri: lb://passenger-service
           predicates:
-            - Path=/api/v1/passengers
-            - Method=GET
+            - Path=/api/v1/passengers/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: passengers-service-circuit
+                fallbackUri: forward://fallback/passengers-service
 
-        - id: createPassenger
-          uri: lb://passenger-service
+        - id: rideService
+          uri: lb://ride-service
           predicates:
-            - Path=/api/v1/passengers
-            - Method=POST
+            - Path=/api/v1/rides/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: ride-service-circuit
+                fallbackUri: forward://fallback/rides-service
 
-        - id: deletePassenger
-          uri: lb://passenger-service
-          predicates:
-            - Path=/api/v1/passengers/{id}
-            - Method=DELETE
-
-        - id: getPassenger
-          uri: lb://passenger-service
-          predicates:
-            - Path=/api/v1/passengers/{id}
-            - Method=GET
-
-        - id: updatePassenger
-          uri: lb://passenger-service
-          predicates:
-            - Path=/api/v1/passengers/{id}
-            - Method=PUT
-
-        - id: getPagePassenger
-          uri: lb://passenger-service
-          predicates:
-            - Path=/api/v1/passengers/page
-            - Method=GET
-
-        - id: addRatingPassenger
-          uri: lb://passenger-service
-          predicates:
-            - Path=/api/v1/passengers/{passengerId}/rating
-            - Method=PATCH
-
-#payment-service routes
-        - id: createCustomer
+        - id: paymentService
           uri: lb://payment-service
           predicates:
-            - Path=/api/v1/payment/customers
-            - Method=POST
+            - Path=/api/v1/payment/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: payment-service-circuit
+                fallbackUri: forward://fallback/payment-service
 
-        - id: generateToken
-          uri: lb://payment-service
-          predicates:
-            - Path=/api/v1/payment/token
-            - Method=POST
-
-        - id: getCustomerById
-          uri: lb://payment-service
-          predicates:
-            - Path=/api/v1/payment/customer/{id}
-            - Method=GET
-
-        - id: payFromCard
-          uri: lb://payment-service
-          predicates:
-            - Path=/api/v1/payment/charge
-            - Method=POST
-
-        - id: getBalance
-          uri: lb://payment-service
-          predicates:
-            - Path=/api/v1/payment/balance
-            - Method=GET
-
-        - id: payFromCustomer
-          uri: lb://payment-service
-          predicates:
-            - Path=/api/v1/payment/customers/charge
-            - Method=POST
-
-#ride-service routes
-        - id: acceptRide
-          uri: lb://ride-service
-          predicates:
-            - Path=/api/v1/rides/accept
-            - Method=PATCH
-
-        - id: cancelRide
-          uri: lb://ride-service
-          predicates:
-            - Path=/api/v1/rides/cancel
-            - Method=PATCH
-
-        - id: getAllRides
-          uri: lb://ride-service
-          predicates:
-            - Path=/api/v1/rides
-            - Method=GET
-
-        - id: getPassengerRides
-          uri: lb://ride-service
-          predicates:
-            - Path=/api/v1/rides/passenger-rides
-            - Method=GET
-
-        - id: getDriverRides
-          uri: lb://ride-service
-          predicates:
-            - Path=/api/v1/rides/driver-rides
-            - Method=GET
-
-        - id: startRide
-          uri: lb://ride-service
-          predicates:
-            - Path=/api/v1/rides/start
-            - Method=PATCH
-
-        - id: findRide
-          uri: lb://ride-service
-          predicates:
-            - Path=/api/v1/rides/find
-            - Method=POST
-
-        - id: endRide
-          uri: lb://ride-service
-          predicates:
-            - Path=/api/v1/rides/end
-            - Method=PATCH

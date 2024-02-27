@@ -28,6 +28,7 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compileOnly "org.springframework.boot:spring-boot-starter-actuator"
     compileOnly 'io.micrometer:micrometer-registry-prometheus'
+    implementation "org.springframework.cloud:spring-cloud-starter-circuitbreaker-reactor-resilience4j"
 
 }
 

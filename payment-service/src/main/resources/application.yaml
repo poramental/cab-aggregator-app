@@ -5,8 +5,8 @@ spring:
   datasource:
     url: ${paymentDbUrl}
     driver-class-name:  org.postgresql.Driver
-    username: ${dbPassword}
-    password: ${dbUsername}
+    username: ${dbUsername}
+    password: ${dbPassword}
 
   jpa:
     show-sql: true

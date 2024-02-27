@@ -5,7 +5,6 @@ networks:
     name: cab_aggregator
     driver: bridge
 
-
 services:
 
   api-gateway:
@@ -164,7 +163,6 @@ services:
     restart: unless-stopped
     volumes:
       - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-
 
   zookeeper:
     image: zookeeper:3.7.0
