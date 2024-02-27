@@ -128,7 +128,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/dashboards
 
 #kafka
   zookeeper:
