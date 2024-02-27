@@ -42,7 +42,7 @@ services:
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
     depends_on:
       - eureka-server
-      - db-passenger-service
+      - db
 
   driver-service:
     image: driver-service:latest
@@ -60,7 +60,7 @@ services:
       - KAFKA_BOOTSTRAP-SERVERS=kafka:29092
     depends_on:
       - eureka-server
-      - db-driver-service
+      - db
       - kafka
 
   payment-service:
@@ -79,7 +79,7 @@ services:
       - STRIPE_SECRET=${stripeSecretKey}
     depends_on:
       - eureka-server
-      - db-payment-service
+      - db
 
   ride-service:
     image: ride-service:latest
@@ -97,7 +97,7 @@ services:
       - KAFKA_BOOTSTRAP-SERVERS=kafka:29092
     depends_on:
       - eureka-server
-      - db-ride-service
+      - db
       - kafka
 
   #database
