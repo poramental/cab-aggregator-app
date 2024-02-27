@@ -36,7 +36,7 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-passenger-service:5432/passenger-db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/passenger-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -52,7 +52,7 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-driver-service:5432/driver-db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/driver-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -71,7 +71,7 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-payment-service:5432/payment-db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/payment-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -89,7 +89,7 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-ride-service:5432/ride-db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ride-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -100,52 +100,18 @@ services:
       - db-ride-service
       - kafka
 
-  #databases
-  db-ride-service:
+  #database
+  db:
     image: postgres
     ports:
       - '5446:5432'
     environment:
       POSTGRES_PASSWORD: ${dbPassword}
       POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: ride-db
     networks:
       - cab_aggregator
 
-  db-payment-service:
-    image: postgres
-    ports:
-      - '5447:5432'
-    environment:
-      POSTGRES_PASSWORD: ${dbPassword}
-      POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: payment-db
-    networks:
-      - cab_aggregator
-
-  db-driver-service:
-    image: postgres
-    container_name: db-driver-service
-    ports:
-      - '5445:5432'
-    environment:
-      POSTGRES_PASSWORD: ${dbPassword}
-      POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: driver-db
-    networks:
-      - cab_aggregator
-
-  db-passenger-service:
-    image: postgres
-    ports:
-      - '5444:5432'
-    environment:
-      POSTGRES_PASSWORD: ${dbPassword}
-      POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: passenger-db
-    networks:
-      - cab_aggregator
-
+#monitoring
   prometheus:
     image: prom/prometheus:v2.44.0
     container_name: prometheus
@@ -153,7 +119,6 @@ services:
       - "9090:9090"
     volumes:
       - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
-
 
   grafana:
     image: grafana/grafana:9.5.2
@@ -164,6 +129,8 @@ services:
     volumes:
       - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
 
+
+#kafka
   zookeeper:
     image: zookeeper:3.7.0
     container_name: zookeeper
