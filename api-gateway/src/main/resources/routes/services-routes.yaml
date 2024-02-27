@@ -32,6 +32,12 @@ spring:
                 name: passengers-service-circuit
                 fallbackUri: forward://fallback/passenger-service
 
+        - id: findRide
+          uri: lb://ride-service
+          predicates:
+            - Path=/api/v1/rides/find
+            - Method=POST
+
         - id: rideService
           uri: lb://ride-service
           predicates:

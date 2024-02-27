@@ -9,7 +9,7 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
-    url: jdbc:postgresql://localhost:${dbHost}/payment-db
+    url: jdbc:postgresql://localhost:${dbHost}/driver-db
     username: ${dbUsername}
     password: ${dbPassword}
     driver-class-name: org.postgresql.Driver

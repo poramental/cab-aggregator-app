@@ -5,6 +5,7 @@ import com.modsen.rideservice.exception.ServiceUnAvailableException;
 import com.modsen.rideservice.feignclient.DriverFeignClient;
 import com.modsen.rideservice.service.DriverService;
 import com.modsen.rideservice.util.ExceptionMessages;
+import feign.RetryableException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ public class DriverServiceImpl implements DriverService {
         return driverFeignClient.changeIsInRideStatus(id);
     }
 
-    private DriverResponse fallbackMethod(Exception e) {
+    private DriverResponse fallbackMethod(RetryableException e) {
         throw new ServiceUnAvailableException(ExceptionMessages.DRIVER_SERVICE_NOT_AVAILABLE);
     }
 }

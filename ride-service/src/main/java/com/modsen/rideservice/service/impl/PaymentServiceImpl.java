@@ -6,6 +6,7 @@ import com.modsen.rideservice.exception.ServiceUnAvailableException;
 import com.modsen.rideservice.feignclient.PaymentFeignClient;
 import com.modsen.rideservice.service.PaymentService;
 import com.modsen.rideservice.util.ExceptionMessages;
+import feign.RetryableException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class PaymentServiceImpl implements PaymentService {
         return paymentFeignClient.chargeFromCustomer(req);
     }
 
-    private ChargeResponse fallbackMethod(Exception e) {
+    private ChargeResponse fallbackMethod(RetryableException e) {
         throw new ServiceUnAvailableException(ExceptionMessages.PAYMENT_SERVICE_NOT_AVAILABLE);
     }
 }

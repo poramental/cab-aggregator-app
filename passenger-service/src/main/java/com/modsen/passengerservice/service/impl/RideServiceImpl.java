@@ -5,6 +5,7 @@ import com.modsen.passengerservice.exception.ServiceUnAvailableException;
 import com.modsen.passengerservice.feignclient.RideFeignClient;
 import com.modsen.passengerservice.service.RideService;
 import com.modsen.passengerservice.util.ExceptionMessages;
+import feign.RetryableException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class RideServiceImpl implements RideService {
         return rideFeignClient.getRideById(id);
     }
 
-    private RideResponse fallbackMethod(Exception e) {
+    private RideResponse fallbackMethod(RetryableException e) {
         throw new ServiceUnAvailableException(ExceptionMessages.RIDE_SERVICE_NOT_AVAILABLE);
     }
 }

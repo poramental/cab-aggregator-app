@@ -36,7 +36,7 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/passenger-db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/passenger-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -52,7 +52,7 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/driver-db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/driver-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -71,7 +71,7 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/payment-db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/payment-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -89,7 +89,7 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ride-db
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/ride-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -102,9 +102,12 @@ services:
 
   #database
   db:
+    container_name: db
     image: postgres
     ports:
-      - '5446:5432'
+      - '5432:5432'
+    volumes:
+      - ./init-scripts-db:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_PASSWORD: ${dbPassword}
       POSTGRES_USER: ${dbUsername}
@@ -128,7 +131,7 @@ services:
     restart: unless-stopped
     volumes:
       - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
-      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
 
 #kafka
   zookeeper:
