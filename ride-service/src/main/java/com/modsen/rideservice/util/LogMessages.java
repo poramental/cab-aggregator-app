@@ -27,4 +27,6 @@ public class LogMessages {
     public final String GET_PASSENGER_BY_ID_METHOD_CALL = "Sending request to passenger-service to get passenger with id: {}";
     public final String GET_DRIVER_BY_ID_METHOD_CALL = "Sending request to driver-service to get driver with id: {}";
     public final String CHANGE_IS_IN_RIDE_STATUS_METHOD_CALL = "Sending request to driver-service to change isInRide status driver with id: {}";
+    public final String CONSUME_MESSAGE_METHOD_CALL = "Consumed message: {}";
+    public final String PRODUCE_MESSAGE_METHOD_CALL = "Produced message: {}";
 }

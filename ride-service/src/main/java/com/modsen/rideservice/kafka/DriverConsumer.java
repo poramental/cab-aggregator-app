@@ -18,7 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Component;
-
+import static com.modsen.rideservice.util.LogMessages.CONSUME_MESSAGE_METHOD_CALL;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +26,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import static com.modsen.rideservice.util.MailUtil.testMail;
 
 @RequiredArgsConstructor
 @Component
@@ -69,6 +68,7 @@ public class DriverConsumer {
     @KafkaListener(topics = "${topic.name.driver}", groupId = "${spring.kafka.consumer.group-id.driver}")
     public void consumeMessage(DriverForRideRequest driverForRideRequest) {
         UUID rideId = driverForRideRequest.getRideId();
+        log.info(CONSUME_MESSAGE_METHOD_CALL, driverForRideRequest);
         if (rideIsAccepted(rideId)) {
             notAvailableDrivers.deleteNotAcceptedDriversForRide(rideId);
             executorService.shutdownNow();
