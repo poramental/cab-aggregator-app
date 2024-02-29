@@ -15,12 +15,15 @@ import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.CustomerUpdateParams;
 import com.stripe.param.PaymentIntentConfirmParams;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import static com.modsen.paymentservice.util.LogMessages.*;
 
 import java.util.Map;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PaymentServiceImpl implements PaymentService {
 
@@ -34,6 +37,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public CustomerResponse createCustomer(CustomerRequest customerRequest) {
+        log.info(CREATE_CUSTOMER_SERVICE_METHOD_CALL);
         checkCustomerAlreadyExist(customerRequest.getPassengerId());
         Customer customer = createStripeCustomer(customerRequest);
 
@@ -52,6 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
     @Override
     public TokenDto generateTokenByCard(CardRequest cardRequest) {
         try {
+            log.info(GENERATE_TOKEN_SERVICE_METHOD_CALL);
             RequestOptions.builder()
                     .setApiKey(publicKey)
                     .build();
@@ -127,6 +132,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public CustomerResponse retrieve(long id) {
+        log.info(RETRIEVE_SERVICE_METHOD_CALL);
         RequestOptions.builder()
                 .setApiKey(secretKey)
                 .build();
@@ -140,6 +146,7 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     private CustomersPassengers getOrThrow(Long id) {
+        log.info(GET_OR_THROW_METHOD_CALL, id);
         return customersPassengersRepository.findByPassengerId(id)
                 .orElseThrow(() -> new FeignClientNotFoundException(ExceptionMessage.CUSTOMER_NOT_FOUND_EXCEPTION));
     }
@@ -168,6 +175,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public MessageResponse payFromCard(ChargeRequest chargeRequest) {
+        log.info(PAY_FROM_CARD_SERVICE_METHOD_CALL);
         RequestOptions.builder()
                 .setApiKey(secretKey)
                 .build();
@@ -187,6 +195,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public BalanceResponse getBalance() {
+        log.info(GET_BALANCE_SERVICE_METHOD_CALL);
         Stripe.apiKey = secretKey;
         Balance balance = retrieveBalance();
         return BalanceResponse
@@ -252,6 +261,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public ChargeResponse payFromCustomer(CustomerChargeRequest customerChargeRequest) {
+        log.info(PAY_FROM_CUSTOMER_SERVICE_METHOD_CALL);
         Stripe.apiKey = secretKey;
         Long passengerId = customerChargeRequest.getPassengerId();
         CustomersPassengers user = getOrThrow(passengerId);
