@@ -9,7 +9,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import static com.modsen.rideservice.util.LogMessages.*;
 import java.util.UUID;
 
 @RestController
@@ -26,7 +26,7 @@ public class RideController {
             @RequestParam UUID rideId,
             @RequestHeader("X-Forwarded-For") String ip
     ) {
-        log.info(String.format("User with ip: {%s} call acceptRideByDriver().", ip));
+        log.info(String.format(ACCEPT_RIDE_CONTROLLER_METHOD_CALL, ip));
         return ResponseEntity.ok(rideService.acceptRide(rideId, driverId));
     }
 
@@ -36,7 +36,7 @@ public class RideController {
             @RequestParam UUID rideId,
             @RequestHeader("X-Forwarded-For") String ip
     ) {
-        log.info(String.format("User with ip: {%s} call cancelRideByDriver().", ip));
+        log.info(String.format(CANCEL_RIDE_CONTROLLER_METHOD_CALL, ip));
         return ResponseEntity.ok(rideService.cancelRide(rideId, driverId));
     }
 
@@ -44,7 +44,7 @@ public class RideController {
     public ResponseEntity<ListRideResponse> getAll(
             @RequestHeader("X-Forwarded-For") String ip
     ) {
-        log.info(String.format("User with ip: {%s} call getAllRides().", ip));
+        log.info(String.format(GET_ALL_RIDES_CONTROLLER_METHOD_CALL, ip));
         return ResponseEntity.ok(rideService.getAll());
     }
 
@@ -53,7 +53,7 @@ public class RideController {
             @PathVariable UUID id,
             @RequestHeader("X-Forwarded-For") String ip
     ) {
-        log.info(String.format("User with ip: {%s} call getById().", ip));
+        log.info(String.format(GET_RIDE_BY_ID_CONTROLLER_METHOD_CALL, ip));
         return ResponseEntity.ok(rideService.getById(id));
     }
 
@@ -62,7 +62,7 @@ public class RideController {
             @RequestParam Long passengerId,
             @RequestHeader("X-Forwarded-For") String ip
     ) {
-        log.info(String.format("User with ip: {%s} call getAllPassengerRidesById().", ip));
+        log.info(String.format(GET_PASSENGER_RIDES_CONTROLLER_METHOD_CALL, ip));
         return ResponseEntity.ok(rideService.getAllPassengerRidesById(passengerId));
     }
 
@@ -71,7 +71,7 @@ public class RideController {
             @RequestParam Long driverId,
             @RequestHeader("X-Forwarded-For") String ip
     ) {
-        log.info(String.format("User with ip: {%s} call getAllDriverRidesById().", ip));
+        log.info(String.format(GET_DRIVER_RIDES_CONTROLLER_METHOD_CALL, ip));
         return ResponseEntity.ok(rideService.getAllDriverRidesById(driverId));
     }
 
@@ -81,7 +81,7 @@ public class RideController {
             @RequestParam Long driverId,
             @RequestHeader("X-Forwarded-For") String ip
     ) {
-        log.info(String.format("User with ip: {%s} call startRide().", ip));
+        log.info(String.format(START_RIDE_CONTROLLER_METHOD_CALL, ip));
         return ResponseEntity.ok(rideService.startRide(rideId, driverId));
     }
 
@@ -90,7 +90,7 @@ public class RideController {
             @Valid @RequestBody RideRequest rideRequest,
             @RequestHeader("X-Forwarded-For") String ip
     ) {
-        log.info(String.format("User with ip: {%s} call findRide().", ip));
+        log.info(String.format(FIND_RIDE_CONTROLLER_METHOD_CALL, ip));
         return ResponseEntity.ok(rideService.findRide(rideRequest));
     }
 
@@ -100,7 +100,7 @@ public class RideController {
             @RequestParam Long driverId,
             @RequestHeader("X-Forwarded-For") String ip
     ) {
-        log.info(String.format("User with ip: {%s} call endRide().", ip));
+        log.info(String.format(END_RIDE_CONTROLLER_METHOD_CALL, ip));
         return ResponseEntity.ok(rideService.endRide(rideId, driverId));
     }
 }
