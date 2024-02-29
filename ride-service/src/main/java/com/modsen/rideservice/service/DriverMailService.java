@@ -9,7 +9,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
-
+import static com.modsen.rideservice.util.LogMessages.EMAIL_SEND_METHOD_CALL;
 import java.util.UUID;
 
 import static com.modsen.rideservice.util.MailUtil.*;
@@ -35,7 +35,7 @@ public class DriverMailService  {
         message.setSubject(driverMailSubject);
         message.setText(String.format(driverAcceptRideText,driver.getId(),rideId)+
                 String.format(cancelRideMessage,driver.getId(),rideId));
-        log.info("An email has been sent to the address {}.",to);
+        log.info(EMAIL_SEND_METHOD_CALL,to);
         emailSender.send(message);
     }
 

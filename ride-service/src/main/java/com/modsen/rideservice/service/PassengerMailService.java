@@ -10,7 +10,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.stereotype.Service;
-
+import static com.modsen.rideservice.util.LogMessages.EMAIL_SEND_METHOD_CALL;
 import static com.modsen.rideservice.util.MailUtil.*;
 
 
@@ -43,7 +43,7 @@ public class PassengerMailService {
                         autoResponse.getNumber(),
                         autoResponse.getColor())
         );
-        log.info("An email has been sent to the address {}.",to);
+        log.info(EMAIL_SEND_METHOD_CALL,to);
         emailSender.send(message);
     }
 
@@ -55,7 +55,7 @@ public class PassengerMailService {
         message.setTo(to);
         message.setSubject(passengerStartRideSubject);
         message.setText(passengerStartRideText);
-        log.info("An email has been sent to the address {}.",to);
+        log.info(EMAIL_SEND_METHOD_CALL,to);
         emailSender.send(message);
     }
 
@@ -67,7 +67,7 @@ public class PassengerMailService {
         message.setTo(to);
         message.setSubject(passengerNoAvailableDriversSubject);
         message.setText(passengerNoAvailableDriversText);
-        log.info("An email has been sent to the address {}.",to);
+        log.info(EMAIL_SEND_METHOD_CALL,to);
         emailSender.send(message);
     }
 }

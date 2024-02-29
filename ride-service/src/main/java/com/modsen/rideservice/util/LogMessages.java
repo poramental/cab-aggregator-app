@@ -22,4 +22,5 @@ public class LogMessages {
     public final String CANCEL_RIDE_CONTROLLER_METHOD_CALL = "User with ip: {%s} call cancelRideByDriver().";
     public final String ACCEPT_RIDE_CONTROLLER_METHOD_CALL = "User with ip: {%s} call acceptRideByDriver().";
     public final String AN_EXCEPTION_OCCURRED =  "An exception occurred: {}";
+    public final String EMAIL_SEND_METHOD_CALL = "An email has been sent to the address {}.";
 }
