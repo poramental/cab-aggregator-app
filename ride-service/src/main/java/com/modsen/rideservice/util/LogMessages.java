@@ -23,4 +23,8 @@ public class LogMessages {
     public final String ACCEPT_RIDE_CONTROLLER_METHOD_CALL = "User with ip: {%s} call acceptRideByDriver().";
     public final String AN_EXCEPTION_OCCURRED =  "An exception occurred: {}";
     public final String EMAIL_SEND_METHOD_CALL = "An email has been sent to the address {}.";
+    public final String CHARGE_FROM_CUSTOMER_METHOD_CALL = "Sending charge request to payment-service";
+    public final String GET_PASSENGER_BY_ID_METHOD_CALL = "Sending request to passenger-service to get passenger with id: {}";
+    public final String GET_DRIVER_BY_ID_METHOD_CALL = "Sending request to driver-service to get driver with id: {}";
+    public final String CHANGE_IS_IN_RIDE_STATUS_METHOD_CALL = "Sending request to driver-service to change isInRide status driver with id: {}";
 }
