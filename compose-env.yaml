@@ -4,7 +4,6 @@ networks:
   cab_aggregator:
     name: cab_aggregator
     driver: bridge
-  elk:
 
 
 services:
@@ -12,6 +11,8 @@ services:
     image: api-gateway:latest
     container_name: api-gateway
     environment:
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
     depends_on:
       - eureka-server
@@ -37,6 +38,8 @@ services:
     networks:
       - cab_aggregator
     environment:
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/passenger-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
@@ -53,6 +56,8 @@ services:
     networks:
       - cab_aggregator
     environment:
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/driver-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
@@ -72,6 +77,8 @@ services:
     networks:
       - cab_aggregator
     environment:
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/payment-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
@@ -90,6 +97,8 @@ services:
     networks:
       - cab_aggregator
     environment:
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/ride-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
@@ -135,52 +144,50 @@ services:
       - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
 
 #ELK STACK
-  Elasticsearch:
-    image: elasticsearch:7.16.2
+  elasticsearch:
+    image: elasticsearch:8.12.0
     container_name: elasticsearch
-    restart: always
-    volumes:
-      - elastic_data:/usr/share/elasticsearch/data/
     environment:
-      ES_JAVA_OPTS: "-Xmx256m -Xms256m"
-      discovery.type: single-node
-    ports:
-      - '9200:9200'
-      - '9300:9300'
-    networks:
-      - elk
-
-  Logstash:
-    image: logstash:7.16.2
-    container_name: logstash
-    restart: always
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+      - xpack.security.enabled=false
     volumes:
-      - ./monitoring/elk/logstash/:/logstash_dir
-    command: logstash -f /logstash_dir/logstash.conf
-    depends_on:
-      - Elasticsearch
+      - elasticsearch_data:/usr/share/elasticsearch/data
     ports:
-      - '9600:9600'
+      - "9200:9200"
+    networks:
+      - cab_aggregator
+
+
+  kibana:
+    image: kibana:8.12.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - cab_aggregator
+
+
+  logstash:
+    image: logstash:8.12.0
+    container_name: logstash
+    volumes:
+      - ./monitoring/elk/logstash:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5000:5000"
     environment:
       LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
-      - elk
-
-  Kibana:
-    image: kibana:7.16.2
-    container_name: kibana
-    restart: always
-    ports:
-      - '5601:5601'
-    environment:
-      - ELASTICSEARCH_URL=http://elasticsearch:9200
-    depends_on:
-      - Elasticsearch
-    networks:
-      - elk
+      - cab_aggregator
 
 
-#kafka
+
+  #kafka
   zookeeper:
     image: zookeeper:3.7.0
     container_name: zookeeper
@@ -209,5 +216,7 @@ services:
     depends_on:
       - zookeeper
 
+
 volumes:
-  elastic_data: {}
+  elasticsearch_data:
+    driver: local
