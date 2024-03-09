@@ -51,6 +51,8 @@ dependencies {
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     compileOnly "org.springframework.boot:spring-boot-starter-actuator"
     compileOnly 'io.micrometer:micrometer-registry-prometheus'
+    implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+    implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
 }
 
 dependencyManagement {

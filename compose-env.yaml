@@ -216,6 +216,14 @@ services:
     depends_on:
       - zookeeper
 
+  zipkin:
+    image: openzipkin/zipkin:2.27
+    container_name: zipkin
+    networks:
+      - cab_aggregator
+    ports:
+      - '9411:9411'
+
 
 volumes:
   elasticsearch_data:
