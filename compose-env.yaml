@@ -101,49 +101,17 @@ services:
       - db-ride-service
       - kafka
 
-  #databases
-  db-ride-service:
+  #database
+  db:
+    container_name: db
     image: postgres
     ports:
-      - '5446:5432'
+      - '5432:5432'
+    volumes:
+      - ./init-scripts-db:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_PASSWORD: ${dbPassword}
       POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: ride-db
-    networks:
-      - cab_aggregator
-
-  db-payment-service:
-    image: postgres
-    ports:
-      - '5447:5432'
-    environment:
-      POSTGRES_PASSWORD: ${dbPassword}
-      POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: payment-db
-    networks:
-      - cab_aggregator
-
-  db-driver-service:
-    image: postgres
-    container_name: db-driver-service
-    ports:
-      - '5445:5432'
-    environment:
-      POSTGRES_PASSWORD: ${dbPassword}
-      POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: driver-db
-    networks:
-      - cab_aggregator
-
-  db-passenger-service:
-    image: postgres
-    ports:
-      - '5444:5432'
-    environment:
-      POSTGRES_PASSWORD: ${dbPassword}
-      POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: passenger-db
     networks:
       - cab_aggregator
 
