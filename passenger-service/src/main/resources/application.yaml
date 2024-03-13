@@ -16,13 +16,24 @@ spring:
       ddl-auto: none
   application:
     name: passenger-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/cab-aggreagator-realm
+          jwk-set-uri: http://localhost:8080/realms/cab-aggreagator-realm/protocol/openid-connect/certs
+
 
 feign:
   client:
     ride:
       name: ride
       path: /api/v1/rides
-
+jwt:
+  auth:
+    converter:
+      resource-id: cab-aggregator-client
+      principal-attribute: sub
 eureka:
   client:
     service-url:
