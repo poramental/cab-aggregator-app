@@ -8,6 +8,7 @@ import com.modsen.driverservice.mapper.AutoMapper;
 import com.modsen.driverservice.mapper.DriverMapper;
 import com.modsen.driverservice.repository.AutoRepository;
 import com.modsen.driverservice.repository.DriverRepository;
+import com.modsen.driverservice.service.RideService;
 import com.modsen.driverservice.service.impl.DriverServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +35,7 @@ public class DriverServiceTest {
     private DriverServiceImpl driverService;
 
     @Mock
-    private RideFeignClient rideFeignClient;
+    private RideService rideFeignClient;
 
     @Mock
     private DriverMapper driverMapper;

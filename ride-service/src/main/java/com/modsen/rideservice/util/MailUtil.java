@@ -4,8 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 public class MailUtil {
 
-    @Value("${mail.test-mail}")
-    public static String testMail; //TODO only for tests
+    public static String testMail = "alexy_tsurkan@mail.ru"; //TODO only for tests
     public static final String acceptRideUrl = "http://localhost:8083/api/v1/rides/accept-ride-driver";
     public static final String cancelRideUrl = "http://localhost:8083/api/v1/rides/cancel-ride-driver";
     public static final String driverMailSubject = "Найдена поездка";

@@ -3,10 +3,10 @@ spring:
     name: payment-service
 
   datasource:
-    url: ${paymentDbUrl}
+    url: jdbc:postgresql://localhost:${dbHost}/payment-db
     driver-class-name:  org.postgresql.Driver
-    username: ${dbPassword}
-    password: ${dbUsername}
+    username: ${dbUsername}
+    password: ${dbPassword}
 
   jpa:
     show-sql: true
@@ -27,3 +27,15 @@ stripe:
 logging:
   pattern:
     console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0

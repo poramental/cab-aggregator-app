@@ -9,7 +9,7 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
-    url: ${driversDbUrl}
+    url: jdbc:postgresql://localhost:${dbHost}/driver-db
     username: ${dbUsername}
     password: ${dbPassword}
     driver-class-name: org.postgresql.Driver
@@ -52,3 +52,14 @@ logging:
   pattern:
     console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0

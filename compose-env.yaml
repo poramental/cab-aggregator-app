@@ -7,11 +7,12 @@ networks:
 
 
 services:
-
   api-gateway:
     image: api-gateway:latest
     container_name: api-gateway
     environment:
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
     depends_on:
       - eureka-server
@@ -37,13 +38,15 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-passenger-service:5432/passenger-db
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/passenger-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
     depends_on:
       - eureka-server
-      - db-passenger-service
+      - db
 
   driver-service:
     image: driver-service:latest
@@ -53,7 +56,9 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-driver-service:5432/driver-db
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/driver-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -61,7 +66,7 @@ services:
       - KAFKA_BOOTSTRAP-SERVERS=kafka:29092
     depends_on:
       - eureka-server
-      - db-driver-service
+      - db
       - kafka
 
   payment-service:
@@ -72,7 +77,9 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-payment-service:5432/payment-db
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/payment-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -80,7 +87,7 @@ services:
       - STRIPE_SECRET=${stripeSecretKey}
     depends_on:
       - eureka-server
-      - db-payment-service
+      - db
 
   ride-service:
     image: ride-service:latest
@@ -90,7 +97,9 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db-ride-service:5432/ride-db
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/ride-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -98,58 +107,87 @@ services:
       - KAFKA_BOOTSTRAP-SERVERS=kafka:29092
     depends_on:
       - eureka-server
-      - db-ride-service
+      - db
       - kafka
 
-  #databases
-  db-ride-service:
+  #database
+  db:
+    container_name: db
     image: postgres
     ports:
-      - '5446:5432'
+      - '5432:5432'
+    volumes:
+      - ./init-scripts-db:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_PASSWORD: ${dbPassword}
       POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: ride-db
     networks:
       - cab_aggregator
 
-  db-payment-service:
-    image: postgres
+#monitoring
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    container_name: prometheus
     ports:
-      - '5447:5432'
-    environment:
-      POSTGRES_PASSWORD: ${dbPassword}
-      POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: payment-db
-    networks:
-      - cab_aggregator
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
 
-  db-driver-service:
-    image: postgres
-    container_name: db-driver-service
+  grafana:
+    image: grafana/grafana:9.5.2
+    container_name: grafana
     ports:
-      - '5445:5432'
-    environment:
-      POSTGRES_PASSWORD: ${dbPassword}
-      POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: driver-db
-    networks:
-      - cab_aggregator
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
 
-  db-passenger-service:
-    image: postgres
+#ELK STACK
+  elasticsearch:
+    image: elasticsearch:8.12.0
+    container_name: elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
     ports:
-      - '5444:5432'
+      - "9200:9200"
+    networks:
+      - cab_aggregator
+
+
+  kibana:
+    image: kibana:8.12.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
     environment:
-      POSTGRES_PASSWORD: ${dbPassword}
-      POSTGRES_USER: ${dbUsername}
-      POSTGRES_DB: passenger-db
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - cab_aggregator
+
+
+  logstash:
+    image: logstash:8.12.0
+    container_name: logstash
+    volumes:
+      - ./monitoring/elk/logstash:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5000:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
     networks:
       - cab_aggregator
 
 
 
-
+  #kafka
   zookeeper:
     image: zookeeper:3.7.0
     container_name: zookeeper
@@ -177,3 +215,16 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+
+  zipkin:
+    image: openzipkin/zipkin:2.27
+    container_name: zipkin
+    networks:
+      - cab_aggregator
+    ports:
+      - '9411:9411'
+
+
+volumes:
+  elasticsearch_data:
+    driver: local

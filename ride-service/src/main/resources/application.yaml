@@ -12,7 +12,7 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-ride-master.xml
   datasource:
-    url: jdbc:postgresql://localhost:${rideDbHost}/ride-db
+    url: jdbc:postgresql://localhost:${dbHost}/ride-db
     username: ${dbUsername}
     password: ${dbPassword}
     driver-class-name: org.postgresql.Driver
@@ -52,7 +52,9 @@ eureka:
 
 logging:
   pattern:
-    console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  level:
+    root: info
 
 
 feign:
@@ -67,3 +69,15 @@ feign:
       name: payment-service
       path: /api/v1/payment
 
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0

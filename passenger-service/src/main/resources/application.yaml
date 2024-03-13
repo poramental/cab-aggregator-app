@@ -1,14 +1,13 @@
 server:
   port: 8081
-
 spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
-    url: ${passengerDbUrl}
-    username: ${dbPassword}
-    password: ${dbUsername}
+    url: jdbc:postgresql://localhost:${dbHost}/passenger-db
+    username: ${dbUsername}
+    password: ${dbPassword}
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -22,7 +21,6 @@ feign:
     ride:
       name: ride
       path: /api/v1/rides
-
 eureka:
   client:
     service-url:
@@ -31,3 +29,16 @@ eureka:
 logging:
   pattern:
     console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
