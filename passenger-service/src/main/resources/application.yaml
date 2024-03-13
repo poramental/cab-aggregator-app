@@ -6,7 +6,7 @@ spring:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
-    url: ${passengerDbUrl}
+    url: jdbc:postgresql://localhost:${dbHost}/passenger-db
     username: ${dbPassword}
     password: ${dbUsername}
     driver-class-name: org.postgresql.Driver
