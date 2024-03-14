@@ -20,8 +20,8 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/cab-aggreagator-realm
-          jwk-set-uri: http://localhost:8080/realms/cab-aggreagator-realm/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8089/realms/cab-aggreagator-realm
+          jwk-set-uri: http://localhost:8089/realms/cab-aggreagator-realm/protocol/openid-connect/certs
 
 
 feign:
