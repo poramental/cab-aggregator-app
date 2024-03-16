@@ -18,8 +18,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.modsen.passengerservice.util.SecurityUtil.RESOURCES_ACCESS;
-import static com.modsen.passengerservice.util.SecurityUtil.ROLES;
+import static com.modsen.passengerservice.util.SecurityUtil.*;
 
 @RequiredArgsConstructor
 @Component
@@ -46,13 +45,11 @@ public class JwtAuthConverter implements Converter<Jwt, AbstractAuthenticationTo
     }
 
     private Collection<? extends GrantedAuthority> extractResourceRoles(Jwt jwt) {
-        Map<String, Object> resourceAccess = jwt.getClaim(RESOURCES_ACCESS);
-        Map<String, Object> resource;
+        Map<String, Object> realmAccess = jwt.getClaim(REALM_ACCESS);
         Collection<String> resourceRoles;
-
-        if (resourceAccess == null
-                || (resource = (Map<String, Object>) resourceAccess.get(properties.getResourceId())) == null
-                || (resourceRoles = (Collection<String>) resource.get(ROLES)) == null) {
+        System.out.println(realmAccess.get(properties.getResourceId()));
+        if (realmAccess == null
+                || (resourceRoles = (Collection<String>) realmAccess.get(ROLES)) == null) {
             return Set.of();
         }
 

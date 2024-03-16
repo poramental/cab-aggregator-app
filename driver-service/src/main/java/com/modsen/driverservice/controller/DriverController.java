@@ -90,6 +90,7 @@ public class DriverController {
     }
 
     @GetMapping("/available")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<List<DriverResponse>> getAvailableDrivers() {
         return ResponseEntity.ok(driverService.getAvailableDrivers());
     }

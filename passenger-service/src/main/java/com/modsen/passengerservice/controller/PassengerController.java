@@ -9,6 +9,7 @@ import com.modsen.passengerservice.service.PassengerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -39,12 +40,14 @@ public class PassengerController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER')")
     public PassengerResponse add(@RequestBody @Valid PassengerRequest passengerDto) {
         return passengerService.add(passengerDto);
     }
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER')")
     public PassengerResponse delete(@PathVariable Long id) {
         return passengerService.deleteById(id);
     }
@@ -57,6 +60,7 @@ public class PassengerController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER')")
     public PassengerResponse updateById(@PathVariable Long id,
                                         @RequestBody PassengerRequest passengerDto) {
         return passengerService.updateById(id, passengerDto);
@@ -73,6 +77,7 @@ public class PassengerController {
 
     @PatchMapping("/{passengerId}/rating")
     @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public PassengerResponse addRating(@RequestParam("rating") int rating,
                                        @RequestParam("rideId") UUID rideId,
                                        @PathVariable Long passengerId) {
