@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +28,7 @@ public class DriverController {
     }
 
     @PostMapping
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<DriverResponse> add(@RequestBody @Valid DriverRequest driverDto) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
@@ -34,6 +36,7 @@ public class DriverController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<DriverResponse> deleteById(@PathVariable Long id) {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)
@@ -46,6 +49,7 @@ public class DriverController {
     }
 
     @PutMapping("/{driverId}")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<DriverResponse> update(@PathVariable Long driverId,
                                                  @RequestBody @Valid DriverRequest driverDto) {
         return ResponseEntity.ok(driverService.update(driverId, driverDto));
@@ -59,12 +63,14 @@ public class DriverController {
     }
 
     @PostMapping("{driverId}/auto")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<DriverResponse> setAutoById(@PathVariable Long driverId,
                                                       @RequestBody AutoRequest autoDto) {
         return ResponseEntity.ok(driverService.setAutoById(driverId, autoDto));
     }
 
     @PatchMapping("/{driverId}/rating")
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER')")
     public ResponseEntity<DriverResponse> addRating(@PathVariable Long driverId,
                                                     @RequestParam("rideId") UUID rideId,
                                                     @RequestParam("rating") int rating) {
@@ -72,6 +78,7 @@ public class DriverController {
     }
 
     @PutMapping("/{driverId}/auto")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<DriverResponse> replaceAutoById(@PathVariable Long driverId,
                                                           @RequestBody @Valid AutoRequest autoDto) {
         return ResponseEntity.ok(driverService.replaceAutoById(driverId, autoDto));
