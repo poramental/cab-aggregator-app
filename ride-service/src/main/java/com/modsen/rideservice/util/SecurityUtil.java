@@ -11,7 +11,7 @@ public class SecurityUtil {
     public static final String NAME = "name";
     public static final String SURNAME = "surname";
     public static final String USER_NAME = "username";
-    public static final String RESOURCES_ACCESS = "resource_access";
+    public static final String REALM_ACCESS = "realm_access";
     public static final String ROLES = "roles";
 
 

@@ -7,6 +7,7 @@ import com.modsen.rideservice.service.RideService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -19,6 +20,7 @@ public class RideController {
     private final RideService rideService;
 
     @PatchMapping("/accept")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<RideResponse> acceptRideByDriver(
             @RequestParam Long driverId,
             @RequestParam UUID rideId
@@ -27,6 +29,7 @@ public class RideController {
     }
 
     @PatchMapping("/cancel")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<RideResponse> cancelRideByDriver(
             @RequestParam Long driverId,
             @RequestParam UUID rideId
@@ -45,6 +48,7 @@ public class RideController {
     }
 
     @GetMapping("/passenger-rides")
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER')")
     public ResponseEntity<ListRideResponse> getAllPassengerRidesById(
             @RequestParam Long passengerId
     ) {
@@ -52,6 +56,7 @@ public class RideController {
     }
 
     @GetMapping("/driver-rides")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<ListRideResponse> getAllDriverRidesById(
             @RequestParam Long driverId
     ) {
@@ -59,17 +64,20 @@ public class RideController {
     }
 
     @PatchMapping("/start")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<RideResponse> startRide(@RequestParam UUID rideId,
                                                   @RequestParam Long driverId) {
         return ResponseEntity.ok(rideService.startRide(rideId, driverId));
     }
 
     @PostMapping("/find")
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER')")
     public ResponseEntity<RideResponse> findRide(@Valid @RequestBody RideRequest rideRequest) {
         return ResponseEntity.ok(rideService.findRide(rideRequest));
     }
 
     @PatchMapping("/end")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<RideResponse> endRide(@RequestParam UUID rideId,
                                                 @RequestParam Long driverId) {
         return ResponseEntity.ok(rideService.endRide(rideId, driverId));

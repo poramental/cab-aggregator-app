@@ -76,5 +76,5 @@ feign:
 jwt:
   auth:
     converter:
-      resource-id: cab-aggregator-client
+      resource-id: cab-aggregator
       principal-attribute: sub
