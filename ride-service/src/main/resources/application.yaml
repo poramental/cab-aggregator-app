@@ -6,13 +6,19 @@ mail:
   test-mail: "alexey_tsurkan@mail.ru"
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8089/realms/cab-aggreagator-realm
+          jwk-set-uri: http://localhost:8089/realms/cab-aggreagator-realm/protocol/openid-connect/certs
   application:
     name: ride-service
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-ride-master.xml
   datasource:
-    url: jdbc:postgresql://localhost:${rideDbHost}/ride-db
+    url: jdbc:postgresql://localhost:${dbHost}/ride-db
     username: ${dbUsername}
     password: ${dbPassword}
     driver-class-name: org.postgresql.Driver
@@ -67,3 +73,8 @@ feign:
       name: payment-service
       path: /api/v1/payment
 
+jwt:
+  auth:
+    converter:
+      resource-id: cab-aggregator-client
+      principal-attribute: sub

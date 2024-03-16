@@ -303,9 +303,11 @@ public class DriverServiceImpl implements DriverService {
                             .build()
             );
         } else {
+
             driverProducer.sendMessage(
                     DriverForRideResponse.builder()
                             .driverId(availableDrivers.get(0).getId())
+                            .driverResponse(driverMapper.entityToResp(availableDrivers.get(0)))
                             .rideId(request.getRideId())
                             .build()
             );

@@ -10,6 +10,7 @@ import com.modsen.rideservice.exception.RideNotFoundException;
 import com.modsen.rideservice.feignclient.DriverFeignClient;
 import com.modsen.rideservice.repository.RideRepository;
 import com.modsen.rideservice.service.DriverMailService;
+import com.modsen.rideservice.service.DriverService;
 import com.modsen.rideservice.service.PassengerMailService;
 import com.modsen.rideservice.util.ExceptionMessages;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +36,7 @@ import static com.modsen.rideservice.util.MailUtil.testMail;
 public class DriverConsumer {
 
     @Autowired
-    private DriverFeignClient driverFeignClient;
+    private DriverService driverFeignClient;
 
     @Autowired
     private DriverMailService driverMailService;
@@ -80,7 +81,7 @@ public class DriverConsumer {
             notAvailableDrivers.deleteNotAcceptedDriversForRide(rideId);
             passengerMailService.sendNoAvailableDriversExceptionMessage("alexey_tsurkan@mail.ru");
         } else {
-            DriverResponse driverResponse = driverFeignClient.getDriverById(driverForRideRequest.getDriverId());
+            DriverResponse driverResponse = driverForRideRequest.getDriverResponse();
             processingDriver(driverResponse, rideId);
             Ride ride = getOrThrow(rideId);
             notAvailableDrivers.addWaitingDriver(driverForRideRequest.getDriverId());

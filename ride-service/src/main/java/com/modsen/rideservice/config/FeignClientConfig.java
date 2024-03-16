@@ -3,6 +3,8 @@ package com.modsen.rideservice.config;
 
 
 import static com.modsen.rideservice.util.RetryerSettings.*;
+
+import feign.RequestInterceptor;
 import feign.Retryer;
 import feign.codec.ErrorDecoder;
 import org.springframework.context.annotation.Bean;
@@ -16,7 +18,10 @@ public class FeignClientConfig {
     public ErrorDecoder errorDecoder() {
         return new RideErrorDecoder();
     }
-
+    @Bean
+    public RequestInterceptor feignInterceptor() {
+        return new FeignInterceptor();
+    }
     @Bean
     public Retryer retryer() {
         return new Retryer.Default(RETRYER_PERIOD, RETRYER_MAX_PERIOD, RETRYER_MAX_ATTEMPTS);

@@ -2,8 +2,14 @@ spring:
   application:
     name: payment-service
 
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8089/realms/cab-aggreagator-realm
+          jwk-set-uri: http://localhost:8089/realms/cab-aggreagator-realm/protocol/openid-connect/certs
   datasource:
-    url: ${paymentDbUrl}
+    url: jdbc:postgresql://localhost:${dbHost}/payment-db
     driver-class-name:  org.postgresql.Driver
     username: ${dbPassword}
     password: ${dbUsername}
@@ -19,7 +25,11 @@ eureka:
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
-
+jwt:
+  auth:
+    converter:
+      resource-id: cab-aggregator-client
+      principal-attribute: sub
 stripe:
   public: ${stripePublicKey}
   secret: ${stripeSecretKey}

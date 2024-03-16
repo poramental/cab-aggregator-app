@@ -1,14 +1,18 @@
 package com.modsen.rideservice.dto.response;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.util.List;
 
-@Data
-@Accessors(chain = true)
+@Getter
+@Setter
+@ToString
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
+@EqualsAndHashCode
+@Accessors(chain = true)
 public class DriverResponse {
 
     private Long id;

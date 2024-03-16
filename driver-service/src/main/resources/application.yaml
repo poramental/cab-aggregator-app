@@ -3,13 +3,19 @@ server:
   port: 8082
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8089/realms/cab-aggreagator-realm
+          jwk-set-uri: http://localhost:8089/realms/cab-aggreagator-realm/protocol/openid-connect/certs
   application:
     name: driver-service
   liquibase:
     enabled: true
     change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
-    url: ${driversDbUrl}
+    url: jdbc:postgresql://localhost:${dbHost}/driver-db
     username: ${dbUsername}
     password: ${dbPassword}
     driver-class-name: org.postgresql.Driver
@@ -42,7 +48,11 @@ feign:
     ride:
       name: ride
       path: /api/v1/rides
-
+jwt:
+  auth:
+    converter:
+      resource-id: cab-aggregator-client
+      principal-attribute: sub
 eureka:
   client:
     service-url:
