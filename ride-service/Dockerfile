@@ -4,7 +4,7 @@ ARG JAR_FILE=build/libs/*.jar
 COPY ${JAR_FILE} ./build/libs/ride-service-0.0.1-SNAPSHOT.jar
 RUN java -Djarmode=layertools -jar ./build/libs/ride-service-0.0.1-SNAPSHOT.jar extract
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:17-jre
 WORKDIR workspace
 COPY --from=builder workspace/dependencies/ ./
 COPY --from=builder workspace/spring-boot-loader/ ./

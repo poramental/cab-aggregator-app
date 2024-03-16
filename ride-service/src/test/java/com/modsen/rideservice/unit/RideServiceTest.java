@@ -14,7 +14,10 @@ import com.modsen.rideservice.feignclient.PaymentFeignClient;
 import com.modsen.rideservice.kafka.RideProducer;
 import com.modsen.rideservice.mapper.RideMapper;
 import com.modsen.rideservice.repository.RideRepository;
+import com.modsen.rideservice.service.DriverService;
 import com.modsen.rideservice.service.PassengerMailService;
+import com.modsen.rideservice.service.PassengerService;
+import com.modsen.rideservice.service.PaymentService;
 import com.modsen.rideservice.service.impl.RideServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,7 +45,7 @@ public class RideServiceTest {
     private RideMapper rideMapper;
 
     @Mock
-    private DriverFeignClient driverFeignClient;
+    private DriverService driverFeignClient;
 
     @Mock
     private PassengerMailService passengerMailService;
@@ -54,10 +57,10 @@ public class RideServiceTest {
     private RideProducer rideProducer;
 
     @Mock
-    private PaymentFeignClient paymentFeignClient;
+    private PaymentService paymentFeignClient;
 
     @Mock
-    private PassengerFeignClient passengerFeignClient;
+    private PassengerService passengerFeignClient;
 
     @Test
     void getAll() {
@@ -241,7 +244,6 @@ public class RideServiceTest {
         var rideResult = rideService.endRide(DEFAULT_RIDE_ID, DEFAULT_DRIVER_ID);
 
         assertEquals(rideResult,rideResponse);
-        verify(driverFeignClient).getDriverById(DEFAULT_DRIVER_ID);
         verify(rideRepository).findById(DEFAULT_RIDE_ID);
         verify(rideRepository).save(any(Ride.class));
         verify(rideMapper).entityToResponse(ride);

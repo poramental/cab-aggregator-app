@@ -6,6 +6,7 @@ import com.modsen.passengerservice.exception.*;
 import com.modsen.passengerservice.feignclient.RideFeignClient;
 import com.modsen.passengerservice.mapper.PassengerMapper;
 import com.modsen.passengerservice.repository.PassengerRepository;
+import com.modsen.passengerservice.service.RideService;
 import com.modsen.passengerservice.service.impl.PassengerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +35,7 @@ class PassengerServiceTest {
     private PassengerRepository passengerRepository;
 
     @Mock
-    private RideFeignClient rideFeignClient;
+    private RideService rideService;
 
     @Mock
     private PassengerMapper mapper;
@@ -235,14 +236,14 @@ class PassengerServiceTest {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
-        when(rideFeignClient.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setPassenger(43L)); // not equal passenger id
+        when(rideService.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setPassenger(43L)); // not equal passenger id
 
         assertThrows(
                 RideHaveAnotherPassengerException.class,
                 () -> passengerService.addRatingById(4, DEFAULT_RIDE_ID, DEFAULT_PASSENGER_ID)
         );
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
-        verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
+        verify(rideService).getRideById(DEFAULT_RIDE_ID);
 
     }
 
@@ -251,13 +252,13 @@ class PassengerServiceTest {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
-        when(rideFeignClient.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setEndDate(LocalDateTime.now().minusMinutes(5)));
+        when(rideService.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setEndDate(LocalDateTime.now().minusMinutes(5)));
         assertThrows(
                 RatingException.class,
                 () -> passengerService.addRatingById(4, DEFAULT_RIDE_ID, DEFAULT_PASSENGER_ID)
         );
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
-        verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
+        verify(rideService).getRideById(DEFAULT_RIDE_ID);
     }
 
     @Test
@@ -266,14 +267,14 @@ class PassengerServiceTest {
         var rideResponse = getRideResponse();
         var passengerResponse = getPassengerResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
-        when(rideFeignClient.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setEndDate(LocalDateTime.now()));
+        when(rideService.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setEndDate(LocalDateTime.now()));
         when(mapper.entityToResponse(passenger)).thenReturn(passengerResponse);
         when(passengerRepository.save(passenger)).thenReturn(passenger);
 
         passengerService.addRatingById(4, DEFAULT_RIDE_ID, DEFAULT_PASSENGER_ID);
 
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
-        verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
+        verify(rideService).getRideById(DEFAULT_RIDE_ID);
         verify(passengerRepository).save(passenger);
         verify(mapper).entityToResponse(passenger);
     }
@@ -300,13 +301,13 @@ class PassengerServiceTest {
         var passenger = getPassenger();
         var rideResponse = getRideResponse();
         when(passengerRepository.findById(DEFAULT_PASSENGER_ID)).thenReturn(Optional.of(passenger));
-        when(rideFeignClient.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setEndDate(null));
+        when(rideService.getRideById(DEFAULT_RIDE_ID)).thenReturn(rideResponse.setEndDate(null));
         assertThrows(
                 RideIsNotInactiveException.class,
                 () -> passengerService.addRatingById(4, DEFAULT_RIDE_ID, DEFAULT_PASSENGER_ID)
         );
         verify(passengerRepository).findById(DEFAULT_PASSENGER_ID);
-        verify(rideFeignClient).getRideById(DEFAULT_RIDE_ID);
+        verify(rideService).getRideById(DEFAULT_RIDE_ID);
     }
 
     private void tryUpdateWhenParamExist(Passenger passenger, Predicate<String> existParam, String param) {

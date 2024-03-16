@@ -1,6 +1,5 @@
 server:
   port: 8081
-
 spring:
   liquibase:
     enabled: true
@@ -9,6 +8,7 @@ spring:
     url: jdbc:postgresql://localhost:${dbHost}/passenger-db
     username: ${dbPassword}
     password: ${dbUsername}
+
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -29,11 +29,13 @@ feign:
     ride:
       name: ride
       path: /api/v1/rides
+
 jwt:
   auth:
     converter:
       resource-id: cab-aggregator
       principal-attribute: sub
+
 eureka:
   client:
     service-url:
@@ -42,3 +44,16 @@ eureka:
 logging:
   pattern:
     console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
+
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0

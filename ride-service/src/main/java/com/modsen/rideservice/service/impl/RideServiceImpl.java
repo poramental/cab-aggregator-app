@@ -15,8 +15,9 @@ import com.modsen.rideservice.repository.RideRepository;
 import com.modsen.rideservice.service.*;
 import com.modsen.rideservice.util.ExceptionMessages;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
+import static com.modsen.rideservice.util.LogMessages.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
@@ -25,6 +26,7 @@ import static com.modsen.rideservice.util.MailUtil.testMail;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RideServiceImpl implements RideService {
 
     private final RideRepository repository;
@@ -52,14 +54,12 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public RideResponse getById(UUID id) {
-        return mapper.entityToResponse(repository.findById(id)
-                .orElseThrow(() -> new RideNotFoundException(String.format(
-                        ExceptionMessages.RIDE_NOT_FOUND_ID_EXCEPTION,
-                        id))));
+        return mapper.entityToResponse(getOrThrow(id));
     }
 
     @Override
     public ListRideResponse getAllPassengerRidesById(Long passengerId) {
+        log.info(String.format(GET_ALL_PASSENGER_RIDES_SERVICE_METHOD_CALL,passengerId));
         return new ListRideResponse(repository.findAllByPassenger(passengerId)
                 .stream()
                 .map(mapper::entityToResponse)
@@ -68,6 +68,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public ListRideResponse getAllDriverRidesById(Long driverId) {
+        log.info(String.format(GET_ALL_DRIVER_RIDES_SERVICE_METHOD_CALL,driverId));
         return new ListRideResponse(repository.findAllByDriverId(driverId)
                 .stream()
                 .map(mapper::entityToResponse)
@@ -76,6 +77,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public RideResponse acceptRide(UUID rideId, Long driverId) {
+        log.info(ACCEPT_RIDE_SERVICE_METHOD_CALL);
         DriverResponse driverResponse = driverService.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
         if (!Objects.equals(ride.getWaitingForDriverId(), driverId)) {
@@ -98,6 +100,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public RideResponse cancelRide(UUID rideId, Long driverId) {
+        log.info(CANCEL_RIDE_SERVICE_METHOD_CALL);
         driverService.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
         if (!Objects.equals(ride.getWaitingForDriverId(), driverId)) {
@@ -117,6 +120,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public RideResponse startRide(UUID rideId, Long driverId) {
+        log.info(START_RIDE_SERVICE_METHOD_CALL);
         driverService.getDriverById(driverId);
         Ride ride = getOrThrow(rideId);
         checkRideToStart(ride, driverId);
@@ -163,6 +167,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public RideResponse endRide(UUID rideId, Long driverId) {
+        log.info(END_RIDE_SERVICE_METHOD_CALL);
         Ride ride = getOrThrow(rideId);
         checkRideToEnd(ride, driverId);
         ride
@@ -171,7 +176,6 @@ public class RideServiceImpl implements RideService {
         driverService.changeIsInRideStatus(driverId);
         paymentService.chargeFromCustomer(new CustomerChargeRequest()
                 .setAmount(20).setPassengerId(ride.getPassenger()).setCurrency("USD"));
-        driverService.changeIsInRideStatus(driverId);
         repository.save(ride);
         return mapper.entityToResponse(ride);
 
@@ -179,6 +183,7 @@ public class RideServiceImpl implements RideService {
 
     @Override
     public RideResponse findRide(RideRequest rideRequest) {
+        log.info(FIND_RIDE_SERVICE_METHOD_CALL);
         Ride ride = mapper.requestToEntity(rideRequest);
         passengerService.getPassengerById(ride.getPassenger());
         ride.setFindDate(LocalDateTime.now());
@@ -192,6 +197,7 @@ public class RideServiceImpl implements RideService {
     }
 
     private Ride getOrThrow(UUID id) {
+        log.info(String.format(String.format(GET_OR_THROW_METHOD_CALL,id)));
         return repository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(
                         String.format(

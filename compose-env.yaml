@@ -7,11 +7,12 @@ networks:
 
 
 services:
-
   api-gateway:
     image: api-gateway:latest
     container_name: api-gateway
     environment:
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
     depends_on:
       - eureka-server
@@ -37,7 +38,9 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/passenger-db
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/passenger-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -53,7 +56,9 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/driver-db
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/driver-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -72,7 +77,9 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/payment-db
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/payment-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -90,7 +97,9 @@ services:
     networks:
       - cab_aggregator
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ride-db
+      - LOGSTASH_HOST=host.docker.internal
+      - LOGSTASH_PORT=9600
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:${dbHost}/ride-db
       - SPRING_DATASOURCE_USERNAME=${dbUsername}
       - SPRING_DATASOURCE_PASSWORD=${dbPassword}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka
@@ -127,8 +136,71 @@ services:
       - cab_aggregator
     command:
       - start-dev
+      
+#monitoring
+  prometheus:
+    image: prom/prometheus:v2.44.0
+    container_name: prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+
+  grafana:
+    image: grafana/grafana:9.5.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+    volumes:
+      - ./monitoring/grafana/provisioning/datasources:/etc/grafana/provisioning/datasources
+      - ./monitoring/grafana/provisioning/dashboards:/etc/grafana/provisioning/dashboards
+
+#ELK STACK
+  elasticsearch:
+    image: elasticsearch:8.12.0
+    container_name: elasticsearch
+    environment:
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "discovery.type=single-node"
+      - xpack.security.enabled=false
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - cab_aggregator
 
 
+  kibana:
+    image: kibana:8.12.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - cab_aggregator
+
+
+  logstash:
+    image: logstash:8.12.0
+    container_name: logstash
+    volumes:
+      - ./monitoring/elk/logstash:/usr/share/logstash/pipeline:ro
+    ports:
+      - "5000:5000"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    networks:
+      - cab_aggregator
+
+
+
+  #kafka
   zookeeper:
     image: zookeeper:3.7.0
     container_name: zookeeper
@@ -156,3 +228,16 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+
+  zipkin:
+    image: openzipkin/zipkin:2.27
+    container_name: zipkin
+    networks:
+      - cab_aggregator
+    ports:
+      - '9411:9411'
+
+
+volumes:
+  elasticsearch_data:
+    driver: local

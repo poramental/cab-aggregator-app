@@ -58,7 +58,9 @@ eureka:
 
 logging:
   pattern:
-    console: "%C{1.} [%-5level] %d{HH:mm:ss} - %msg%n"
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  level:
+    root: info
 
 
 feign:
@@ -78,3 +80,15 @@ jwt:
     converter:
       resource-id: cab-aggregator
       principal-attribute: sub
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus
+  endpoint:
+    prometheus:
+      enabled: true
+  tracing:
+    sampling:
+      probability: 1.0
