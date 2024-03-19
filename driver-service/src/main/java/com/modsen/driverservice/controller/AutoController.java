@@ -7,6 +7,7 @@ import com.modsen.driverservice.service.AutoService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,6 +35,7 @@ public class AutoController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<AutoResponse> deleteById(@PathVariable Long id) {
         return ResponseEntity
                 .status(HttpStatus.NO_CONTENT)

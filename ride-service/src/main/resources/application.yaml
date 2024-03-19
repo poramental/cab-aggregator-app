@@ -6,6 +6,12 @@ mail:
   test-mail: "alexey_tsurkan@mail.ru"
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8089/realms/cab-aggreagator-realm
+          jwk-set-uri: http://localhost:8089/realms/cab-aggreagator-realm/protocol/openid-connect/certs
   application:
     name: ride-service
   liquibase:
@@ -69,6 +75,11 @@ feign:
       name: payment-service
       path: /api/v1/payment
 
+jwt:
+  auth:
+    converter:
+      resource-id: cab-aggregator
+      principal-attribute: sub
 
 management:
   endpoints:

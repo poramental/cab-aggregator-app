@@ -8,6 +8,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import static com.modsen.rideservice.util.LogMessages.*;
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class RideController {
     private final RideService rideService;
 
     @PatchMapping("/accept")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<RideResponse> acceptRideByDriver(
             @RequestParam Long driverId,
             @RequestParam UUID rideId,
@@ -31,6 +33,7 @@ public class RideController {
     }
 
     @PatchMapping("/cancel")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<RideResponse> cancelRideByDriver(
             @RequestParam Long driverId,
             @RequestParam UUID rideId,
@@ -57,6 +60,8 @@ public class RideController {
         return ResponseEntity.ok(rideService.getById(id));
     }
 
+
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER')")
     @GetMapping("/passenger")
     public ResponseEntity<ListRideResponse> getAllPassengerRidesById(
             @RequestParam Long passengerId,
@@ -66,6 +71,8 @@ public class RideController {
         return ResponseEntity.ok(rideService.getAllPassengerRidesById(passengerId));
     }
 
+
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     @GetMapping("/driver")
     public ResponseEntity<ListRideResponse> getAllDriverRidesById(
             @RequestParam Long driverId,
@@ -76,6 +83,7 @@ public class RideController {
     }
 
     @PatchMapping("/start")
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<RideResponse> startRide(
             @RequestParam UUID rideId,
             @RequestParam Long driverId,
@@ -86,6 +94,7 @@ public class RideController {
     }
 
     @PostMapping("/find")
+    @PreAuthorize("hasAnyRole('ROLE_PASSENGER')")
     public ResponseEntity<RideResponse> findRide(
             @Valid @RequestBody RideRequest rideRequest,
             @RequestHeader("X-Forwarded-For") String ip
@@ -95,6 +104,8 @@ public class RideController {
     }
 
     @PatchMapping("/end")
+
+    @PreAuthorize("hasAnyRole('ROLE_DRIVER')")
     public ResponseEntity<RideResponse> endRide(
             @RequestParam UUID rideId,
             @RequestParam Long driverId,

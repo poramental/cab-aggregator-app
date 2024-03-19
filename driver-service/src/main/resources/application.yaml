@@ -3,6 +3,12 @@ server:
   port: 8082
 
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8089/realms/cab-aggreagator-realm
+          jwk-set-uri: http://localhost:8089/realms/cab-aggreagator-realm/protocol/openid-connect/certs
   application:
     name: driver-service
   liquibase:
@@ -42,7 +48,11 @@ feign:
     ride:
       name: ride
       path: /api/v1/rides
-
+jwt:
+  auth:
+    converter:
+      resource-id: cab-aggregator
+      principal-attribute: sub
 eureka:
   client:
     service-url:

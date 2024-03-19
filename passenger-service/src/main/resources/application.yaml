@@ -6,8 +6,9 @@ spring:
     change-log: classpath:/db/changelog/db.changelog-master.xml
   datasource:
     url: jdbc:postgresql://localhost:${dbHost}/passenger-db
-    username: ${dbUsername}
-    password: ${dbPassword}
+    username: ${dbPassword}
+    password: ${dbUsername}
+
     driver-class-name: org.postgresql.Driver
   jpa:
     show-sql: true
@@ -15,12 +16,26 @@ spring:
       ddl-auto: none
   application:
     name: passenger-service
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8089/realms/cab-aggreagator-realm
+          jwk-set-uri: http://localhost:8089/realms/cab-aggreagator-realm/protocol/openid-connect/certs
+
 
 feign:
   client:
     ride:
       name: ride
       path: /api/v1/rides
+
+jwt:
+  auth:
+    converter:
+      resource-id: cab-aggregator
+      principal-attribute: sub
+
 eureka:
   client:
     service-url:

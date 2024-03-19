@@ -15,4 +15,5 @@ import java.util.UUID;
 public class DriverForRideResponse {
     private UUID rideId;
     private Long driverId;
+    DriverResponse driverResponse;
 }

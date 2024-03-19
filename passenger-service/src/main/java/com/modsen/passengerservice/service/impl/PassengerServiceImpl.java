@@ -13,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,6 +24,8 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.modsen.passengerservice.util.SecurityUtil.*;
+import com.modsen.passengerservice.security.User;
 
 @Service
 @RequiredArgsConstructor
@@ -229,5 +233,23 @@ public class PassengerServiceImpl implements PassengerService {
                 .orElseThrow(() -> new PassengerNotFoundException(String.format(
                         ExceptionMessages.PASSENGER_NOT_FOUND_EXCEPTION,
                         id)));
+    }
+    public PassengerRequest getPassengerRequestFromOauth2User(OAuth2User oAuth2User) {
+        return PassengerRequest.builder()
+                .username(oAuth2User.getAttribute(USER_NAME))
+                .email(oAuth2User.getAttribute(EMAIL))
+                .phone(oAuth2User.getAttribute(PHONE))
+                .build();
+    }
+
+    public User extractUserInfo(Jwt jwt) {
+        return User.builder()
+                .phone(jwt.getClaim(PHONE))
+                .surname(jwt.getClaim(FAMILY_NAME))
+                .name(jwt.getClaim(GIVEN_NAME))
+                .id(UUID.fromString(jwt.getClaim(ID)))
+                .email(jwt.getClaim(EMAIL))
+                .username(jwt.getClaim(USERNAME))
+                .build();
     }
 }

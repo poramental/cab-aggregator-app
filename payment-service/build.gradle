@@ -46,10 +46,13 @@ dependencies {
     implementation group: 'com.stripe', name: 'stripe-java', version:stripeVersion
     implementation group: 'org.springframework.kafka', name: 'spring-kafka', version:kafkaVersion
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+    implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
     compileOnly "org.springframework.boot:spring-boot-starter-actuator"
     compileOnly 'io.micrometer:micrometer-registry-prometheus'
     implementation 'io.micrometer:micrometer-tracing-bridge-brave'
     implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+
 }
 
 dependencyManagement {
